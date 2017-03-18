@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sample>
+	<a attr2="second" timestamp="03/18/2017 8:23:25">
+		<b>This is my simple content</b>
+	</a>
+	<c class="abc">
+		<d class="d"/>
+	</c>
+	<a ab="12" attr1="one string"/>
+</sample>

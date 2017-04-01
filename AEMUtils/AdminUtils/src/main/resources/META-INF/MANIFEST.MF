@@ -1,0 +1,32 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1491048636574
+Build-Jdk: 1.8.0_91
+Built-By: Petre
+Bundle-ClassPath: .,commons-lang3-3.5.jar
+Bundle-ManifestVersion: 2
+Bundle-Name: AdminUtils
+Bundle-SymbolicName: org.maiereni.aem.utils.AdminUtils-bundle
+Bundle-Version: 1.0.0.SNAPSHOT
+Created-By: Apache Maven Bundle Plugin
+Embed-Dependency: commons-lang3,commons-io,commons-beanutils,commons-col
+ lections;scope=compile|runtime
+Embedded-Artifacts: commons-lang3-3.5.jar;g="org.apache.commons";a="comm
+ ons-lang3";v="3.5"
+Export-Package: org.maiereni.aem.admin.bean;version="1.0.0.SNAPSHOT",org
+ .maiereni.aem.admin.service;version="1.0.0.SNAPSHOT";uses:="org.apache.
+ sling.api.resource,org.maiereni.aem.admin.bean"
+Import-Package: com.day.cq.wcm.api;version="[1.0,2)",javax.jcr;version="
+ [2.0,3)",javax.jcr.query;version="[2.0,3)",javax.jcr.security;version="
+ [2.0,3)",javax.xml.parsers,org.apache.commons.io;version="[2.2,3)",org.
+ apache.jackrabbit.api;version="[2.3,3)",org.apache.jackrabbit.api.secur
+ ity;version="[2.3,3)",org.apache.jackrabbit.api.security.principal;vers
+ ion="[2.3,3)",org.apache.jackrabbit.api.security.user;version="[2.3,3)"
+ ,org.apache.sling.api.resource;version="[2.1,3)",org.maiereni.aem.admin
+ .bean;version="[1.0,2)",org.maiereni.aem.admin.service;version="[1.0,2)
+ ",org.slf4j;version="[1.6,2)",org.w3c.dom
+Originally-Created-By: Apache Maven Bundle Plugin
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.7))"
+Service-Component: OSGI-INF/org.maiereni.admin.service.impl.GroupUserSer
+ viceImpl.xml,OSGI-INF/org.maiereni.admin.service.impl.PermissionService
+ Impl.xml
+Tool: Bnd-3.0.0.201509101326

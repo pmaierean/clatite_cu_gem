@@ -30,9 +30,6 @@ import com.maiereni.web.bo.BlogPosting;
 import com.maiereni.web.bo.Status;
 import com.maiereni.web.jaxrs.service.BloggerService;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 /**
  * A sample implementation of a JAX_RS resource 
  * 

@@ -23,4 +23,6 @@ package com.maiereni.web.jaxrs.service;
  */
 public interface BloggerService {
 	String getServiceName();
+	
+	String getPosting(String id);
 }

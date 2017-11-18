@@ -19,15 +19,39 @@ package com.maiereni.web.jaxrs.application;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import com.maiereni.web.bo.BlogPosting;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 /**
  * @author Petre Maierean
  *
  */
+@Path("/")
+@Api(value = "/blogger", description = "This is the base application")
+@Produces("application/json")
 public interface BloggerInterface {
 	@GET
 	@Path("/ping")
-	@Produces("application/json")
+    @ApiOperation(
+            value = "To be used for a ping",
+            notes = "To be used for a ping",
+            response = String.class,
+            responseContainer = "A string"
+        )	
 	String ping();
+	
+	@GET
+	@Path("/posting/{id}")
+    @ApiOperation(
+        value = "Get a posting of a given id",
+        notes = "Get a posting of a given id",
+        response = BlogPosting.class,
+        responseContainer = "A string"
+    )
+	BlogPosting getPosting(@ApiParam(value = "id", required = true) @PathParam("id") String id);
 }

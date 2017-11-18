@@ -7,6 +7,11 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
+				<groupId>com.maiereni.webservices</groupId>
+				<artifactId>RestfulInterface</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
 			    <groupId>org.eclipse.jetty</groupId>
 			    <artifactId>jetty-webapp</artifactId>
 			    <version>9.4.7.v20170914</version>
@@ -35,6 +40,21 @@
 			    <groupId>org.apache.cxf</groupId>
 			    <artifactId>cxf-rt-frontend-jaxrs</artifactId>
 			    <version>3.2.1</version>
+			</dependency>
+			<dependency>
+			    <groupId>org.apache.cxf</groupId>
+			    <artifactId>cxf-rt-rs-service-description-swagger</artifactId>
+			    <version>3.1.11</version>
+			</dependency>
+			<dependency>
+			    <groupId>com.fasterxml.jackson.jaxrs</groupId>
+				<artifactId>jackson-jaxrs-json-provider</artifactId>
+				<version>2.9.2</version>
+			</dependency>
+			<dependency>
+			    <groupId>org.checkerframework</groupId>
+			    <artifactId>checker</artifactId>
+			    <version>2.2.2</version>
 			</dependency>			
 			<dependency>
 				<groupId>javax</groupId>
@@ -81,6 +101,7 @@
 	</build>
 	<modules>
 		<module>JettyEmbedded</module>
+		<module>RestfulInterface</module>
 		<module>RestfulWithCXF</module>
 	</modules>
 </project>

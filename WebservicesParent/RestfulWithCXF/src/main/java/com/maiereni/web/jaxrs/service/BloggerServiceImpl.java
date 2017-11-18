@@ -35,6 +35,12 @@ public class BloggerServiceImpl implements BloggerService {
 		logger.debug("Get the service name");
 		return SERVICE_NAME;
 	}
+
+	@Override
+	public String getPosting(String id) {
+		logger.debug("Get a blog posting");
+		return "This is my posting";
+	}
 	
 	
 }

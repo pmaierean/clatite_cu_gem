@@ -40,31 +40,18 @@ import io.swagger.annotations.ApiOperation;
  *
  */
 @Component("bloggerInterface")
-@Api(value = "/blogger", description = "This is the base application")
 public class BloggerApplication implements BloggerInterface {
 	private static final Logger logger = LoggerFactory.getLogger(BloggerApplication.class);
 
 	@Autowired
 	private BloggerService bloggerService;
 	
-    @ApiOperation(
-            value = "To be used for a ping",
-            notes = "To be used for a ping",
-            response = String.class,
-            responseContainer = "A string"
-        )	
 	@Override	
 	public String ping() {
 		logger.debug("Calling ping");
 		return bloggerService.getServiceName();
 	}
 	
-    @ApiOperation(
-            value = "Get a posting of a given id",
-            notes = "Get a posting of a given id",
-            response = BlogPosting.class,
-            responseContainer = "A string"
-        )
 	@Override
 	public BlogPosting getPosting(@Nonnull String id) {
 		BlogPosting posting = new BlogPosting();

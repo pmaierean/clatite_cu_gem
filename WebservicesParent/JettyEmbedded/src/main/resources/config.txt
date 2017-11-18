@@ -1,0 +1,15 @@
+The values for the configuration arguments of the application can be passed as System properties of command line arguments.
+The as system properties the following argument keys may be used
+''{0}''  expected as in integer value to overwrite the default port number 8080
+''{1}''  to point to the Spring context configuration file such as classpath:/appConfiguration.xml
+''{2}''  to set the configuration profile name other then the default 'dev'
+''{3}''  to overwrite the default web context path '/' 
+''{4}''  to overwrite the default mapping URL path '/'
+
+
+The command line arguments may be passed as follows
+''{5}''  to pass a port number
+''{6}''  to pass a path to the Spring context configuration file
+''{7}''  to pass a value for the profile 
+''{8}''  to pass a web context path
+''{9}''  to pass a web mapping URL

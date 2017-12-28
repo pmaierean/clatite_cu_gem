@@ -1,0 +1,4 @@
+.product li:first-child {
+	color: blue;
+	font-weight: bold;
+}

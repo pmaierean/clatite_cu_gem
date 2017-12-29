@@ -19,6 +19,7 @@ package com.maiereni.web.jaxrs2.filter;
 
 import java.io.IOException;
 
+import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.RequestDispatcher;
@@ -36,8 +37,7 @@ import org.slf4j.LoggerFactory;
  * @author Petre Maierean
  *
  */
-public class JSPProvider extends org.glassfish.jersey.servlet.ServletContainer {
-	private static final long serialVersionUID = 1L;
+public class JSPProvider implements Filter {
 	private static final Logger logger = LoggerFactory.getLogger(JSPProvider.class);
 	private ServletContext servletContext;
 	
@@ -66,7 +66,7 @@ public class JSPProvider extends org.glassfish.jersey.servlet.ServletContainer {
 			}
 		}
 		if (isChain)
-			super.doFilter(request, response, chain);
+			chain.doFilter(request, response);
 	}
 	
 	@Override

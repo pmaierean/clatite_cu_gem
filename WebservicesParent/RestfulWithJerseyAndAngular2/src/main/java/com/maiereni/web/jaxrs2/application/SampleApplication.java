@@ -17,13 +17,23 @@
  */
 package com.maiereni.web.jaxrs2.application;
 
-import com.maiereni.web.jaxrs2.bo.Product;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
+
 /**
  * @author Petre Maierean
  *
  */
-public interface BloggerInterface {
-	String ping();
-	
-	Product getProduct(String id);
+@ApplicationPath("/api")
+public class SampleApplication extends Application {
+
+    @Override
+    public Map<String, Object> getProperties() {
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put("jersey.config.server.provider.packages", "com.fasterxml.jackson.jaxrs.json,io.swagger.jaxrs.listing,com.maiereni.web.jaxrs2.rs");
+        return properties;
+    }	
 }

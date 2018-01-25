@@ -74,13 +74,26 @@
 			    <groupId>org.checkerframework</groupId>
 			    <artifactId>checker</artifactId>
 			    <version>2.2.2</version>
-			</dependency>			
+			</dependency>
+			<!-- Http Client -->
+			<dependency>
+			    <groupId>org.apache.httpcomponents</groupId>
+			    <artifactId>httpclient</artifactId>
+			    <version>4.5.4</version>
+			</dependency>
+			<!-- Jave EE -->					
 			<dependency>
 				<groupId>javax</groupId>
 				<artifactId>javaee-api</artifactId>
 				<version>7.0</version>
 				<scope>provided</scope>
 			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>servlet-api</artifactId>
+				<version>2.5</version>
+				<scope>provided</scope>
+			</dependency>			
 		</dependencies>	
 	</dependencyManagement>
 	<build>

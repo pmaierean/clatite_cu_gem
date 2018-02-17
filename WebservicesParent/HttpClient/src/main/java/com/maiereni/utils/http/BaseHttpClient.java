@@ -17,6 +17,10 @@
  */
 package com.maiereni.utils.http;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -65,9 +69,13 @@ import com.maiereni.utils.http.bo.ResponseBean;
 public class BaseHttpClient {
     private static final Logger logger = LoggerFactory.getLogger(BaseHttpClient.class);
     public static final Map<String, String> NO_HEADER = new Hashtable<String, String>();
+    public static final Map<String, String> EMPTY_PARAMS = new Hashtable<String, String>();
     public static final List<Cookie> NO_COOKIES = new Vector<Cookie>();
     private static final String ERROR_MESSAGE = "%s: %s";
-
+    public static final String GET = "get";
+    public static final String POST = "post";
+    private EntityProcessor defaultEntityProcessor = new DefaultEntityProcessor();
+    private EntityProcessor fileDownloadingProcessor = new FileDownloadingProcessor();
     /**
      * Make a GET request call without headers nor cookies
      * @param url
@@ -168,22 +176,63 @@ public class BaseHttpClient {
         return _post(url, params, headers, cookies);
     }
 
-    protected ResponseBean execute(@Nonnull final HttpRequestBase request, final List<Cookie> cookies, final Map<String, String> headers) throws Exception {
-        setHeaders(request, headers);
+    
+    /**
+     * Downloads a file from a given URL
+     * @param url
+     * @return
+     * @throws Exception
+     */
+    public ResponseBean downloadFile(@Nonnull final String url) throws Exception {
+    	return downloadFile(url, GET, NO_HEADER, NO_COOKIES);
+    }
+    
+    /**
+     * Downloads a file from a given URL
+     * @param url
+     * @param method
+     * @return
+     * @throws Exception
+     */
+    public ResponseBean downloadFile(@Nonnull final String url, final String method) throws Exception {
+    	return downloadFile(url, method, NO_HEADER, NO_COOKIES);
+    }
+    
+    /**
+     * Download a file from the give URLs
+     * @param url the URL to download from
+     * @param method the method (GET, POST). If null then GET is being used
+     * @param headers
+     * @param cookies
+     * @return
+     * @throws Exception
+     */
+    public ResponseBean downloadFile(@Nonnull final String url, final String method, final Map<String, String> headers, final List<Cookie> cookies) throws Exception {
+    	ResponseBean responseBean = null;
+    	if (StringUtils.isBlank(method) || method.equalsIgnoreCase(GET)) {
+    		responseBean = _get(url, EMPTY_PARAMS, headers, cookies, fileDownloadingProcessor);
+    	}
+    	else if (method.equalsIgnoreCase(POST)) {
+    		responseBean = _post(url, EMPTY_PARAMS, headers, cookies, fileDownloadingProcessor);    		
+    	}
+    	else
+    		throw new Exception("Unsupported method");
+    	return responseBean;
+    }
+    
+    protected ResponseBean execute(@Nonnull final HttpRequestBase request, final List<Cookie> cookies, final Map<String, String> headers) 
+    	throws Exception {
+    	return execute(request, cookies, headers, defaultEntityProcessor);
+    }
+
+    private ResponseBean execute(@Nonnull final HttpRequestBase request, final List<Cookie> cookies, final Map<String, String> headers, final EntityProcessor entityProcessor) 
+    	throws Exception {
+    	setHeaders(request, headers);
     	try (CloseableHttpClient httpclient = getHttpClient(cookies)) {
 	        HttpClientContext context = HttpClientContext.create();
 	        CloseableHttpResponse response = httpclient.execute(request, context);
 	        checkError(response);
-	       
-	        // get Cookies
-	        ResponseBean ret = new ResponseBean();
-	        ret.setCookies(getCookies(context));
-	
-	       
-	        HttpEntity entity = response.getEntity();
-	        ret.setBody(EntityUtils.toString(entity, "UTF-8"));
-	        ret.setPageUrl(getCurrentURL(context));
-	        return ret;
+	        return entityProcessor.processResponse(context, response);
     	}
     }
     
@@ -220,38 +269,50 @@ public class BaseHttpClient {
 
     private ResponseBean _get(final String url, final Map<String, String> params, final Map<String, String> headers, final List<Cookie> cookies)
         throws Exception {
-        StringBuffer sb = new StringBuffer();
-        for(String key: params.keySet()) {
-            String value = params.get(key);
-            if (sb.length() > 0)
-                sb.append("&");
-            sb.append(key).append("=");
-            if (StringUtils.isNoneEmpty(value))
-                sb.append(URLEncoder.encode(value, "UTF-8"));
+    	return _get(url, params, headers, cookies, defaultEntityProcessor);
+     }
+    
+    private ResponseBean _get(final String url, final Map<String, String> params, final Map<String, String> headers, final List<Cookie> cookies, final EntityProcessor entityProcessor)
+            throws Exception {
+            StringBuffer sb = new StringBuffer();
+            for(String key: params.keySet()) {
+                String value = params.get(key);
+                if (sb.length() > 0)
+                    sb.append("&");
+                sb.append(key).append("=");
+                if (StringUtils.isNoneEmpty(value))
+                    sb.append(URLEncoder.encode(value, "UTF-8"));
+            }
+            if (sb.length()>0)
+                sb.insert(0, "?");
+            sb.insert(0, url);
+            logger.debug("Send GET: " + sb.toString());
+               
+            HttpGet httpGet = new HttpGet(sb.toString());
+            return execute(httpGet, cookies, headers, entityProcessor);
         }
-        if (sb.length()>0)
-            sb.insert(0, "?");
-        sb.insert(0, url);
-        logger.debug("Send GET: " + sb.toString());
-           
-        HttpGet httpGet = new HttpGet(sb.toString());
-        return execute(httpGet, cookies, headers);
-    }
+
     
     private ResponseBean _post(final String url, final Map<String, String> params, final Map<String, String> headers, final List<Cookie> cookies)
         throws Exception {
-        List <NameValuePair> nameValuePairs = new ArrayList <NameValuePair>();
-       
-        for(String key: params.keySet())    {
-            String value = params.get(key);               
-            nameValuePairs.add(new BasicNameValuePair(key, value));
-        }
-
-        logger.debug("Send POST: " + url);
-        HttpPost httpPost = new HttpPost(url);
-        httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
-        return execute(httpPost, cookies, headers);
+    	return _post(url, params, headers, cookies, defaultEntityProcessor);
     }
+    
+    private ResponseBean _post(final String url, final Map<String, String> params, final Map<String, String> headers, final List<Cookie> cookies, final EntityProcessor entityProcessor)
+            throws Exception {
+            List <NameValuePair> nameValuePairs = new ArrayList <NameValuePair>();
+           
+            for(String key: params.keySet())    {
+                String value = params.get(key);               
+                nameValuePairs.add(new BasicNameValuePair(key, value));
+            }
+
+            logger.debug("Send POST: " + url);
+            HttpPost httpPost = new HttpPost(url);
+            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+            return execute(httpPost, cookies, headers, entityProcessor);
+        }
+    
        
     private String getCurrentURL(final HttpContext context) {
         HttpUriRequest currentReq = (HttpUriRequest) context.getAttribute(HttpCoreContext.HTTP_REQUEST);
@@ -307,4 +368,40 @@ public class BaseHttpClient {
         }
     }
 
+    private class FileDownloadingProcessor implements EntityProcessor {
+        public ResponseBean processResponse(final HttpClientContext context, final HttpResponse response) throws Exception {
+            ResponseBean ret = new ResponseBean();
+            ret.setCookies(getCookies(context));
+            HttpEntity entity = response.getEntity();
+            File fRet = File.createTempFile("download", ".file");
+            try (BufferedInputStream bis = new BufferedInputStream(entity.getContent());
+           		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(fRet));) {
+            	byte[] buffer = new byte[2048];
+            	for(int i=0; (i = bis.read(buffer)) > 0 ;) {
+            		bos.write(buffer, 0, i);
+            	}
+            }
+            catch(Exception e) {
+            	if (!fRet.delete())
+            		fRet.deleteOnExit();
+            }
+            ret.setBody(fRet.getPath());
+            ret.setPageUrl(getCurrentURL(context));
+            return ret;    	
+        }    	
+    }
+    
+    private class DefaultEntityProcessor implements EntityProcessor {
+        public ResponseBean processResponse(final HttpClientContext context, final HttpResponse response) throws Exception {
+            ResponseBean ret = new ResponseBean();
+            ret.setCookies(getCookies(context));
+            HttpEntity entity = response.getEntity();
+            ret.setBody(EntityUtils.toString(entity, "UTF-8"));
+            ret.setPageUrl(getCurrentURL(context));
+            return ret;    	
+        }    	
+    }
+    private interface EntityProcessor {
+    	ResponseBean processResponse(HttpClientContext context, HttpResponse response) throws Exception;
+    }
 }

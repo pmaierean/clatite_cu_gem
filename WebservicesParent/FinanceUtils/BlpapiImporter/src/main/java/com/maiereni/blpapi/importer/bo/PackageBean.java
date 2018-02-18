@@ -25,7 +25,19 @@ import java.io.Serializable;
  */
 public class PackageBean implements Serializable {
 	private static final long serialVersionUID = 8939077113362208735L;
-	private String path, version;
+	private String path, version, artifactId, groupId;
+	public String getArtifactId() {
+		return artifactId;
+	}
+	public void setArtifactId(String artifactId) {
+		this.artifactId = artifactId;
+	}
+	public String getGroupId() {
+		return groupId;
+	}
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
+	}
 	public String getPath() {
 		return path;
 	}

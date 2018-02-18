@@ -24,16 +24,16 @@ import static org.junit.Assert.fail;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Petre Maierean
  *
  */
 public class FileDownloaderTest {
-	private static final Logger logger = LoggerFactory.getLogger(FileDownloaderTest.class);
+	private static final Log logger = new SystemStreamLog();
 /*	
 	@Test
 	public void testDownloading() {

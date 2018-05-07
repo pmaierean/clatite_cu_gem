@@ -1,0 +1,9 @@
+The values for the configuration arguments of the application can be passed as System properties of command line arguments.
+The as system properties the following argument keys may be used
+-D{0}  expected as in integer value to overwrite the default port number 8187
+-D{1}  to overwrite the default web context path '/npmRegistry' 
+
+
+The command line arguments may be passed as follows
+''{2}''  to pass a port number
+''{3}''  to pass a web context path

@@ -28,6 +28,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.log4j.Logger;
 
@@ -38,45 +39,60 @@ import org.apache.log4j.Logger;
  */
 public class ProcessingFiles {
 	private static final Logger LOG = Logger.getLogger(ProcessingFiles.class); 
+
 	/**
-	 * Using collect 
-	 * @param fileName
-	 * @param regex
-	 * @return
+	 * Find the number of matches
+	 * @param fileName the path to the text file
+	 * @param regex the regular expression to match
+	 * @return the number of matches
+	 * @throws
+	 * 
+	 */
+	public long getMatchesNumber(final String fileName, final String regex) throws IOException {
+		Pattern pattern = Pattern.compile(regex);		
+		return asStream(fileName)
+			.filter( (s) -> pattern.matcher(s).matches() )
+			.count();
+	}
+	
+	/**
+	 * Get all matches
+	 * @param fileName the path to the text file
+	 * @param regex the regular expression to match
+	 * @return a list of matches
 	 * @throws IOException
 	 */
-	public LineWithNumber findMatchingLine(final String fileName, final String regex) throws IOException {
-		Pattern pattern = Pattern.compile(regex);
-		Path p = FileSystems.getDefault().getPath(fileName);
-		if (!p.toFile().exists())
-			throw new IOException("The path does not exist");
-		
-		List<LineWithNumber> lst = Files.lines(p, Charset.defaultCharset())
+	public List<LineWithNumber> findAllMatchingLine(final String fileName, final String regex) throws IOException {
+		Pattern pattern = Pattern.compile(regex);		
+		return asStream(fileName)
 			.map(new LineWithNumberFunction())
 			.filter( (l) -> pattern.matcher(l.getString()).matches() )
 			.collect( Collectors.toList() );
-		return lst.isEmpty()? new LineWithNumber(-1, null): lst.get(0);
 	}
 
 	/**
 	 * Get as optional
-	 * @param fileName
-	 * @param regex
-	 * @return
+	 * @param fileName the path to the text file
+	 * @param regex the regular expression to match
+	 * @return the first match
 	 * @throws IOException
 	 */
 	public Optional<LineWithNumber> findFirstMatchingLine(final String fileName, final String regex) throws IOException {
 		Pattern pattern = Pattern.compile(regex);
-		Path p = FileSystems.getDefault().getPath(fileName);
-		if (!p.toFile().exists())
-			throw new IOException("The path does not exist");
-		
-		return Files.lines(p, Charset.defaultCharset())
+		return asStream(fileName)
 			.map(new LineWithNumberFunction())
 			.filter( (l) -> pattern.matcher(l.getString()).matches() )
 			.findFirst();
 	}
 
+	private Stream<String> asStream(final String fileName) throws IOException {
+		Path p = FileSystems.getDefault().getPath(fileName);
+		if (!p.toFile().exists())
+			throw new IOException("The path does not exist");
+		
+		return Files.lines(p, Charset.defaultCharset());		
+	}
+	
 	/**
 	 * @param args
 	 */

@@ -21,9 +21,29 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
+    <servlet>
+        <servlet-name>JerseyServlet</servlet-name>
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>
+            	com.fasterxml.jackson.jaxrs.json, 
+            	io.swagger.jaxrs.listing,
+            	com.maiereni.npm.jaxrs2.application
+             </param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+ 
 	<servlet-mapping>
 		<servlet-name>registry</servlet-name>
-		<url-pattern>/*</url-pattern>
+		<url-pattern>*.html</url-pattern>
 	</servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>JerseyServlet</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
+
 	
 </web-app>

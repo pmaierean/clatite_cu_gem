@@ -13,7 +13,7 @@
 
 	<appender name="fileAppender" class="org.apache.log4j.DailyRollingFileAppender">
 		<!-- eg: TL_onlinePayout.log -->
-		<param name="File" value="/opt/local/logger/npmregistry/application.log" />
+		<param name="File" value="opt/local/logs/LottoMax/application.log" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="[%d{dd MMM yyyy HH:mm:ss,SSS}],[%t%n],[%-5p],[%t] (%F:%L), %m%n" />
 		</layout>
@@ -23,18 +23,10 @@
 		<appender-ref ref="fileAppender" />
 	</appender>
 	
-	<logger name="com.maiereni.npm">
+	<logger name="com.maiereni.utils.lottoMax">
 		<level value="debug" />
 	</logger>
-	
-	<logger name="org.eclipse.jetty">
-		<level value="error"/>
-	</logger>
-	
-	<logger name="org.glassfish.jersey">
-		<level value="debug" />	
-	</logger>
-	
+		
 	<root>
 		<level value="error"></level>
 		<appender-ref ref="consoleAppender"/>

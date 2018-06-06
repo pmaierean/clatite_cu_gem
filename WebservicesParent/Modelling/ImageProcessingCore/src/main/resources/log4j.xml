@@ -5,7 +5,7 @@
 	<!-- output to console -->
 	<appender name="consoleAppender" class="org.apache.log4j.ConsoleAppender">
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="[%d{dd MMM yyyy HH:mm:ss,SSS}],[%-5p],[%t] (%C:%L), %m%n"/>
+			<param name="ConversionPattern" value="[%d{dd MMM yyyy HH:mm:ss,SSS}],[%-5p],[%-20c{1}], %m%n"/>
 		</layout>
 	</appender>
 
@@ -13,9 +13,9 @@
 
 	<appender name="fileAppender" class="org.apache.log4j.DailyRollingFileAppender">
 		<!-- eg: TL_onlinePayout.log -->
-		<param name="File" value="/opt/local/logger/npmregistry/application.log" />
+		<param name="File" value="/opt/local/logs/model/core/application.log" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="[%d{dd MMM yyyy HH:mm:ss,SSS}],[%t%n],[%-5p],[%t] (%F:%L), %m%n" />
+			<param name="ConversionPattern" value="[%d{dd MMM yyyy HH:mm:ss,SSS}],[%-5p],[%-20c{1}], %m%n" />
 		</layout>
 	</appender>
 
@@ -23,18 +23,18 @@
 		<appender-ref ref="fileAppender" />
 	</appender>
 	
-	<logger name="com.maiereni.npm">
+	<logger name="org.maiereni.imaging.processing">
 		<level value="debug" />
 	</logger>
-	
-	<logger name="org.eclipse.jetty">
-		<level value="error"/>
-	</logger>
-	
-	<logger name="org.glassfish.jersey">
+
+	<logger name="org.springframework.web.servlet.view">
 		<level value="debug" />	
 	</logger>
 	
+	<logger name="org.hibernate">
+		<level value="error" />
+	</logger>
+
 	<root>
 		<level value="error"></level>
 		<appender-ref ref="consoleAppender"/>

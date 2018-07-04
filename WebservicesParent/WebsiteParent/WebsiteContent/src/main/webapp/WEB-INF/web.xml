@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee	
+	http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
+	
+	<display-name>WebApplication</display-name>
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/webApplication.xml</param-value>
+	</context-param>	
+
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<servlet>
+		<servlet-name>Content</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Content</servlet-name>
+		<url-pattern>*.htm</url-pattern>
+	</servlet-mapping>
+
+    <servlet>
+        <servlet-name>CXFServlet</servlet-name>
+        <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+ 
+    <servlet-mapping>
+        <servlet-name>CXFServlet</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
+    
+    <jsp-config>
+    	<taglib>
+    		<taglib-uri>http://java.sun.com/jsp/jstl/core</taglib-uri>
+    		<taglib-location>WEB-INF/c.tld</taglib-location>
+    	</taglib>
+    	<taglib>
+    		<taglib-uri>http://java.sun.com/jsp/jstl/fmt</taglib-uri>
+    		<taglib-location>WEB-INF/fmt.tld</taglib-location>
+    	</taglib>
+    </jsp-config>
+</web-app>

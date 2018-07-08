@@ -17,11 +17,18 @@
  */
 package com.maiereni.host.web.util.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
-import org.junit.After;
+import java.io.InputStream;
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Unit test for the Bouncy Castle wraping encryptor
@@ -29,21 +36,33 @@ import org.junit.Test;
  *
  */
 public class BouncyCastleEncryptorImplTest {
-
+	private static final Logger logger = LoggerFactory.getLogger(BouncyCastleEncryptorImplTest.class);
+	private BouncyCastleEncryptorImpl encryptor;
+	
 	@Before
 	public void setUp() throws Exception {
+		EncryptorFactory factory = new EncryptorFactory();
+		PrivateKey pk = null;
+		X509Certificate cert = null;
+		try(InputStream is = getClass().getResourceAsStream("/testkeystore.jks")) {
+			pk = factory.getKey(is, "server-alias", "changeit");
+		}
+		try(InputStream is = getClass().getResourceAsStream("/testkeystore.jks")) {
+			cert = factory.getCertificate(is, "server-alias", "changeit");
+		}
+		encryptor = new BouncyCastleEncryptorImpl(cert, pk);
 	}
-
-	@After
-	public void tearDown() throws Exception {
-	}
-
-	/**
-	 * Test method for {@link com.maiereni.host.web.util.impl.BouncyCastleEncryptorImpl#encryptData(byte[])}.
-	 */
+	private static final String TESTING_STRING = "# This is a testing string\r\nadmin.password=testme";
 	@Test
 	public void testEncryptData() {
-		fail("Not yet implemented");
+		try {
+			byte[] encrypted = encryptor.encryptData(TESTING_STRING.getBytes());
+			assertNotNull(encrypted);
+		}
+		catch(Exception e) {
+			logger.error("Failed to encrypt the data", e);
+			fail("Failure");
+		}
 	}
 
 	/**
@@ -51,7 +70,17 @@ public class BouncyCastleEncryptorImplTest {
 	 */
 	@Test
 	public void testDecryptData() {
-		fail("Not yet implemented");
+		try {
+			byte[] encrypted = encryptor.encryptData(TESTING_STRING.getBytes());
+			assertNotNull(encrypted);
+			byte[] decrypt = encryptor.decryptData(encrypted);
+			String s = new String(decrypt);
+			assertEquals("Matching strings", TESTING_STRING, s);
+		}
+		catch(Exception e) {
+			logger.error("Failed to encrypt the data", e);
+			fail("Failure");
+		}
 	}
 
 }

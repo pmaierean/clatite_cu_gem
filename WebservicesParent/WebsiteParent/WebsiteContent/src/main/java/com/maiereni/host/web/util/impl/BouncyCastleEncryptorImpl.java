@@ -18,6 +18,7 @@
 package com.maiereni.host.web.util.impl;
 
 import java.security.PrivateKey;
+import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 
@@ -34,6 +35,7 @@ import org.bouncycastle.cms.jcajce.JceCMSContentEncryptorBuilder;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.cms.jcajce.JceKeyTransRecipient;
 import org.bouncycastle.cms.jcajce.JceKeyTransRecipientInfoGenerator;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.OutputEncryptor;
 
 import com.maiereni.host.web.util.DataEncryptor;
@@ -50,6 +52,7 @@ public class BouncyCastleEncryptorImpl implements DataEncryptor {
 	BouncyCastleEncryptorImpl(@Nonnull final X509Certificate certificate, @Nonnull final PrivateKey key) {
 		this.certificate = certificate;
 		this.key = key;
+		Security.addProvider(new BouncyCastleProvider());
 	}
 	
     public byte[] encryptData(@Nonnull final byte[] data) throws Exception {
@@ -62,7 +65,6 @@ public class BouncyCastleEncryptorImpl implements DataEncryptor {
         return cmsEnvelopedData.getEncoded();
     }
 
-    @SuppressWarnings("unchecked")
 	public byte[] decryptData(@Nonnull final byte[] encryptedData) throws Exception {
         CMSEnvelopedData envelopedData = new CMSEnvelopedData(encryptedData);
         Collection<RecipientInformation> recip = envelopedData.getRecipientInfos().getRecipients();

@@ -18,24 +18,15 @@
 package com.maiereni.host.web.util.impl;
 
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.InputStream;
-import java.security.KeyPair;
+import java.security.KeyStore;
 import java.security.PrivateKey;
-import java.security.Security;
-import java.security.cert.CertificateFactory;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.StringUtils;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.openssl.PEMDecryptorProvider;
-import org.bouncycastle.openssl.PEMEncryptedKeyPair;
-import org.bouncycastle.openssl.PEMKeyPair;
-import org.bouncycastle.openssl.PEMParser;
-import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
-import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -75,45 +66,39 @@ public class EncryptorFactory extends BaseBeanFactory{
 		if (StringUtils.isAnyEmpty(securityConfiguration.getKeyStorePath(), securityConfiguration.getKeyStorePassword()))
 			throw new Exception("The SSL settings cannot be found");
 		try (InputStream in = new FileInputStream("CERT.RSA")) {
-			CertificateFactory factory = CertificateFactory.getInstance("X.509");
-			return (X509Certificate) factory.generateCertificate(in);
+			return getCertificate(in, securityConfiguration.getKeyAlias(), securityConfiguration.getKeyStorePassword());
 		}
 	}
+	
 	
 	@Bean
 	public PrivateKey getKey(@Nonnull final SecurityConfiguration securityConfiguration) throws Exception {
 		if (StringUtils.isAnyEmpty(securityConfiguration.getKeyStorePath(), securityConfiguration.getKeyStorePassword()))
 			throw new Exception("The SSL settings cannot be found");
-		Security.addProvider(new BouncyCastleProvider());
-		PEMParser pemParser = null;
-		try (FileReader fr = new FileReader(securityConfiguration.getKeyStorePath())) {
-			pemParser = new PEMParser(fr);
-			Object object = pemParser.readObject();
-			JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("BC");
-			KeyPair kp = null;
-			if (object instanceof PEMEncryptedKeyPair) {
-			    PEMEncryptedKeyPair ckp = (PEMEncryptedKeyPair) object;
-			    char[] pwd = securityConfiguration.getKeyStorePassword().toCharArray();
-			    PEMDecryptorProvider decProv = new JcePEMDecryptorProviderBuilder().build(pwd);
-			    kp = converter.getKeyPair(ckp.decryptKeyPair(decProv));
-			}
-			else {
-			    PEMKeyPair ukp = (PEMKeyPair) object;
-			    kp = converter.getKeyPair(ukp);
-			}
-			return kp.getPrivate();
-		}
-		finally {
-			if (pemParser != null)
-				try {
-					pemParser.close();
-				}
-				catch(Exception e) {}	
+		try (InputStream is = new FileInputStream(securityConfiguration.getKeyStorePath())) {
+			return getKey(is, securityConfiguration.getKeyAlias(), securityConfiguration.getKeyStorePassword());
 		}
 	}
-	
+		
 	@Bean
 	public DataEncryptor getEncryptor(final X509Certificate certificate, final PrivateKey key) {
 		return new BouncyCastleEncryptorImpl(certificate, key);
 	}
+	
+	protected X509Certificate getCertificate(@Nonnull final InputStream is, @Nonnull final String alias, @Nonnull final String keyStorePassword) 
+		throws Exception {
+	    KeyStore keystore = KeyStore.getInstance("JKS");
+	    char[] pwd = keyStorePassword.toCharArray();
+	    keystore.load(is, pwd);	
+	    Certificate[] chain = keystore.getCertificateChain(alias);
+	    return (X509Certificate) chain[0];
+	}
+
+	protected PrivateKey getKey(@Nonnull final InputStream is, @Nonnull final String keyAlias, @Nonnull final String keyStorePassword) throws Exception {
+	    KeyStore keystore = KeyStore.getInstance("JKS");
+	    char[] pwd = keyStorePassword.toCharArray();
+	    keystore.load(is, pwd);
+	    return (PrivateKey) keystore.getKey(keyAlias, pwd);
+	}
+
 }

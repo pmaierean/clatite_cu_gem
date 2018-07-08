@@ -14,7 +14,30 @@
 		<nav class="navbar navbar-expand-sm navbar-dark bg-dark my-sm-0">
 			<div class="navbar navbar-inverse">
 				<div class="container">
-					
+					<a class="nav-link" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<span class="navbar-toggler-icon"></span>
+					</a>
+					<div class="dropdown-menu dropdown-submenu" aria-labelledby="dropdown01">
+						<c:if test="${ not empty menu }">
+							<c:set var="counter" value="2"/>
+							<c:forEach items="${ menu }" var="m">
+								<c:choose>
+									<c:when test="${ not empty m.menus }">
+										<a class="dropdown-item nav-link" href="#" title="${ m.title }" id="dropdown${ counter }" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">${ m.text }</a>
+										<div class="dropdown-menu" aria-labelledby="dropdown${ counter }">
+										<c:forEach items="${ m.menus }" var="mc">
+											<a class="dropdown-item nav-link" href="${ mc.link }" title="${ mc.title }">${ mc.text }</a>
+										</c:forEach>
+										</div>										
+									</c:when>
+									<c:otherwise>
+										<a class="dropdown-item nav-link" href="${ m.link }" title="${ m.title }">${ m.text }</a>
+									</c:otherwise>
+								</c:choose>
+								<c:set var="counter" value="${ counter + 1 }"/>
+							</c:forEach>
+						</c:if>
+					</div>
 				</div>
 			</div>
 		</nav>
@@ -27,12 +50,12 @@
 				<div class="row">
 				    <div class="col-12 mx-auto">
 				        <div class="text-center">
-							<p><bean:message key="copyright"/></p>
-							<p><bean:message key="application.version"/></p>
+							<fmt:message key="copyright"/>
 				        </div>
 				    </div>
 				</div>	
 			</div>
 		</footer>
+		<script src="js/bootstrap.min.js"></script>
 	</body>
 </html>

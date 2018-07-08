@@ -15,32 +15,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.host.web.jaxrs.service;
+package com.maiereni.host.web.bo;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import java.util.List;
 
 /**
  * @author Petre Maierean
  *
  */
-@Component
-public class BloggerServiceImpl implements BloggerService {
-	private static final Logger logger = LoggerFactory.getLogger(BloggerServiceImpl.class);
-	private static final String SERVICE_NAME = "sample blogger";
+public class Menu extends MenuItem {
+	private static final long serialVersionUID = -5495484304702674910L;
+	private List<MenuItem> menus;
+	private String type;
 	
-	@Override
-	public String getServiceName() {
-		logger.debug("Get the service name");
-		return SERVICE_NAME;
+	public String getType() {
+		return type;
 	}
-
-	@Override
-	public String getPosting(String id) {
-		logger.debug("Get a blog posting");
-		return "This is my posting";
+	public void setType(String type) {
+		this.type = type;
 	}
-	
-	
+	public List<MenuItem> getMenus() {
+		return menus;
+	}
+	public void setMenus(List<MenuItem> menus) {
+		this.menus = menus;
+	}
 }

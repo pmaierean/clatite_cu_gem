@@ -33,6 +33,7 @@ import com.maiereni.host.web.jaxrs.service.RepositoryConsumerFactory;
 import com.maiereni.host.web.jaxrs.service.RepositoryService;
 import com.maiereni.host.web.jaxrs.service.RepositoryUserResolver;
 import com.maiereni.host.web.util.BaseBeanFactory;
+import com.maiereni.host.web.util.ConfigurationProvider;
 
 /**
  * Builds the services base on configuration
@@ -80,9 +81,9 @@ public class ServicesFactory extends BaseBeanFactory {
 	}
 	
 	@Bean
-	public RepositoryUserResolver getUserResolver() throws Exception {
-		
-		return null;
+	public RepositoryUserResolver getUserResolver(final RepositoryImpl repo, final ConfigurationProvider configurationProvider)
+		throws Exception {
+		return new RepositoryUserResolverImpl(repo, configurationProvider);
 	}
 	
 	@Bean

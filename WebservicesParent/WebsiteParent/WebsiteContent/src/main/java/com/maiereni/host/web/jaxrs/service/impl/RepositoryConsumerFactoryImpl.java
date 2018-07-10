@@ -17,17 +17,10 @@
  */
 package com.maiereni.host.web.jaxrs.service.impl;
 
-import java.io.InputStream;
-import java.util.Properties;
-
 import javax.annotation.Nonnull;
 
-import org.apache.jackrabbit.core.RepositoryImpl;
-import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
-import org.xml.sax.InputSource;
 
 import com.maiereni.host.web.jaxrs.service.RepositoryConsumer;
 import com.maiereni.host.web.jaxrs.service.RepositoryConsumerFactory;
@@ -48,7 +41,7 @@ public class RepositoryConsumerFactoryImpl implements RepositoryConsumerFactory 
 	 */
 	@Override
 	public RepositoryConsumer getConsumer(@Nonnull final Class<?> expectedType) throws Exception {
-		// TODO Auto-generated method stub
+		logger.debug("Consumer");
 		return null;
 	}
 

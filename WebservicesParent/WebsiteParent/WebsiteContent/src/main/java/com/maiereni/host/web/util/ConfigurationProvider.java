@@ -15,37 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.host.web.jaxrs.service;
-
-import javax.jcr.Credentials;
+package com.maiereni.host.web.util;
 
 /**
- * The API of a utility class that resolves the credentials to access the repository 
- * for a given user
+ * The API of an external configuration storage for the application
  * @author Petre Maierean
  *
  */
-public interface RepositoryUserResolver {
-	/**
-	 * Get user credentials
-	 * @param repoUser
-	 * @return
-	 * @throws Exception
-	 */
-	Credentials getCredentials(String repoUser) throws Exception;
-	/**
-	 * Add user
-	 * @param repoUser
-	 * @param password
-	 * @throws Exception
-	 */
-	void addUser(String repoUser, String password) throws Exception;
-	/**
-	 * Change the user password
-	 * 
-	 * @param repoUser
-	 * @param repoPassword
-	 * @throws Exception
-	 */
-	void setPassword(String repoUser, String repoPassword) throws Exception;
+public interface ConfigurationProvider {
+	String getProperty(String key, String defaultValue);
+	void setProperty(String key, String value) throws Exception;
 }

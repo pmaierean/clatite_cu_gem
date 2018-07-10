@@ -21,10 +21,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-import java.io.InputStream;
-import java.security.PrivateKey;
-import java.security.cert.X509Certificate;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -41,17 +37,9 @@ public class BouncyCastleEncryptorImplTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		EncryptorFactory factory = new EncryptorFactory();
-		PrivateKey pk = null;
-		X509Certificate cert = null;
-		try(InputStream is = getClass().getResourceAsStream("/testkeystore.jks")) {
-			pk = factory.getKey(is, "server-alias", "changeit");
-		}
-		try(InputStream is = getClass().getResourceAsStream("/testkeystore.jks")) {
-			cert = factory.getCertificate(is, "server-alias", "changeit");
-		}
-		encryptor = new BouncyCastleEncryptorImpl(cert, pk);
+		encryptor = TestEncryptorProvider.load();
 	}
+	
 	private static final String TESTING_STRING = "# This is a testing string\r\nadmin.password=testme";
 	@Test
 	public void testEncryptData() {

@@ -31,6 +31,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.maiereni.host.web.util.BaseBeanFactory;
+import com.maiereni.host.web.util.ConfigurationProvider;
 import com.maiereni.host.web.util.DataEncryptor;
 
 /**
@@ -45,7 +46,8 @@ public class EncryptorFactory extends BaseBeanFactory{
 	public static final String KEY_STORE_PASSWORD = "javax.net.ssl.keyStorePassword";
 	public static final String KEY_STORE_PATH = "javax.net.ssl.keyStore";
 	public static final String KEY_ALIAS = "javax.net.ssl.keyAlias";
-	
+	public static final String CONFIGURATION_FILE = "com.maiereni.host.web.util.configurationFilePath";
+	public static final String DEFAULT_CONFIGURATION_FILE = "/opt/local/maiereni/config.dta";
 	public EncryptorFactory() throws Exception {
 		super();
 	}
@@ -83,6 +85,12 @@ public class EncryptorFactory extends BaseBeanFactory{
 	@Bean
 	public DataEncryptor getEncryptor(final X509Certificate certificate, final PrivateKey key) {
 		return new BouncyCastleEncryptorImpl(certificate, key);
+	}
+	
+	@Bean
+	public ConfigurationProvider getConfiguration(final DataEncryptor dataEncryptor) throws Exception {
+		String configFile = getProperty(CONFIGURATION_FILE, DEFAULT_CONFIGURATION_FILE);
+		return new ConfigurationProviderImpl(dataEncryptor, configFile);
 	}
 	
 	protected X509Certificate getCertificate(@Nonnull final InputStream is, @Nonnull final String alias, @Nonnull final String keyStorePassword) 

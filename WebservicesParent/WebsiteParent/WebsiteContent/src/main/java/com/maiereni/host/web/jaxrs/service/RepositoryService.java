@@ -19,7 +19,10 @@ package com.maiereni.host.web.jaxrs.service;
 
 import java.util.List;
 
-import com.maiereni.host.web.jaxrs.service.bo.RepositoryRequest;
+import com.maiereni.host.web.jaxrs.service.bo.RepositoryAddNodeRequest;
+import com.maiereni.host.web.jaxrs.service.bo.RepositoryDeleteRequest;
+import com.maiereni.host.web.jaxrs.service.bo.RepositoryInsertRequest;
+import com.maiereni.host.web.jaxrs.service.bo.RepositoryQueryRequest;
 
 /**
  * The API of a service to access the website repository
@@ -36,5 +39,26 @@ public interface RepositoryService {
 	 * @return
 	 * @throws Exception
 	 */
-	List<? extends Class<?>> getResources(RepositoryRequest request, Class<?> resultType) throws Exception;
+	List<Object> getResources(RepositoryQueryRequest request, Class<?> resultType) throws Exception;
+	/**
+	 * Add a node
+	 * 
+	 * @param request
+	 * @throws Exception
+	 */
+	void addNode(RepositoryAddNodeRequest request) throws Exception;
+	/**
+	 * Save a resource
+	 * 
+	 * @param request
+	 * @param o
+	 * @throws Exception
+	 */
+	void addResource(RepositoryInsertRequest request, Object o) throws Exception;
+	/**
+	 * Delete a resource
+	 * @param request
+	 * @throws Exception 
+	 */
+	void delete(RepositoryDeleteRequest request)  throws Exception;
 }

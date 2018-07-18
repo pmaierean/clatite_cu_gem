@@ -15,17 +15,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.host.web.jaxrs.service;
-
-import java.util.List;
-import java.util.function.Consumer;
-
-import javax.jcr.Node;
+package com.maiereni.host.web.util;
 
 /**
  * @author Petre Maierean
  *
  */
-public interface RepositoryConsumer extends Consumer<Node> {
-	List<? extends Class<?>> getResults();
+public class ExceptionHolder {
+	private String message;
+	private Exception exception;
+
+	public boolean isException() {
+		return exception != null;
+	}
+	
+	public Exception getException() {
+		return exception;
+	}
+
+	public void setException(Exception exception) {
+		this.exception = exception;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	
 }

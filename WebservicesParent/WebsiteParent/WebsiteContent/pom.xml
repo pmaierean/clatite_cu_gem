@@ -62,6 +62,14 @@
 		</dependency>
 		<!-- JCR Jackrabbit -->
 		<dependency>
+		    <groupId>org.reflections</groupId>
+		    <artifactId>reflections</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache</groupId>
+		    <artifactId>jackrabbit-ocm</artifactId>
+		</dependency>
+		<dependency>
 		    <groupId>javax.jcr</groupId>
 		    <artifactId>jcr</artifactId>
 		</dependency>		

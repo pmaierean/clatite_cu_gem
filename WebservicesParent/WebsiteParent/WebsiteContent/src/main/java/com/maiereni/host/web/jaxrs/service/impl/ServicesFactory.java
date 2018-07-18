@@ -29,7 +29,6 @@ import org.springframework.context.annotation.Configuration;
 import org.xml.sax.InputSource;
 
 import com.maiereni.host.web.jaxrs.service.MenuService;
-import com.maiereni.host.web.jaxrs.service.RepositoryConsumerFactory;
 import com.maiereni.host.web.jaxrs.service.RepositoryService;
 import com.maiereni.host.web.jaxrs.service.RepositoryUserResolver;
 import com.maiereni.host.web.util.BaseBeanFactory;
@@ -87,17 +86,10 @@ public class ServicesFactory extends BaseBeanFactory {
 	}
 	
 	@Bean
-	public RepositoryConsumerFactory getConsumerFactory() throws Exception {
-		
-		return null;
-	}
-	
-	@Bean
 	public RepositoryService getRepositoryService(
 		final RepositoryImpl repo, 
-		final RepositoryUserResolver repoUserResolver,
-		final RepositoryConsumerFactory repositoryConsumerFactory) {
-		return new RepositoryServiceImpl(repo, repoUserResolver, repositoryConsumerFactory);
+		final RepositoryUserResolver repoUserResolver) throws Exception {
+		return new RepositoryServiceImpl(repo, repoUserResolver);
 	}
 	
 }

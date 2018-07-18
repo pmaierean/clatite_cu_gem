@@ -18,10 +18,11 @@
 package com.maiereni.host.web.jaxrs.service.bo;
 
 /**
+ * A repository request
  * @author Petre Maierean
  *
  */
-public class RepositoryRequest extends BaseRequest {
+public class RepositoryQueryRequest extends BaseRequest {
 	private static final long serialVersionUID = 7823432898810751842L;
 	private String queryStmt, language;
 	public String getQueryStmt() {

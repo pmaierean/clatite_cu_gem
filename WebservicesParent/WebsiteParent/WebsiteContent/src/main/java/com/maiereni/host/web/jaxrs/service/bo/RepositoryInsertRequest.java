@@ -15,13 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.host.web.jaxrs.service;
+package com.maiereni.host.web.jaxrs.service.bo;
 
 /**
- * The API of a factory class that creates node to Java converters
  * @author Petre Maierean
  *
  */
-public interface RepositoryConsumerFactory {
-	RepositoryConsumer getConsumer(Class<?> result) throws Exception;
+public class RepositoryInsertRequest extends BaseRequest {
+	private static final long serialVersionUID = -7076020598605781283L;
+	private String parentPath, name;
+	public String getParentPath() {
+		return parentPath;
+	}
+	public void setParentPath(String parentPath) {
+		this.parentPath = parentPath;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
 }

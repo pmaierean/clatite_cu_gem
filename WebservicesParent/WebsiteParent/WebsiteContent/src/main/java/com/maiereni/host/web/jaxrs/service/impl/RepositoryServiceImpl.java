@@ -193,7 +193,7 @@ public class RepositoryServiceImpl implements RepositoryService {
 	@SuppressWarnings("rawtypes")
 	private List<Class> scan() throws Exception {
 		List<Class> ret = new ArrayList<Class>();
-		Reflections reflections = new Reflections("my.project.prefix");
+		Reflections reflections = new Reflections("com.maiereni.host");
 		Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(org.apache.jackrabbit.ocm.mapper.impl.annotation.Node.class);
 		ret.addAll(annotated);
 		return ret;

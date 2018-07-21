@@ -4,6 +4,9 @@
 	<artifactId>WebservicesParent</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
+	<properties>
+		<spring.version>5.0.7.RELEASE</spring.version>
+	</properties>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -42,11 +45,6 @@
 			    <version>1.2.5</version>
 			</dependency>		
 			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-webmvc</artifactId>
-				<version>5.0.0.RELEASE</version>
-			</dependency>
-			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
 				<version>3.7</version>
@@ -70,7 +68,17 @@
 			    <groupId>commons-collections</groupId>
 			    <artifactId>commons-collections</artifactId>
 			    <version>3.2.2</version>
-			</dependency>			
+			</dependency>
+			<dependency>
+			    <groupId>org.apache.commons</groupId>
+			    <artifactId>commons-dbcp2</artifactId>
+			    <version>2.5.0</version>
+			</dependency>		
+			<dependency>
+			    <groupId>org.reflections</groupId>
+			    <artifactId>reflections</artifactId>
+			    <version>0.9.11</version>
+			</dependency>	
 			<!-- CXF Libraries -->
 			<dependency>
 			    <groupId>org.apache.cxf</groupId>
@@ -83,6 +91,27 @@
 			    <version>3.1.11</version>
 			</dependency>
 			<!-- or -->
+			<!-- Spring Framework -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>${spring.version}</version>			
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${spring.version}</version>			
+			</dependency>
+			<dependency>
+			    <groupId>org.springframework</groupId>
+			    <artifactId>spring-orm</artifactId>
+				<version>${spring.version}</version>			
+			</dependency>			
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-webmvc</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
 			<!-- Jersey Libraries -->
 			<dependency>
 			    <groupId>org.glassfish.jersey.containers</groupId>

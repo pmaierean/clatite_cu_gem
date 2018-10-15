@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<samlp:Response 
+	xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" 
+	xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" 
+	ID="e4d1eaa3-56c0-4c2d-a085-2f62855a6a8d"
+	_Version="2.0" 
+	IssueInstant="2018-10-13T08:01:48Z" 
+	Destination="https://sp.maiereni.com/demo1/index.html?sp" 
+	InResponseTo="34ec4de2-25ef-456c-8135-0e54e2383ac2">
+  <saml:Issuer>https://idp.maiereni.com/sso</saml:Issuer>
+  <samlp:Status>
+    <samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/>
+  </samlp:Status>
+  <saml:Assertion xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" ID="af5e8c50-2fa6-4f22-831a-0532d2ba7da7" Version="2.0" IssueInstant="2018-10-13T08:01:48Z">
+    <saml:Issuer>https://idp.maiereni.com/sso</saml:Issuer>
+    <saml:Subject>
+      <saml:NameID SPNameQualifier="https://sp.maiereni.com/demo1" Format="urn:oasis:names:tc:SAML:2.0:nameid-format:transient">9e51b615-e794-4632-b7c1-fede60365ec4</saml:NameID>
+      <saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
+        <saml:SubjectConfirmationData NotOnOrAfter="2024-01-18T06:21:48Z" Recipient="https://sp.maiereni.com/demo1" InResponseTo="34ec4de2-25ef-456c-8135-0e54e2383ac2"/>
+      </saml:SubjectConfirmation>
+    </saml:Subject>
+    <saml:Conditions NotBefore="2018-10-13T08:01:48Z" NotOnOrAfter="2024-01-18T06:21:48Z">
+      <saml:AudienceRestriction>
+        <saml:Audience>http://sp.maiereni.com/demo1</saml:Audience>
+      </saml:AudienceRestriction>
+    </saml:Conditions>
+    <saml:AuthnStatement AuthnInstant="2018-10-13T08:01:48Z" SessionNotOnOrAfter="2018-10-13T08:01:48Z" SessionIndex="2d79baf5-351d-4994-ad5b-2aa6ff7d8142">
+      <saml:AuthnContext>
+        <saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:Password</saml:AuthnContextClassRef>
+      </saml:AuthnContext>
+    </saml:AuthnStatement>
+    <saml:AttributeStatement>
+      <saml:Attribute Name="uid" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic">
+        <saml:AttributeValue xsi:type="xs:string">petre</saml:AttributeValue>
+      </saml:Attribute>
+      <saml:Attribute Name="mail" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic">
+        <saml:AttributeValue xsi:type="xs:string">petre@maiereni.com</saml:AttributeValue>
+      </saml:Attribute>
+      <saml:Attribute Name="roles" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic">
+        <saml:AttributeValue xsi:type="xs:string">user</saml:AttributeValue>
+        <saml:AttributeValue xsi:type="xs:string">tester</saml:AttributeValue>
+      </saml:Attribute>
+    </saml:AttributeStatement>
+  </saml:Assertion>
+</samlp:Response>

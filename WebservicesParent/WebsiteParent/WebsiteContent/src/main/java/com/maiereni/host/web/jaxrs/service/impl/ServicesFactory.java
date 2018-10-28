@@ -23,9 +23,12 @@ import java.util.Properties;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.xml.sax.InputSource;
 
 import com.maiereni.host.web.jaxrs.service.MenuService;
@@ -41,6 +44,7 @@ import com.maiereni.host.web.util.ConfigurationProvider;
  */
 @Configuration
 public class ServicesFactory extends BaseBeanFactory {
+	private static final Logger logger = LoggerFactory.getLogger(ServicesFactory.class);
 	public static final String REPOSITORY_HOME = "rep.home";
 	public static final String WORKSPACE_HOME = "wsp.home";
 	public static final String WORKSPACE_NAME = "wsp.name";
@@ -70,26 +74,33 @@ public class ServicesFactory extends BaseBeanFactory {
 		return props;
 	}
 	
-	@Bean
+	@Bean(name="repository")
+	@Scope("singleton")
 	public RepositoryImpl getRepository(final Properties repositoryProperties) throws Exception {
+		logger.debug("Create Repository");
+		RepositoryImpl ret = null;
 		try(InputStream is = getClass().getResourceAsStream("/repository.xml")) {
 			InputSource source = new InputSource(is);
 			RepositoryConfig cfg = RepositoryConfig.create(source, repositoryProperties);
-			return RepositoryImpl.create(cfg);
+			ret = RepositoryImpl.create(cfg);
+			logger.debug("The repository has been created");
 		}
+		return ret;
 	}
 	
-	@Bean
-	public RepositoryUserResolver getUserResolver(final RepositoryImpl repo, final ConfigurationProvider configurationProvider)
+	@Bean(name="repositoryUserResolver")
+	public RepositoryUserResolver getUserResolver(final RepositoryImpl repository, final ConfigurationProvider configurationProvider)
 		throws Exception {
-		return new RepositoryUserResolverImpl(repo, configurationProvider);
+		logger.debug("Create repository user resolver");
+		return new RepositoryUserResolverImpl(repository, configurationProvider);
 	}
 	
-	@Bean
+	@Bean(name="repositoryService")
 	public RepositoryService getRepositoryService(
-		final RepositoryImpl repo, 
+		final RepositoryImpl repository, 
 		final RepositoryUserResolver repoUserResolver) throws Exception {
-		return new RepositoryServiceImpl(repo, repoUserResolver);
+		logger.debug("Create repository service");
+		return new RepositoryServiceImpl(repository, repoUserResolver);
 	}
 	
 }

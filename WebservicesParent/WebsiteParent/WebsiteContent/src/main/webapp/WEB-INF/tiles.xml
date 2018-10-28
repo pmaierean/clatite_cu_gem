@@ -3,7 +3,7 @@
        "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
        "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 <tiles-definitions>
-	<definition name="home" template="/layout/classic.jsp">
+	<definition name="home" template="/layout/consulting.jsp">
 		<put-attribute name="body" value="/content/home.jsp" />
 	</definition>
 </tiles-definitions>

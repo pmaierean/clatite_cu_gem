@@ -23,6 +23,7 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.Enumeration;
 
 import javax.annotation.Nonnull;
 
@@ -42,7 +43,7 @@ import com.maiereni.host.web.util.DataEncryptor;
 @Configuration
 public class EncryptorFactory extends BaseBeanFactory{
 	public static final String TRUST_STORE_PASSWORD = "javax.net.ssl.trustStorePassword";
-	public static final String TRUST_STORE_PATH = "javax.net.ssl.truesStore";
+	public static final String TRUST_STORE_PATH = "javax.net.ssl.trustStore";
 	public static final String KEY_STORE_PASSWORD = "javax.net.ssl.keyStorePassword";
 	public static final String KEY_STORE_PATH = "javax.net.ssl.keyStore";
 	public static final String KEY_ALIAS = "javax.net.ssl.keyAlias";
@@ -67,8 +68,8 @@ public class EncryptorFactory extends BaseBeanFactory{
 	public X509Certificate getCertificate(@Nonnull final SecurityConfiguration securityConfiguration) throws Exception {
 		if (StringUtils.isAnyEmpty(securityConfiguration.getKeyStorePath(), securityConfiguration.getKeyStorePassword()))
 			throw new Exception("The SSL settings cannot be found");
-		try (InputStream in = new FileInputStream("CERT.RSA")) {
-			return getCertificate(in, securityConfiguration.getKeyAlias(), securityConfiguration.getKeyStorePassword());
+		try (InputStream is = new FileInputStream(securityConfiguration.getKeyStorePath())) {
+			return getCertificate(is, securityConfiguration.getKeyAlias(), securityConfiguration.getKeyStorePassword());
 		}
 	}
 	
@@ -95,18 +96,36 @@ public class EncryptorFactory extends BaseBeanFactory{
 	
 	protected X509Certificate getCertificate(@Nonnull final InputStream is, @Nonnull final String alias, @Nonnull final String keyStorePassword) 
 		throws Exception {
+		X509Certificate ret = null;
 	    KeyStore keystore = KeyStore.getInstance("JKS");
 	    char[] pwd = keyStorePassword.toCharArray();
 	    keystore.load(is, pwd);	
-	    Certificate[] chain = keystore.getCertificateChain(alias);
-	    return (X509Certificate) chain[0];
+	    Enumeration<String> en = keystore.aliases();
+	    while(en.hasMoreElements()) {
+	    	String s = en.nextElement();
+	    	Certificate cert = keystore.getCertificate(s);
+	    	if (StringUtils.isEmpty(alias) || alias.equals(s)) {
+	    		ret = (X509Certificate)cert;
+	    		break;
+	    	}
+	    }
+	    return ret;
 	}
 
 	protected PrivateKey getKey(@Nonnull final InputStream is, @Nonnull final String keyAlias, @Nonnull final String keyStorePassword) throws Exception {
-	    KeyStore keystore = KeyStore.getInstance("JKS");
+		PrivateKey ret = null;
+		KeyStore keystore = KeyStore.getInstance("JKS");
 	    char[] pwd = keyStorePassword.toCharArray();
 	    keystore.load(is, pwd);
-	    return (PrivateKey) keystore.getKey(keyAlias, pwd);
+	    Enumeration<String> en = keystore.aliases();
+	    while(en.hasMoreElements()) {
+	    	String s = en.nextElement();
+	    	if ((StringUtils.isEmpty(keyAlias) || keyAlias.equals(s)) && keystore.isKeyEntry(s)) {
+	    		ret = (PrivateKey) keystore.getKey(s, pwd);
+	    		break;
+	    	}
+	    }
+	    return ret;
 	}
 
 }

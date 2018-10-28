@@ -17,14 +17,21 @@
  */
 package com.maiereni.host.web.jaxrs.service.impl;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.util.Locale;
+
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.maiereni.host.web.jaxrs.service.RepositoryUserResolver;
+import com.maiereni.host.web.jaxrs.service.bo.RepositoryAddNodeRequest;
+import com.maiereni.host.web.jaxrs.service.bo.RepositoryInsertRequest;
+import com.maiereni.host.web.jcr.TextMessage;
 import com.maiereni.host.web.util.ConfigurationProvider;
 
 /**
@@ -34,12 +41,12 @@ import com.maiereni.host.web.util.ConfigurationProvider;
  */
 public class RepositoryServiceImplTest extends BaseRepositoryTest {
 	private RepositoryServiceImpl repositoryService;
-	
+	private RepositoryUserResolver repositoryUserResolver;
 	@Before
 	public void setUp() throws Exception {
 		RepositoryImpl repository = getRepository();
 		ConfigurationProvider config = getConfigurationProvider();
-		RepositoryUserResolver repositoryUserResolver = new RepositoryUserResolverImpl(repository, config);
+		repositoryUserResolver = new RepositoryUserResolverImpl(repository, config);
 		repositoryService = new RepositoryServiceImpl(repository, repositoryUserResolver);
 	}
 
@@ -49,14 +56,81 @@ public class RepositoryServiceImplTest extends BaseRepositoryTest {
 	}
 
 	@Test
-	public void testAddObject() {
+	public void testAddObjectNoPath() {
 		try {
-			
+			RepositoryAddNodeRequest request = new RepositoryAddNodeRequest();
+			repositoryService.addNode(request);
+			fail("Unexpected request to add node without credentials");			
 		}
 		catch(Exception e) {
-			logger.error("Failed to add object", e);
-			fail("Not yet implemented");
+			assertEquals("Expected error", e.getMessage(), "Either path or name is null");
 		}
 	}
 
+	@Test
+	public void testAddObjectNoCredentials() {
+		try {
+			RepositoryAddNodeRequest request = new RepositoryAddNodeRequest();
+			request.setName("abc");
+			request.setPath("/simple/test");
+			request.setRepoUser("");
+			repositoryService.addNode(request);
+			fail("Unexpected request to add node without credentials");			
+		}
+		catch(Exception e) {
+			assertEquals("Expected error", e.getMessage(), "Invalid authorizable name ''");
+		}
+	}
+	@Test
+	public void testAddObjectWithBadCredential() {
+		try {
+			TextMessage textMessage = new TextMessage();
+			textMessage.setKey("description");
+			textMessage.setLocale(Locale.ENGLISH);
+			textMessage.setMessage("This is the simple message");
+			RepositoryInsertRequest request = new RepositoryInsertRequest();
+			request.setName("abc");
+			request.setParentPath("/simple/test");
+			request.setRepoUser("test");
+			repositoryService.addResource(request, textMessage);
+			fail("Unexpected request to add node without credentials");			
+		}
+		catch(Exception e) {
+			assertEquals("Expected error", e.getMessage(), "User not found");
+		}		
+	}
+	@Test
+	public void testAddObjectWithCredential() {
+		try {
+			repositoryUserResolver.addUser("test123", "sample");
+			TextMessage textMessage = new TextMessage();
+			textMessage.setKey("description");
+			textMessage.setLocale(Locale.ENGLISH);
+			textMessage.setMessage("This is the simple message");
+			RepositoryAddNodeRequest addReq = new RepositoryAddNodeRequest();
+			addReq.setRepoUser("test123");
+			addReq.setLocale(Locale.ENGLISH);
+			addReq.setName("simple");
+			addReq.setPath("/");
+			addReq.setType(JcrConstants.NT_FOLDER);
+			repositoryService.addNode(addReq);
+
+			addReq.setName("test");
+			addReq.setPath("/simple");
+			addReq.setType(JcrConstants.NT_FOLDER);
+			repositoryService.addNode(addReq);
+			
+			RepositoryInsertRequest request = new RepositoryInsertRequest();
+			request.setName("abc");
+			request.setParentPath("/simple/test");
+			request.setRepoUser("test123");
+			repositoryService.addResource(request, textMessage);
+			fail("Unexpected request to add node without credentials");			
+		}
+		catch(Exception e) {
+			logger.error("The error", e);
+			assertEquals("Expected error", e.getMessage(), "User not found");
+		}		
+	}
+	
 }

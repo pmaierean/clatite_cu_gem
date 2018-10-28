@@ -7,23 +7,23 @@
 	<display-name>WebApplication</display-name>
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>/WEB-INF/Content-servlet.xml</param-value>
+		<param-value>/WEB-INF/webApplication.xml</param-value>
 	</context-param>	
 
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 
-	<servlet>
-		<servlet-name>Content</servlet-name>
-		<servlet-class>com.maiereni.host.web.servlet.MvcDispatcherServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Content</servlet-name>
-		<url-pattern>*.html</url-pattern>
-	</servlet-mapping>
-
+    <servlet>
+        <servlet-name>staticContent</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value></param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
     <servlet>
         <servlet-name>CXFServlet</servlet-name>
         <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
@@ -34,15 +34,10 @@
         <servlet-name>CXFServlet</servlet-name>
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>staticContent</servlet-name>
+        <url-pattern>*.html</url-pattern>
+    </servlet-mapping>
     
-    <jsp-config>
-    	<taglib>
-    		<taglib-uri>http://java.sun.com/jsp/jstl/core</taglib-uri>
-    		<taglib-location>WEB-INF/c.tld</taglib-location>
-    	</taglib>
-    	<taglib>
-    		<taglib-uri>http://java.sun.com/jsp/jstl/fmt</taglib-uri>
-    		<taglib-location>WEB-INF/fmt.tld</taglib-location>
-    	</taglib>
-    </jsp-config>
 </web-app>

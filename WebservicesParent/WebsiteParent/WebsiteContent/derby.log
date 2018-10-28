@@ -1,0 +1,39 @@
+----------------------------------------------------------------
+Sun Oct 28 15:40:04 EDT 2018:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0166-bc30-c3d6-00000db96080 
+on database directory C:\Users\Petre\AppData\Local\Temp\cxf-tmp-1497000521858408841\version\db with class loader sun.misc.Launcher$AppClassLoader@18b4aac2 
+Loaded from file:/C:/Users/Petre/.m2/repository/org/apache/derby/derby/10.14.2.0/derby-10.14.2.0.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_162-b12
+user.dir=C:\Users\Petre\git\clatite_cu_gem\WebservicesParent\WebsiteParent\WebsiteContent
+os.name=Windows 10
+os.arch=amd64
+os.version=10.0
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Sun Oct 28 15:40:12 EDT 2018:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance cead00d8-0166-bc30-c3d6-00000db96080 
+on database directory C:\Users\Petre\AppData\Local\Temp\cxf-tmp-1497000521858408841\workspaces\default\db with class loader sun.misc.Launcher$AppClassLoader@18b4aac2 
+Loaded from file:/C:/Users/Petre/.m2/repository/org/apache/derby/derby/10.14.2.0/derby-10.14.2.0.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_162-b12
+user.dir=C:\Users\Petre\git\clatite_cu_gem\WebservicesParent\WebsiteParent\WebsiteContent
+os.name=Windows 10
+os.arch=amd64
+os.version=10.0
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Sun Oct 28 15:40:21 EDT 2018:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance f584c1a3-0166-bc30-c3d6-00000db96080 
+on database directory C:\Users\Petre\AppData\Local\Temp\cxf-tmp-1497000521858408841\workspaces\security\db with class loader sun.misc.Launcher$AppClassLoader@18b4aac2 
+Loaded from file:/C:/Users/Petre/.m2/repository/org/apache/derby/derby/10.14.2.0/derby-10.14.2.0.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_162-b12
+user.dir=C:\Users\Petre\git\clatite_cu_gem\WebservicesParent\WebsiteParent\WebsiteContent
+os.name=Windows 10
+os.arch=amd64
+os.version=10.0
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

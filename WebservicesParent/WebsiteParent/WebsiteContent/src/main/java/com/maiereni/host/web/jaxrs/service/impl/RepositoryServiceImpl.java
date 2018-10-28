@@ -85,15 +85,15 @@ public class RepositoryServiceImpl implements RepositoryService {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Object> getResources(@Nonnull final RepositoryQueryRequest request, @Nonnull Class<?> result) throws Exception {
-		final List<Object> ret = new ArrayList<Object>();
+	public List<? extends Object> getResources(@Nonnull final RepositoryQueryRequest request, @Nonnull Class<? extends Object> result) throws Exception {
+		final List<Object> ret = new ArrayList();
 		Credentials credentials = repoUserResolver.getCredentials(request.getRepoUser()) ;
 		Session session = null;
 		try {
 			session = repo.login(credentials);
 			ObjectContentManager ocm =  new ObjectContentManagerImpl(session, mapper); 
 			QueryManager qm = session.getWorkspace().getQueryManager();
-			logger.debug("Execute statement: " + request.getQueryStmt());
+			logger.debug("Execute statement {}", request.getQueryStmt());
 			Query q = qm.createQuery(request.getQueryStmt(), request.getLanguage());
 			QueryResult qr = q.execute();
 			NodeIterator ni = qr.getNodes();
@@ -133,7 +133,7 @@ public class RepositoryServiceImpl implements RepositoryService {
 	public void addNode(@Nonnull final RepositoryAddNodeRequest request) throws Exception {
 		if (StringUtils.isAnyEmpty(request.getPath(), request.getName()))
 			throw new Exception("Either path or name is null");
-		Credentials credentials = repoUserResolver.getCredentials(request.getRepoUser()) ;
+		Credentials credentials = repoUserResolver.getCredentials(request.getRepoUser());
 		Session session = null;
 		try {
 			session = repo.login(credentials);
@@ -144,7 +144,8 @@ public class RepositoryServiceImpl implements RepositoryService {
 			session.save();
 		}
 		finally {
-			session.logout();
+			if (session != null)
+				session.logout();
 		}		
 	}
 	
@@ -156,6 +157,8 @@ public class RepositoryServiceImpl implements RepositoryService {
 	 */
 	public void addResource(@Nonnull final RepositoryInsertRequest request, @Nonnull final Object o) throws Exception {
 		Credentials credentials = repoUserResolver.getCredentials(request.getRepoUser()) ;
+		if (credentials == null)
+			throw new Exception("Could not find user");
 		if (mapper.getClassDescriptorByClass(o.getClass())== null)
 			throw new Exception("The object cannot be persisted because its class has not been registered for JCR");
 		Session session = null;

@@ -11,6 +11,7 @@
 	</parent>
 	<artifactId>WebsiteContent</artifactId>
 	<packaging>war</packaging>
+	<name>WebsiteContent</name>
 	<dependencies>
 		<dependency>
 			<groupId>org.slf4j</groupId>

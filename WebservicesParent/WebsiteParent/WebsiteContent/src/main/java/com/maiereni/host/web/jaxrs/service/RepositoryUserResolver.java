@@ -48,4 +48,11 @@ public interface RepositoryUserResolver {
 	 * @throws Exception
 	 */
 	void setPassword(String repoUser, String repoPassword) throws Exception;
+	
+	/**
+	 * Detects if the user exists
+	 * @param repoUser
+	 * @return
+	 */
+	boolean isUser(String repoUser);
 }

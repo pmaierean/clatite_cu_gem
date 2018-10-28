@@ -29,6 +29,7 @@ import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.NonNull;
 
 import com.maiereni.host.web.jaxrs.service.RepositoryUserResolver;
 import com.maiereni.host.web.util.ConfigurationProvider;
@@ -63,7 +64,7 @@ public class RepositoryUserResolverImpl implements RepositoryUserResolver {
 	 * @throws if the repository user cannot be found
 	 */
 	@Override
-	public Credentials getCredentials(@Nonnull final String repoUser) 
+	public Credentials getCredentials(@NonNull final String repoUser) 
 		throws Exception {
 		Credentials ret = null;
 		Session session = null;
@@ -71,8 +72,12 @@ public class RepositoryUserResolverImpl implements RepositoryUserResolver {
 			session = repository.login(new SimpleCredentials(ADMIN_USER, adminPassword.toCharArray()));
 	        UserManager userManager = ((JackrabbitSession) session).getUserManager();
             Authorizable authorizable = userManager.getAuthorizable(repoUser);
-            if (authorizable != null)
-            	ret = ((User) authorizable).getCredentials();
+            if (authorizable != null) {
+            	User user = (User) authorizable;
+            	ret = user.getCredentials();
+            }
+            else
+            	throw new Exception("User not found");
 		}
 		finally {
 			if (session != null) {
@@ -80,7 +85,7 @@ public class RepositoryUserResolverImpl implements RepositoryUserResolver {
 					session.logout();
 				}
 				catch(Exception e) {
-					
+					logger.error("Failed to close", e);
 				}
 			}
 		}
@@ -101,6 +106,7 @@ public class RepositoryUserResolverImpl implements RepositoryUserResolver {
 	        UserManager userManager = ((JackrabbitSession) session).getUserManager();
             userManager.createUser(repoUser, password);
             session.save();
+            logger.debug("The user has been created");
 		}
 		finally {
 			if (session != null) {
@@ -108,7 +114,7 @@ public class RepositoryUserResolverImpl implements RepositoryUserResolver {
 					session.logout();
 				}
 				catch(Exception e) {
-					
+					logger.error("Failed to logout", e);
 				}
 			}
 		}		
@@ -149,6 +155,37 @@ public class RepositoryUserResolverImpl implements RepositoryUserResolver {
 			}
 		}
 	}
+	
+	/**
+	 * Detects if the user exists
+	 * @param repoUser
+	 * @return
+	 */
+	public boolean isUser(String repoUser) {
+		boolean ret = false;
+		Session session = null;
+		try {
+			session = repository.login(new SimpleCredentials(ADMIN_USER, adminPassword.toCharArray()));
+	        UserManager userManager = ((JackrabbitSession) session).getUserManager();
+            Authorizable authorizable = userManager.getAuthorizable(repoUser);
+            ret = authorizable != null;
+		}
+		catch(Exception e) {
+			logger.error("Failed to test if the user exists", e);
+		}
+		finally {
+			if (session != null) {
+				try {
+					session.logout();
+				}
+				catch(Exception e) {
+					
+				}
+			}
+		}
+		return ret;
+	}
+
 	
 	public void setAdminPassword(@Nonnull final String adminPassword) throws Exception {
 		configurationProvider.setProperty(ADMIN_USER_PASSWORD, adminPassword);

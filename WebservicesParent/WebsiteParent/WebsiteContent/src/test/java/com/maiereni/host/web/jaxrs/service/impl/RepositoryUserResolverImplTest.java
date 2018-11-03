@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.maiereni.host.web.util.ConfigurationProvider;
+import com.maiereni.host.web.util.impl.TestEncryptorProvider;
 
 /**
  * @author Petre Maierean
@@ -43,7 +44,7 @@ public class RepositoryUserResolverImplTest extends BaseRepositoryTest {
 	public void setUp() throws Exception {
 		RepositoryImpl repository = getRepository();
 		config = getConfigurationProvider();
-		service = new RepositoryUserResolverImpl(repository, config);
+		service = new RepositoryUserResolverImpl(repository, config, TestEncryptorProvider.load());
 	}
 	
 	@After

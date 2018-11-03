@@ -24,6 +24,7 @@ import java.util.Collection;
 
 import javax.annotation.Nonnull;
 
+import org.apache.commons.codec.binary.Base64;
 import org.bouncycastle.cms.CMSAlgorithm;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
@@ -48,10 +49,12 @@ import com.maiereni.host.web.util.DataEncryptor;
 public class BouncyCastleEncryptorImpl implements DataEncryptor {
 	private X509Certificate certificate;
 	private PrivateKey key;
+	private Base64 base64;
 	
 	BouncyCastleEncryptorImpl(@Nonnull final X509Certificate certificate, @Nonnull final PrivateKey key) {
 		this.certificate = certificate;
 		this.key = key;
+		this.base64 = new Base64();
 		Security.addProvider(new BouncyCastleProvider());
 	}
 	
@@ -64,6 +67,12 @@ public class BouncyCastleEncryptorImpl implements DataEncryptor {
         CMSEnvelopedData cmsEnvelopedData = cmsEnvelopedDataGenerator.generate(msg, encryptor);
         return cmsEnvelopedData.getEncoded();
     }
+    
+    public String encrypt(@Nonnull final String s) throws Exception {
+    	byte[] buffer = s.getBytes();
+    	byte[] enc = encryptData(buffer);
+    	return base64.encodeAsString(enc);
+    }
 
 	public byte[] decryptData(@Nonnull final byte[] encryptedData) throws Exception {
         CMSEnvelopedData envelopedData = new CMSEnvelopedData(encryptedData);
@@ -72,4 +81,10 @@ public class BouncyCastleEncryptorImpl implements DataEncryptor {
         JceKeyTransRecipient recipient = new JceKeyTransEnvelopedRecipient(key);
         return recipientInfo.getContent(recipient);
     }
+	
+	public String decrypt(@Nonnull final String s) throws Exception {
+		byte[] buffer = base64.decode(s);
+		byte[] decrypt = decryptData(buffer);
+		return new String(decrypt);
+	}
 }

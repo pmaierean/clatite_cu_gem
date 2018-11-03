@@ -15,29 +15,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.host.web.util.impl;
+package com.maiereni.oak;
 
-import java.io.InputStream;
-import java.security.PrivateKey;
-import java.security.cert.X509Certificate;
+import java.io.File;
+import java.util.UUID;
+
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import com.maiereni.oak.bo.RepositoryProperties;
 
 /**
+ * The tester application
  * @author Petre Maierean
  *
  */
-public class TestEncryptorProvider {
-	
-	public static BouncyCastleEncryptorImpl load() throws Exception {
-		EncryptorFactory factory = new EncryptorFactory();
-		PrivateKey pk = null;
-		X509Certificate cert = null;
-		try(InputStream is = TestEncryptorProvider.class.getResourceAsStream("/testkeystore.jks")) {
-			pk = factory.getKey(is, "server-alias", "changeit");
-		}
-		try(InputStream is = TestEncryptorProvider.class.getResourceAsStream("/testkeystore.jks")) {
-			cert = factory.getCertificate(is, "server-alias", "changeit");
-		}
-		return new BouncyCastleEncryptorImpl(cert, pk);
+@Component
+public class Application extends OakBeanFactory {
+	protected static final Logger logger = LoggerFactory.getLogger(Application.class);
+
+	@Override
+	public RepositoryProperties getProperties() {
+		RepositoryProperties props = new RepositoryProperties();
+		File fDir = new File(FileUtils.getTempDirectoryPath(), UUID.randomUUID().toString().replaceAll("-", ""));
+		props.setRepositoryPath(fDir.getPath());
+		props.setAdminPassword("admin");
+		props.setAdminUser("admin");
+		return props;
 	}
-	
 }

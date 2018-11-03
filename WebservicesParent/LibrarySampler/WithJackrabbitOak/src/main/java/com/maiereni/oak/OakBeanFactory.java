@@ -15,17 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.sample.oak;
+package com.maiereni.oak;
 
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.jcr.SimpleCredentials;
 import javax.naming.Context;
-import javax.naming.InitialContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.oak.InitialContent;
@@ -48,7 +46,6 @@ import org.apache.jackrabbit.oak.plugins.tree.impl.TreeProviderService;
 import org.apache.jackrabbit.oak.plugins.version.VersionHook;
 import org.apache.jackrabbit.oak.query.QueryEngineSettings;
 import org.apache.jackrabbit.oak.security.internal.SecurityProviderBuilder;
-import org.apache.jackrabbit.oak.segment.SegmentNodeStore;
 import org.apache.jackrabbit.oak.segment.SegmentNodeStoreBuilders;
 import org.apache.jackrabbit.oak.segment.file.FileStore;
 import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder;
@@ -56,98 +53,53 @@ import org.apache.jackrabbit.oak.spi.security.ConfigurationParameters;
 import org.apache.jackrabbit.oak.spi.security.SecurityProvider;
 import org.apache.jackrabbit.oak.spi.security.user.UserConfiguration;
 import org.apache.jackrabbit.oak.spi.security.user.util.UserUtil;
+import org.apache.jackrabbit.oak.spi.state.NodeStore;
 import org.apache.jackrabbit.oak.spi.whiteboard.DefaultWhiteboard;
 import org.apache.jackrabbit.oak.spi.whiteboard.Whiteboard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+
+import com.maiereni.oak.bo.RepositoryProperties;
 
 /**
  * A factory class for the repository builder
  * @author Petre Maierean
  *
  */
-@Configuration
-public class BeanFactory {
-	private static final Logger logger = LoggerFactory.getLogger(BeanFactory.class);
+public abstract class OakBeanFactory {
+	private static final Logger logger = LoggerFactory.getLogger(OakBeanFactory.class);
+
 	/**
-	 * The root to the repository
+	 * Get the properties for the Oak repository
+	 * @return
 	 */
-	public static final String ROOT_REPOSITORY_PATH = "com.maiereni.sample.oak.repositoryRoot";
-	public static final String REPORITORY_SUPER_USER = "com.maiereni.sample.oak.repository.su";
-	public static final String REPORITORY_SUPER_USER_PASSWORD = "com.maiereni.sample.oak.repository.supwd";
-	
-	@Bean(name="properties")
-	public Map<String, String> getProperties() throws Exception {
-		Map<String, String> ret = new HashMap<String, String>();
-		Context ctxt = null;
-		try {
-			ctxt = new InitialContext();
-		}
-		catch(Exception e) {
-		}
-		resolveProperty(ret, ctxt, ROOT_REPOSITORY_PATH, "/opt/local/sample/repo");
-		resolveProperty(ret, ctxt, REPORITORY_SUPER_USER, "admin");
-		resolveProperty(ret, ctxt, REPORITORY_SUPER_USER_PASSWORD, "");
-		
-		return ret;
-	}
-	
-	@Bean (name="repositoryDir")
-	public File getRepositoryDirectory(@Nonnull final Map<String, String> properties) {
-		String repositoryRootDirectory = properties.get(ROOT_REPOSITORY_PATH);
-		try {
-			Context ctxt = new InitialContext();
-			Object o = ctxt.lookup(ROOT_REPOSITORY_PATH);
-			if (o != null)
-				repositoryRootDirectory = o.toString();
-		}
-		catch(Exception e) {
-		}
-		logger.debug("The repository will be set at " + repositoryRootDirectory);
-		return new File(repositoryRootDirectory);
-	}
-	
-	@Bean(name="segmentStore")
-	public FileStore getSegmentNodeStore(@Nonnull final File repositoryDir) throws Exception {
-        return FileStoreBuilder.fileStoreBuilder(repositoryDir).withMaxFileSize(1).build();	
-	}
-	
+	public abstract @Nonnull RepositoryProperties getProperties();
+
 	@Bean(name="securityProvider")
 	public SecurityProvider getSecurityProvider() throws Exception {
 	    RootProvider rootProvider = new RootProviderService(); 
-	    TreeProvider treeProvider = new TreeProviderService();		
-        SecurityProvider securityProvider = SecurityProviderBuilder.newBuilder().with(ConfigurationParameters.EMPTY)
-        		.withRootProvider(rootProvider)
-        		.withTreeProvider(treeProvider)
-        		.build();
-        return securityProvider;
+	    TreeProvider treeProvider = new TreeProviderService();
+	    SecurityProviderBuilder securityProviderBuilder = SecurityProviderBuilder.newBuilder();
+	    securityProviderBuilder.with(getConfigurationParameters());
+	    securityProviderBuilder.withRootProvider(rootProvider);
+	    securityProviderBuilder.withTreeProvider(treeProvider);
+        return securityProviderBuilder.build();
 	}
 	
 	@Bean(name="oak")
-	public Oak getOak(@Nonnull final FileStore segmentStore, @Nonnull final SecurityProvider securityProvider) throws Exception {
+	public Oak getOak(@Nonnull final SecurityProvider securityProvider) throws Exception {
 		logger.debug("Create an Oak repository");
         Whiteboard wb = new DefaultWhiteboard();
         WhiteboardIndexEditorProvider wbProvider = new WhiteboardIndexEditorProvider();
         wbProvider.start(wb);
-        SegmentNodeStore segmentNodeStore = SegmentNodeStoreBuilders.builder(segmentStore).build();	
         QueryEngineSettings querySettings = new QueryEngineSettings();
         querySettings.setFailTraversal(true);
-        
-        Oak oak = new Oak(segmentNodeStore)
-                .with(new InitialContent())
-                .with(new VersionHook())
-                .with(JcrConflictHandler.createJcrConflictHandler())
-                .with(new NamespaceEditorProvider())
-                .with(new ReferenceEditorProvider())
-                .with(new ReferenceIndexProvider())
-                .with(new PropertyIndexEditorProvider())
-                .with(new PropertyIndexProvider())
-                .with(new TypeEditorProvider())
-                .with(new ConflictValidatorProvider())
-                .with(querySettings)
-                .with(securityProvider);
+        Oak oak = new Oak(getNodeStore());
+        initializeOak(oak);
+        oak.with(querySettings);
+        oak.with(securityProvider);
+        oak.with(wb);
         return oak;
 	}
 	
@@ -162,13 +114,15 @@ public class BeanFactory {
 	}
 
 	@Bean(name="superUser")
-	public SimpleCredentials getSuperUser(@Nonnull final SecurityProvider securityProvider) throws Exception {
-		UserConfiguration userConfiguration = securityProvider.getConfiguration(UserConfiguration.class);
-		String adminId = UserUtil.getAdminId(userConfiguration.getParameters());
-		return new SimpleCredentials(adminId, adminId.toCharArray());
+	public SimpleCredentials getSuperUser() throws Exception {
+		RepositoryProperties properties = getProperties();
+		if (StringUtils.isAnyBlank(properties.getAdminUser(), properties.getAdminPassword())) {
+			throw new Exception("The admin user and password cannot be null");
+		}
+		return new SimpleCredentials(properties.getAdminUser(), properties.getAdminPassword().toCharArray());
 	}
 
-	private void resolveProperty(final Map<String, String> props, final Context ctxt, final String key, final String defaultValue) {
+	protected void resolveProperty(final Map<String, String> props, final Context ctxt, final String key, final String defaultValue) {
 		String value = System.getProperty(key, defaultValue);
 		if (ctxt != null)
 			try {
@@ -183,5 +137,41 @@ public class BeanFactory {
 			props.put(key, value);
 	}
 	
-
+	/**
+	 * Create a file system node store
+	 * @return
+	 * @throws Exception
+	 */
+	protected NodeStore getNodeStore() throws Exception {
+		RepositoryProperties properties = getProperties();
+		if (StringUtils.isBlank(properties.getRepositoryPath())) {
+			throw new Exception("The configuration for path cannot be empty");
+		}
+		File repositoryDir = new File(properties.getRepositoryPath());
+		if (repositoryDir.isFile()) {
+			throw new Exception("The repository name points to a file");
+		}
+		else if (!(repositoryDir.exists() || repositoryDir.mkdirs())) {
+			throw new Exception("Cannot make directory at " + repositoryDir.getPath());
+		}
+		FileStore segmentStore = FileStoreBuilder.fileStoreBuilder(repositoryDir).withMaxFileSize(1).build();			
+        return SegmentNodeStoreBuilders.builder(segmentStore).build();			
+	}
+	
+	protected ConfigurationParameters getConfigurationParameters() {
+		return ConfigurationParameters.EMPTY;
+	}
+	
+	protected void initializeOak(final Oak oak) {
+        oak.with(new InitialContent());
+        oak.with(new VersionHook());
+        oak.with(JcrConflictHandler.createJcrConflictHandler());
+        oak.with(new NamespaceEditorProvider());
+        oak.with(new ReferenceEditorProvider());
+        oak.with(new ReferenceIndexProvider());
+        oak.with(new PropertyIndexEditorProvider());
+        oak.with(new PropertyIndexProvider());
+        oak.with(new TypeEditorProvider());
+        oak.with(new ConflictValidatorProvider());		
+	}
 }

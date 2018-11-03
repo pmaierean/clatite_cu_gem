@@ -33,6 +33,7 @@ import com.maiereni.host.web.jaxrs.service.bo.RepositoryAddNodeRequest;
 import com.maiereni.host.web.jaxrs.service.bo.RepositoryInsertRequest;
 import com.maiereni.host.web.jcr.TextMessage;
 import com.maiereni.host.web.util.ConfigurationProvider;
+import com.maiereni.host.web.util.impl.TestEncryptorProvider;
 
 /**
  * Unit test for the repository service
@@ -46,7 +47,7 @@ public class RepositoryServiceImplTest extends BaseRepositoryTest {
 	public void setUp() throws Exception {
 		RepositoryImpl repository = getRepository();
 		ConfigurationProvider config = getConfigurationProvider();
-		repositoryUserResolver = new RepositoryUserResolverImpl(repository, config);
+		repositoryUserResolver = new RepositoryUserResolverImpl(repository, config, TestEncryptorProvider.load());
 		repositoryService = new RepositoryServiceImpl(repository, repositoryUserResolver);
 	}
 

@@ -15,29 +15,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.host.web.util.impl;
+package com.maiereni.oak.bo;
 
-import java.io.InputStream;
-import java.security.PrivateKey;
-import java.security.cert.X509Certificate;
+import java.io.Serializable;
+import java.util.HashMap;
 
 /**
+ * The properties for the repository
+ * 
  * @author Petre Maierean
  *
  */
-public class TestEncryptorProvider {
-	
-	public static BouncyCastleEncryptorImpl load() throws Exception {
-		EncryptorFactory factory = new EncryptorFactory();
-		PrivateKey pk = null;
-		X509Certificate cert = null;
-		try(InputStream is = TestEncryptorProvider.class.getResourceAsStream("/testkeystore.jks")) {
-			pk = factory.getKey(is, "server-alias", "changeit");
-		}
-		try(InputStream is = TestEncryptorProvider.class.getResourceAsStream("/testkeystore.jks")) {
-			cert = factory.getCertificate(is, "server-alias", "changeit");
-		}
-		return new BouncyCastleEncryptorImpl(cert, pk);
+public class RepositoryProperties extends HashMap<String, String> implements Serializable {
+	private static final long serialVersionUID = -2131787866133722575L;
+	private String repositoryPath, adminUser, adminPassword;
+	public String getRepositoryPath() {
+		return repositoryPath;
 	}
-	
+	public void setRepositoryPath(String repositoryPath) {
+		this.repositoryPath = repositoryPath;
+	}
+	public String getAdminUser() {
+		return adminUser;
+	}
+	public void setAdminUser(String adminUser) {
+		this.adminUser = adminUser;
+	}
+	public String getAdminPassword() {
+		return adminPassword;
+	}
+	public void setAdminPassword(String adminPassword) {
+		this.adminPassword = adminPassword;
+	}
 }

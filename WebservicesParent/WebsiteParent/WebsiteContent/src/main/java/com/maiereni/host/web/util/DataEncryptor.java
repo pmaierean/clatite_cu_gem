@@ -17,6 +17,8 @@
  */
 package com.maiereni.host.web.util;
 
+import javax.annotation.Nonnull;
+
 /**
  * The API of a data encryptor
  * @author Petre Maierean
@@ -31,10 +33,24 @@ public interface DataEncryptor {
 	 */
 	byte[] encryptData(byte[] data) throws Exception;
 	/**
+	 * Encrypt a string
+	 * @param s
+	 * @return
+	 * @throws Exception
+	 */
+	String encrypt(@Nonnull final String s) throws Exception;
+	/**
 	 * Decrypt the content of the array of bytes
 	 * @param encryptedData
 	 * @return
 	 * @throws Exception
 	 */
 	byte[] decryptData(byte[] encryptedData) throws Exception;
+	/**
+	 * Decrypt a string
+	 * @param s
+	 * @return
+	 * @throws Exception
+	 */
+	String decrypt(@Nonnull final String s) throws Exception;
 }

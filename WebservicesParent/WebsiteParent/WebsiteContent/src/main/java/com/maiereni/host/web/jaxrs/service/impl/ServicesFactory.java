@@ -36,6 +36,7 @@ import com.maiereni.host.web.jaxrs.service.RepositoryService;
 import com.maiereni.host.web.jaxrs.service.RepositoryUserResolver;
 import com.maiereni.host.web.util.BaseBeanFactory;
 import com.maiereni.host.web.util.ConfigurationProvider;
+import com.maiereni.host.web.util.DataEncryptor;
 
 /**
  * Builds the services base on configuration
@@ -89,10 +90,10 @@ public class ServicesFactory extends BaseBeanFactory {
 	}
 	
 	@Bean(name="repositoryUserResolver")
-	public RepositoryUserResolver getUserResolver(final RepositoryImpl repository, final ConfigurationProvider configurationProvider)
+	public RepositoryUserResolver getUserResolver(final RepositoryImpl repository, final ConfigurationProvider configurationProvider, final DataEncryptor encryptor)
 		throws Exception {
 		logger.debug("Create repository user resolver");
-		return new RepositoryUserResolverImpl(repository, configurationProvider);
+		return new RepositoryUserResolverImpl(repository, configurationProvider, encryptor);
 	}
 	
 	@Bean(name="repositoryService")

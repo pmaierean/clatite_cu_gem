@@ -19,9 +19,11 @@ package com.maiereni.host.web.jaxrs.service.impl;
 
 import javax.annotation.Nonnull;
 import javax.jcr.Credentials;
+import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.api.JackrabbitSession;
 import org.apache.jackrabbit.api.security.user.Authorizable;
 import org.apache.jackrabbit.api.security.user.User;
@@ -33,6 +35,7 @@ import org.springframework.lang.NonNull;
 
 import com.maiereni.host.web.jaxrs.service.RepositoryUserResolver;
 import com.maiereni.host.web.util.ConfigurationProvider;
+import com.maiereni.host.web.util.DataEncryptor;
 
 /**
  * An implementation of the Repository User resolver that loads from an encrypted 
@@ -46,14 +49,17 @@ public class RepositoryUserResolverImpl implements RepositoryUserResolver {
 	private static final String DEFAULT_ADMIN_USER_PASSWORD = "admin";
 	private RepositoryImpl repository;
 	private ConfigurationProvider configurationProvider;
+	private DataEncryptor dataEncryptor;
 	private String adminPassword;
 	private String adminPasswordFilePath;
 	
 	RepositoryUserResolverImpl(
 		@Nonnull final RepositoryImpl repository,
-		@Nonnull final ConfigurationProvider configurationProvider) throws Exception {
+		@Nonnull final ConfigurationProvider configurationProvider,
+		@Nonnull final DataEncryptor dataEncryptor) throws Exception {
 		this.repository = repository;
 		this.configurationProvider = configurationProvider;
+		this.dataEncryptor = dataEncryptor;
 		this.adminPassword = loadAdminPassword(adminPasswordFilePath);
 	}
 	
@@ -73,8 +79,11 @@ public class RepositoryUserResolverImpl implements RepositoryUserResolver {
 	        UserManager userManager = ((JackrabbitSession) session).getUserManager();
             Authorizable authorizable = userManager.getAuthorizable(repoUser);
             if (authorizable != null) {
-            	User user = (User) authorizable;
-            	ret = user.getCredentials();
+    			Node usersRoot = getUsersNode(session);
+    			Node userNode = usersRoot.getNode(repoUser);
+    			String encryptedPassword = userNode.getProperty("encryptedPassord").getString();
+    			String password = dataEncryptor.decrypt(encryptedPassword);
+    			ret = new SimpleCredentials(repoUser, password.toCharArray());
             }
             else
             	throw new Exception("User not found");
@@ -105,7 +114,12 @@ public class RepositoryUserResolverImpl implements RepositoryUserResolver {
 			session = repository.login(new SimpleCredentials(ADMIN_USER, adminPassword.toCharArray()));
 	        UserManager userManager = ((JackrabbitSession) session).getUserManager();
             userManager.createUser(repoUser, password);
-            session.save();
+			Node usersRoot = getUsersNode(session);
+			String encryptedPassword = dataEncryptor.encrypt(password);
+			Node userNode = usersRoot.addNode(repoUser, JcrConstants.NT_UNSTRUCTURED);
+			userNode.setProperty("name", repoUser);
+			userNode.setProperty("encryptedPassord", encryptedPassword);
+			session.save();
             logger.debug("The user has been created");
 		}
 		finally {
@@ -141,6 +155,13 @@ public class RepositoryUserResolverImpl implements RepositoryUserResolver {
             	this.configurationProvider.setProperty(ADMIN_USER_PASSWORD, repoPassword);
             	logger.info("Admin password has been saved into the configuration file");
             }
+            else {
+    			Node usersRoot = getUsersNode(session);
+    			String encryptedPassword = dataEncryptor.encrypt(repoPassword);
+    			Node userNode = usersRoot.getNode(repoUser);
+    			userNode.setProperty("encryptedPassord", encryptedPassword);
+            }
+            
             logger.debug("The user password has been changed");
             session.save();
 		}
@@ -194,4 +215,25 @@ public class RepositoryUserResolverImpl implements RepositoryUserResolver {
 	private String loadAdminPassword(final String configFile) throws Exception {
 		return configurationProvider.getProperty(ADMIN_USER_PASSWORD,DEFAULT_ADMIN_USER_PASSWORD);
 	}
+
+	private static final String USERS_ROOT = "/etc/users";
+	private Node getUsersNode(final Session session) throws Exception {
+		Node ret = null;
+		if (!session.nodeExists(USERS_ROOT)) {
+			Node etc = null;
+			if (!session.nodeExists("/etc")) {
+				Node n = session.getNode("/");
+				etc = n.addNode("etc", JcrConstants.NT_FOLDER);
+			}
+			else {
+				etc = session.getNode("/etc");
+			}
+			ret = etc.addNode("users", JcrConstants.NT_FOLDER);
+		}
+		else {
+			ret = session.getNode(USERS_ROOT);
+		}
+		return ret;
+	}
+
 }

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.sample.oak.test;
+package com.maiereni.oak;
 
 import static org.junit.Assert.fail;
 
@@ -36,32 +36,30 @@ import javax.jcr.security.Privilege;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.jackrabbit.commons.jackrabbit.authorization.AccessControlUtils;
 import org.apache.jackrabbit.oak.jcr.Jcr;
+import org.apache.jackrabbit.oak.spi.security.ConfigurationParameters;
 import org.apache.jackrabbit.oak.spi.security.principal.EveryonePrincipal;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.maiereni.sample.oak.Application;
-
 /**
  * @author Petre Maierean
  *
  */
-public class SimpleNodesTest {
+public class SimpleNodesTest extends BaseOakTests {
 	private static final String ENCODING = "UTF-8";
 	private static final Logger logger = LoggerFactory.getLogger(SimpleNodesTest.class);
 	private Repository repo;
 	private SimpleCredentials su;
-	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		Jcr jcr = Application.getJcr();
+		Jcr jcr = getBean(Jcr.class);
 		repo = jcr.createRepository();
-		su = Application.getSuperUser();
+		su = getBean("superUser", SimpleCredentials.class);
 	}
 
 	@Test
@@ -105,6 +103,32 @@ public class SimpleNodesTest {
 		}
 	}
 
+	public void testAddingUser() {
+		Session session = null;
+		try {
+			session = repo.login(su);
+			Node root = session.getRootNode();
+		}
+		catch(Exception e) {
+			logger.error("Failed to login", e);
+			fail("Not yet implemented");
+		}
+		finally {
+			if (session != null)
+				try {
+					session.logout();
+				}
+				catch(Exception e) {
+					
+				}
+		}
+	}
+	
+    
+    protected ConfigurationParameters getSecurityConfigParameters() {
+        return ConfigurationParameters.EMPTY;
+    }
+	
     private void addExportTestData(Node node) throws Exception {
         getOrAddNode(node, "invalidXmlName").setProperty("propName", "some text");
 

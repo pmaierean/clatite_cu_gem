@@ -18,18 +18,19 @@
 package com.maiereni.oak;
 
 
-import java.io.File;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.jcr.SimpleCredentials;
 import javax.naming.Context;
+import javax.security.auth.login.Configuration;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.oak.InitialContent;
 import org.apache.jackrabbit.oak.Oak;
 import org.apache.jackrabbit.oak.api.ContentRepository;
 import org.apache.jackrabbit.oak.jcr.Jcr;
+import org.apache.jackrabbit.oak.namepath.NamePathMapper;
 import org.apache.jackrabbit.oak.plugins.commit.ConflictValidatorProvider;
 import org.apache.jackrabbit.oak.plugins.commit.JcrConflictHandler;
 import org.apache.jackrabbit.oak.plugins.index.WhiteboardIndexEditorProvider;
@@ -46,11 +47,11 @@ import org.apache.jackrabbit.oak.plugins.tree.impl.TreeProviderService;
 import org.apache.jackrabbit.oak.plugins.version.VersionHook;
 import org.apache.jackrabbit.oak.query.QueryEngineSettings;
 import org.apache.jackrabbit.oak.security.internal.SecurityProviderBuilder;
-import org.apache.jackrabbit.oak.segment.SegmentNodeStoreBuilders;
-import org.apache.jackrabbit.oak.segment.file.FileStore;
-import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder;
 import org.apache.jackrabbit.oak.spi.security.ConfigurationParameters;
 import org.apache.jackrabbit.oak.spi.security.SecurityProvider;
+import org.apache.jackrabbit.oak.spi.security.authentication.ConfigurationUtil;
+import org.apache.jackrabbit.oak.spi.security.authorization.AuthorizationConfiguration;
+import org.apache.jackrabbit.oak.spi.security.principal.PrincipalConfiguration;
 import org.apache.jackrabbit.oak.spi.security.user.UserConfiguration;
 import org.apache.jackrabbit.oak.spi.security.user.util.UserUtil;
 import org.apache.jackrabbit.oak.spi.state.NodeStore;
@@ -75,7 +76,13 @@ public abstract class OakBeanFactory {
 	 * @return
 	 */
 	public abstract @Nonnull RepositoryProperties getProperties();
-
+	/**
+	 * Get a node store
+	 * @return
+	 * @throws Exception
+	 */
+	public abstract NodeStore getNodeStore() throws Exception;
+	
 	@Bean(name="securityProvider")
 	public SecurityProvider getSecurityProvider() throws Exception {
 	    RootProvider rootProvider = new RootProviderService(); 
@@ -86,6 +93,27 @@ public abstract class OakBeanFactory {
 	    securityProviderBuilder.withTreeProvider(treeProvider);
         return securityProviderBuilder.build();
 	}
+	
+	@Bean(name="userConfiguration")
+	public UserConfiguration getUserConfiguration(@Nonnull final SecurityProvider securityProvider) throws Exception {
+		return getConfig(securityProvider, UserConfiguration.class);
+	}
+	
+	@Bean(name="principalConfiguration")
+	public PrincipalConfiguration getPrincipalManager(@Nonnull final SecurityProvider securityProvider) throws Exception {
+		return getConfig(securityProvider, PrincipalConfiguration.class);
+	}
+	
+	@Bean(name="authorizationConfiguration")
+	public AuthorizationConfiguration getAuthorizationConfiguration(@Nonnull final SecurityProvider securityProvider) throws Exception {
+		return getConfig(securityProvider, AuthorizationConfiguration.class);
+	}
+	
+	@Bean(name="namePathMapper")
+	public NamePathMapper getNamePathMapper() {
+		return NamePathMapper.DEFAULT;
+	}
+
 	
 	@Bean(name="oak")
 	public Oak getOak(@Nonnull final SecurityProvider securityProvider) throws Exception {
@@ -122,6 +150,17 @@ public abstract class OakBeanFactory {
 		return new SimpleCredentials(properties.getAdminUser(), properties.getAdminPassword().toCharArray());
 	}
 
+	@Bean(name="adminUser")
+    public SimpleCredentials getAdminCredentials(@Nonnull final UserConfiguration userConfiguration) {
+        String adminId = UserUtil.getAdminId(userConfiguration.getParameters());
+        return new SimpleCredentials(adminId, adminId.toCharArray());
+    }
+
+    @Bean("securityConfiguration")
+    public Configuration getConfiguration() {
+        return ConfigurationUtil.getDefaultConfiguration(getSecurityConfigParameters());
+    }
+	
 	protected void resolveProperty(final Map<String, String> props, final Context ctxt, final String key, final String defaultValue) {
 		String value = System.getProperty(key, defaultValue);
 		if (ctxt != null)
@@ -135,27 +174,6 @@ public abstract class OakBeanFactory {
 			}
 		if (StringUtils.isNotEmpty(value))
 			props.put(key, value);
-	}
-	
-	/**
-	 * Create a file system node store
-	 * @return
-	 * @throws Exception
-	 */
-	protected NodeStore getNodeStore() throws Exception {
-		RepositoryProperties properties = getProperties();
-		if (StringUtils.isBlank(properties.getRepositoryPath())) {
-			throw new Exception("The configuration for path cannot be empty");
-		}
-		File repositoryDir = new File(properties.getRepositoryPath());
-		if (repositoryDir.isFile()) {
-			throw new Exception("The repository name points to a file");
-		}
-		else if (!(repositoryDir.exists() || repositoryDir.mkdirs())) {
-			throw new Exception("Cannot make directory at " + repositoryDir.getPath());
-		}
-		FileStore segmentStore = FileStoreBuilder.fileStoreBuilder(repositoryDir).withMaxFileSize(1).build();			
-        return SegmentNodeStoreBuilders.builder(segmentStore).build();			
 	}
 	
 	protected ConfigurationParameters getConfigurationParameters() {
@@ -174,4 +192,12 @@ public abstract class OakBeanFactory {
         oak.with(new TypeEditorProvider());
         oak.with(new ConflictValidatorProvider());		
 	}
+	
+    protected ConfigurationParameters getSecurityConfigParameters() {
+        return ConfigurationParameters.EMPTY;
+    }
+	
+    protected <T> T getConfig(final SecurityProvider securityProvider, Class<T> configClass) {
+        return securityProvider.getConfiguration(configClass);
+    }
 }

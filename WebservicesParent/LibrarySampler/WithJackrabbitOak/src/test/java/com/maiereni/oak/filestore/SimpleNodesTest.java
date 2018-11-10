@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.oak;
+package com.maiereni.oak.filestore;
 
 import static org.junit.Assert.fail;
 
@@ -40,18 +40,16 @@ import org.apache.jackrabbit.oak.spi.security.ConfigurationParameters;
 import org.apache.jackrabbit.oak.spi.security.principal.EveryonePrincipal;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Petre Maierean
  *
  */
-public class SimpleNodesTest extends BaseOakTests {
+public class SimpleNodesTest extends BaseFileStoreTest {
 	private static final String ENCODING = "UTF-8";
-	private static final Logger logger = LoggerFactory.getLogger(SimpleNodesTest.class);
 	private Repository repo;
 	private SimpleCredentials su;
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -86,7 +84,7 @@ public class SimpleNodesTest extends BaseOakTests {
 	        AccessControlUtils.addAccessControlEntry(session, "/", EveryonePrincipal.getInstance(), new String[]{Privilege.JCR_READ}, true);
 	        AccessControlUtils.addAccessControlEntry(session, "/jcr:system", EveryonePrincipal.getInstance(), new String[]{Privilege.JCR_READ}, false);
 	        session.save();
-	        logger.debug("All test are good");
+	        logger.debug("Tested adding nodes have been successful");
 		}
 		catch(Exception e) {
 			logger.error("Failed to login", e);
@@ -102,28 +100,6 @@ public class SimpleNodesTest extends BaseOakTests {
 				}
 		}
 	}
-
-	public void testAddingUser() {
-		Session session = null;
-		try {
-			session = repo.login(su);
-			Node root = session.getRootNode();
-		}
-		catch(Exception e) {
-			logger.error("Failed to login", e);
-			fail("Not yet implemented");
-		}
-		finally {
-			if (session != null)
-				try {
-					session.logout();
-				}
-				catch(Exception e) {
-					
-				}
-		}
-	}
-	
     
     protected ConfigurationParameters getSecurityConfigParameters() {
         return ConfigurationParameters.EMPTY;

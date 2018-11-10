@@ -26,9 +26,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author Petre Maierean
  *
  */
-public abstract class BaseOakTests {
-	private static final Logger logger = LoggerFactory.getLogger(BaseOakTests.class);
-	protected static final ApplicationContext APPLICATION_CONTEXT;
+public abstract class BaseOakTests {	
+	private static final Logger _logger = LoggerFactory.getLogger(BaseOakTests.class);
+	public final Logger logger = LoggerFactory.getLogger(getClass());
+	
+	public abstract ApplicationContext getApplicationContext();
 	
 	/**
 	 * Get a bean by class
@@ -36,7 +38,7 @@ public abstract class BaseOakTests {
 	 * @return
 	 */
 	public <T> T getBean(final Class<T> clazz) {
-		return APPLICATION_CONTEXT.getBean(clazz);
+		return getApplicationContext().getBean(clazz);
 	}
 	
 	/**
@@ -45,15 +47,23 @@ public abstract class BaseOakTests {
 	 * @return
 	 */
 	public <T> T getBean(final String name, final Class<T> clazz) {
-		return APPLICATION_CONTEXT.getBean(name, clazz);
+		return getApplicationContext().getBean(name, clazz);
 	}
-
-	static {
+	
+	public static ApplicationContext initialize(final String applicationPath) {
 		try {
-			APPLICATION_CONTEXT = new ClassPathXmlApplicationContext("/com/maiereni/sample/oak/test/application.xml");
+			final ApplicationContext ret = new ClassPathXmlApplicationContext(applicationPath);
+			 _logger.debug("Configuration has been loaded from " + applicationPath);
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+				public void run() {
+					_logger.debug("Clean up");
+					ret.getBean(Cleaner.class).cleanup();
+				}				
+			});			 
+			return ret;
 		}
 		catch(Exception e) {
-			logger.error("Failed to load the test context", e);
+			 _logger.error("Failed to load the test context from " + applicationPath);
 			throw new java.lang.ExceptionInInitializerError(e);
 		}
 	}

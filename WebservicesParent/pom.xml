@@ -219,6 +219,12 @@
 				<artifactId>jai_codec</artifactId>
 				<version>1.1.3</version>
 			</dependency>
+			<!-- Jackrabbit OCM -->
+			<dependency>
+				<groupId>org.apache</groupId>
+				<artifactId>jackrabbit-ocm</artifactId>
+				<version>2.0.1-SNAPSHOT</version>
+			</dependency>
 			<!-- Jackrabbit Oak -->
 			<dependency>
 				<groupId>org.apache.jackrabbit</groupId>
@@ -244,7 +250,25 @@
 			    <groupId>com.codahale.metrics</groupId>
 			    <artifactId>metrics-core</artifactId>
 			    <version>3.0.2</version>
-			</dependency>				
+			</dependency>
+			<!-- Ehcache -->
+			<dependency>
+			    <groupId>javax.cache</groupId>
+			    <artifactId>cache-api</artifactId>
+			    <version>1.1.0</version>
+			</dependency>			
+			<dependency>
+			    <groupId>org.ehcache</groupId>
+			    <artifactId>ehcache</artifactId>
+			    <version>3.4.0</version>
+			</dependency>
+			<!-- Spring Mock -->
+			<dependency>
+			    <groupId>org.springframework</groupId>
+			    <artifactId>spring-test</artifactId>
+			    <version>${spring.version}</version>
+			    <scope>test</scope>
+			</dependency>
 		</dependencies>	
 	</dependencyManagement>
 	<build>

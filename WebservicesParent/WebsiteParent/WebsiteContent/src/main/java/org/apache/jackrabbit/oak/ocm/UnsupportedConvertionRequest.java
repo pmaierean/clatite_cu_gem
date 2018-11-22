@@ -15,44 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.host.web.jcr;
-
-import java.io.Serializable;
-import java.util.Locale;
-
-import org.apache.jackrabbit.oak.ocm.annotation.Field;
-import org.apache.jackrabbit.oak.ocm.annotation.Node;
+package org.apache.jackrabbit.oak.ocm;
 
 /**
  * @author Petre Maierean
  *
  */
-@Node(jcrType="maiereni:testMessage")
-public class TextMessage implements Serializable {
-	private static final long serialVersionUID = 3320292113452939049L;
-	@Field
-	private String key;
-	@Field
-	private String message;
-	@Field
-	private Locale locale;
-	public String getKey() {
-		return key;
+public class UnsupportedConvertionRequest extends RuntimeException {
+	private static final long serialVersionUID = 2101606170629691786L;
+
+	public UnsupportedConvertionRequest() {
+		
 	}
-	public void setKey(String key) {
-		this.key = key;
-	}
-	public String getMessage() {
-		return message;
-	}
-	public void setMessage(String message) {
-		this.message = message;
-	}
-	public Locale getLocale() {
-		return locale;
-	}
-	public void setLocale(Locale locale) {
-		this.locale = locale;
-	}
-	
 }

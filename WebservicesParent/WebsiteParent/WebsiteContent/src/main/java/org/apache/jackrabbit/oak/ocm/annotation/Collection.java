@@ -15,44 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.host.web.jcr;
+package org.apache.jackrabbit.oak.ocm.annotation;
 
-import java.io.Serializable;
-import java.util.Locale;
-
-import org.apache.jackrabbit.oak.ocm.annotation.Field;
-import org.apache.jackrabbit.oak.ocm.annotation.Node;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @author Petre Maierean
  *
  */
-@Node(jcrType="maiereni:testMessage")
-public class TextMessage implements Serializable {
-	private static final long serialVersionUID = 3320292113452939049L;
-	@Field
-	private String key;
-	@Field
-	private String message;
-	@Field
-	private Locale locale;
-	public String getKey() {
-		return key;
-	}
-	public void setKey(String key) {
-		this.key = key;
-	}
-	public String getMessage() {
-		return message;
-	}
-	public void setMessage(String message) {
-		this.message = message;
-	}
-	public Locale getLocale() {
-		return locale;
-	}
-	public void setLocale(Locale locale) {
-		this.locale = locale;
-	}
-	
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD, ElementType.METHOD })
+public @interface Collection {
+	String jcrName() default "";
 }

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.oak.filestore;
+package com.maiereni.oak.documentStore.derby;
 
 import java.io.File;
 
@@ -27,7 +27,7 @@ import com.maiereni.oak.BaseOakTests;
  * @author Petre Maierean
  *
  */
-public abstract class BaseFileStoreTest extends BaseOakTests {
+public abstract class BaseDocumentStoreTest extends BaseOakTests {
 	protected static final ApplicationContext APPLICATION_CONTEXT;
 	
 	public ApplicationContext getApplicationContext() {
@@ -44,8 +44,9 @@ public abstract class BaseFileStoreTest extends BaseOakTests {
 			if (!tmpDir.mkdirs()) {
 				throw new Exception();
 			}
-			System.setProperty(FileSystemOakBeanFactory.REPO_PATH_KEY, tmpDir.getPath());
-			APPLICATION_CONTEXT = initialize("/com/maiereni/sample/oak/test/filestore/application.xml");
+			System.setProperty(DerbyDocumentNodeStoreOakBeanFactory.DATABASE_PATH, tmpDir.getPath());
+			System.setProperty(DerbyDocumentNodeStoreOakBeanFactory.DATABASE_NAME, "test;create=true");
+			APPLICATION_CONTEXT = initialize("/com/maiereni/sample/oak/test/documentstore/derbyApplication.xml");
 		}
 		catch(Exception e) {
 			throw new ExceptionInInitializerError(e);

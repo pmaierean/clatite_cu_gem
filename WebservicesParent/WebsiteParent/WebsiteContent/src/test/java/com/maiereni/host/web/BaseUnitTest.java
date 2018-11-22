@@ -15,56 +15,54 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.oak;
+package com.maiereni.host.web;
+
+import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.maiereni.host.web.util.impl.EncryptorFactory;
+
 /**
+ * Creates context that's necessary to test the website without the WebContainer
+ * 
  * @author Petre Maierean
  *
  */
-public abstract class BaseOakTests {	
-	public static final String ENCODING = "UTF-8";
-	private static final Logger _logger = LoggerFactory.getLogger(BaseOakTests.class);
-	public final Logger logger = LoggerFactory.getLogger(getClass());
+public abstract class BaseUnitTest {
+	private static final Logger logger = LoggerFactory.getLogger(BaseUnitTest.class);
+	private static final ApplicationContext applicationContext = loadTestContext();
 	
-	public abstract ApplicationContext getApplicationContext();
-	
-	/**
-	 * Get a bean by class
-	 * @param clazz
-	 * @return
-	 */
-	public <T> T getBean(final Class<T> clazz) {
-		return getApplicationContext().getBean(clazz);
+	public <T> T getBean(@Nonnull Class<T> clazz) {
+		return applicationContext.getBean(clazz);
 	}
 	
-	/**
-	 * Get a bean by class
-	 * @param clazz
-	 * @return
-	 */
-	public <T> T getBean(final String name, final Class<T> clazz) {
-		return getApplicationContext().getBean(name, clazz);
+	public <T> T getBean(@Nonnull String name, @Nonnull Class<T> clazz) {
+		return applicationContext.getBean(name, clazz);
 	}
 	
-	public static ApplicationContext initialize(final String applicationPath) {
+	private static ApplicationContext loadTestContext() {
 		try {
-			final ApplicationContext ret = new ClassPathXmlApplicationContext(applicationPath);
-			 _logger.debug("Configuration has been loaded from " + applicationPath);
+			System.setProperty(EncryptorFactory.KEY_STORE_PATH, "classpath:/testkeystore.jks");
+			System.setProperty(EncryptorFactory.KEY_STORE_PASSWORD, "changeit");
+			final ClassPathXmlApplicationContext ctxt = new ClassPathXmlApplicationContext("/test/testApplication.xml");
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 				public void run() {
-					_logger.debug("Clean up");
-					ret.getBean(Cleaner.class).cleanup();
+					try {
+						ctxt.getBean(Cleaner.class).cleanup();
+					}
+					catch(Exception e) {
+						logger.error("Failed to cleanup", e);
+					}
 				}				
 			});			 
-			return ret;
+			return ctxt;
 		}
 		catch(Exception e) {
-			 _logger.error("Failed to load the test context from " + applicationPath, e);
+			logger.error("Failed to initialize", e);
 			throw new java.lang.ExceptionInInitializerError(e);
 		}
 	}

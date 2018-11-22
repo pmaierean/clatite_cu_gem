@@ -18,9 +18,7 @@
 package com.maiereni.oak.filestore;
 
 import java.io.File;
-import java.util.UUID;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.oak.segment.SegmentNodeStoreBuilders;
 import org.apache.jackrabbit.oak.segment.file.FileStore;
@@ -42,29 +40,28 @@ import com.maiereni.oak.bo.RepositoryProperties;
 @Component
 public class FileSystemOakBeanFactory extends OakBeanFactory {
 	protected static final Logger logger = LoggerFactory.getLogger(FileSystemOakBeanFactory.class);
+	public static final String REPO_PATH_KEY = "repository.path";
 
+	@Bean(name="repositoryProperties")
 	@Override
-	public RepositoryProperties getProperties() {
+	public RepositoryProperties getProperties() throws Exception {
 		RepositoryProperties props = new RepositoryProperties();
-		String repositoryPath = System.getProperty("repository.path");
+		String repositoryPath = getProperty(REPO_PATH_KEY, "");
 		if (StringUtils.isBlank(repositoryPath)) {
-			File fDir = new File(FileUtils.getTempDirectoryPath(), UUID.randomUUID().toString().replaceAll("-", ""));
-			repositoryPath = fDir.getPath();
+			throw new Exception("the repository path is expected set");
 		}
-		
 		props.setRepositoryPath(repositoryPath);
-		props.setAdminPassword("admin");
-		props.setAdminUser("admin");
+		props.setAdminPassword("repository.admin");
+		props.setAdminUser("repository.admin");
 		return props;
 	}
 	
 	@Bean(name="repositoryDir")
-	public File getRepositoryDir() throws Exception  {
-		RepositoryProperties properties = getProperties();
-		if (StringUtils.isBlank(properties.getRepositoryPath())) {
+	public File getRepositoryDir(final RepositoryProperties repositoryProperties) throws Exception  {
+		if (StringUtils.isBlank(repositoryProperties.getRepositoryPath())) {
 			throw new Exception("The configuration for path cannot be empty");
 		}
-		File repositoryDir = new File(properties.getRepositoryPath());
+		File repositoryDir = new File(repositoryProperties.getRepositoryPath());
 		if (repositoryDir.isFile()) {
 			throw new Exception("The repository name points to a file");
 		}
@@ -74,19 +71,22 @@ public class FileSystemOakBeanFactory extends OakBeanFactory {
 		return repositoryDir;
 	}
 	
+	@Bean(name="segmentStore")
+	public FileStore getFileStore(final File repositoryDir) throws Exception {
+		FileStoreBuilder fileStoreBuilder = FileStoreBuilder.fileStoreBuilder(repositoryDir);
+		fileStoreBuilder.withMaxFileSize(1);
+		return fileStoreBuilder.build();			
+	}
+	
 	/**
 	 * Create a file system node store
 	 * @return
 	 * @throws Exception
 	 */
-	@Override
-	public NodeStore getNodeStore() throws Exception {
-		File repositoryDir = getRepositoryDir();
-		FileStoreBuilder fileStoreBuilder = FileStoreBuilder.fileStoreBuilder(repositoryDir);
-		fileStoreBuilder.withMaxFileSize(1);
-		FileStore segmentStore = fileStoreBuilder.build();			
+	@Bean(name="nodeStore")
+	public NodeStore getNodeStore(final File repositoryDir, final FileStore segmentStore) throws Exception {
 		NodeStore ret = SegmentNodeStoreBuilders.builder(segmentStore).build();			
-		logger.debug("Node store has been created at " + repositoryDir);
+		logger.debug("Node store has been created at {}", repositoryDir);
 		return ret;
 	}
 }

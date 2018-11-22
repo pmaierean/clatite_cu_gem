@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.oak.filestore;
+package com.maiereni.oak.documentStore.derby;
 
 import static org.junit.Assert.fail;
 
@@ -42,11 +42,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Simple unit test for the Derby based Document Node Store
  * @author Petre Maierean
  *
  */
-public class SimpleNodesTest extends BaseFileStoreTest {
+public class SimpleDerbyNodeTest extends BaseDocumentStoreTest {
 	private Repository repo;
 	private SimpleCredentials su;
 	
@@ -55,6 +54,7 @@ public class SimpleNodesTest extends BaseFileStoreTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		logger.debug("Setup ");
 		Jcr jcr = getBean(Jcr.class);
 		repo = jcr.createRepository();
 		su = getBean("adminUser", SimpleCredentials.class);

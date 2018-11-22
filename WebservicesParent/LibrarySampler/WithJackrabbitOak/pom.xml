@@ -21,7 +21,7 @@
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.commons</groupId>
+			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 		</dependency>
 		<dependency>
@@ -29,8 +29,8 @@
 		    <artifactId>commons-compress</artifactId>
 		</dependency>
 		<dependency>
-		    <groupId>commons-io</groupId>
-		    <artifactId>commons-io</artifactId>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-dbcp2</artifactId>		
 		</dependency>
 		<dependency>
 		    <groupId>org.checkerframework</groupId>
@@ -54,10 +54,16 @@
 		    <groupId>org.apache.jackrabbit</groupId>
 		    <artifactId>oak-jcr</artifactId>
 		</dependency>
+		<!-- Document store -->
 		<dependency>
 		    <groupId>org.apache.jackrabbit</groupId>
 		    <artifactId>oak-store-document</artifactId>
-		</dependency>		
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.derby</groupId>
+		    <artifactId>derby</artifactId>
+		    <version>10.14.2.0</version>
+		</dependency>
 		<dependency>
 		    <groupId>com.codahale.metrics</groupId>
 		    <artifactId>metrics-core</artifactId>

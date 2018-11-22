@@ -13,7 +13,7 @@
 
 	<appender name="fileAppender" class="org.apache.log4j.DailyRollingFileAppender">
 		<!-- eg: TL_onlinePayout.log -->
-		<param name="File" value="/opt/local/logger/LibrarySampler/withHibernate.log" />
+		<param name="File" value="/opt/local/logger/LibrarySampler/withOak.log" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="[%d{dd MMM yyyy HH:mm:ss,SSS}],[%t%n],[%-5p],[%t] (%F:%L), %m%n" />
 		</layout>

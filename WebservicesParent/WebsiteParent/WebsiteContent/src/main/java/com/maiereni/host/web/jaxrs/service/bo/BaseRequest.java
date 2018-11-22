@@ -27,7 +27,7 @@ import java.util.Locale;
  */
 public abstract class BaseRequest implements Serializable {
 	private static final long serialVersionUID = -609470033530965687L;
-	private String repoUser;
+	private String sessionToken;
 	private Locale locale;
 	
 	public Locale getLocale() {
@@ -36,10 +36,10 @@ public abstract class BaseRequest implements Serializable {
 	public void setLocale(Locale locale) {
 		this.locale = locale;
 	}
-	public String getRepoUser() {
-		return repoUser;
+	public String getSessionToken() {
+		return sessionToken;
 	}
-	public void setRepoUser(String repoUser) {
-		this.repoUser = repoUser;
+	public void setSessionToken(String sessionToken) {
+		this.sessionToken = sessionToken;
 	}
 }

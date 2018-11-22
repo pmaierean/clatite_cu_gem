@@ -68,17 +68,16 @@ public class EncryptorFactory extends BaseBeanFactory{
 	public X509Certificate getCertificate(@Nonnull final SecurityConfiguration securityConfiguration) throws Exception {
 		if (StringUtils.isAnyEmpty(securityConfiguration.getKeyStorePath(), securityConfiguration.getKeyStorePassword()))
 			throw new Exception("The SSL settings cannot be found");
-		try (InputStream is = new FileInputStream(securityConfiguration.getKeyStorePath())) {
+		try (InputStream is = getInputStream(securityConfiguration.getKeyStorePath())) {
 			return getCertificate(is, securityConfiguration.getKeyAlias(), securityConfiguration.getKeyStorePassword());
 		}
 	}
-	
 	
 	@Bean
 	public PrivateKey getKey(@Nonnull final SecurityConfiguration securityConfiguration) throws Exception {
 		if (StringUtils.isAnyEmpty(securityConfiguration.getKeyStorePath(), securityConfiguration.getKeyStorePassword()))
 			throw new Exception("The SSL settings cannot be found");
-		try (InputStream is = new FileInputStream(securityConfiguration.getKeyStorePath())) {
+		try (InputStream is = getInputStream(securityConfiguration.getKeyStorePath())) {
 			return getKey(is, securityConfiguration.getKeyAlias(), securityConfiguration.getKeyStorePassword());
 		}
 	}
@@ -128,4 +127,19 @@ public class EncryptorFactory extends BaseBeanFactory{
 	    return ret;
 	}
 
+	private static final String CLASSPATH = "classpath:";
+	private InputStream getInputStream(final String path) throws Exception {
+		InputStream is = null;
+		if (path.startsWith(CLASSPATH)) {
+			is = getClass().getResourceAsStream(path.substring(CLASSPATH.length()));
+		}
+		else {
+			is = new FileInputStream(path);
+		}
+		if (is == null) {
+			throw new Exception("Resource not found at " + path);
+		}
+		return is;
+	}
+	
 }

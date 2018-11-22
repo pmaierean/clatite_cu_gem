@@ -26,7 +26,7 @@ import java.util.HashMap;
  * @author Petre Maierean
  *
  */
-public class RepositoryProperties extends HashMap<String, String> implements Serializable {
+public class RepositoryProperties extends HashMap<String, Object> implements Serializable {
 	private static final long serialVersionUID = -2131787866133722575L;
 	private String repositoryPath, adminUser, adminPassword;
 	public String getRepositoryPath() {
@@ -46,5 +46,53 @@ public class RepositoryProperties extends HashMap<String, String> implements Ser
 	}
 	public void setAdminPassword(String adminPassword) {
 		this.adminPassword = adminPassword;
+	}
+	
+	/**
+	 * Get the property as a string
+	 * @param key
+	 * @param defValue
+	 * @return
+	 */
+	public String getAsString(final String key, final String defValue) {
+		String ret = defValue;
+		if (isProperty(key, String.class)) {
+			ret = get(key, String.class);
+		}
+		return ret;
+	}
+	/**
+	 * Get a property of a given type
+	 * @param key
+	 * @param clazz
+	 * @return
+	 */
+	public <T> T get(final String key, final Class<T> clazz) {
+		T ret = null;
+		Object o = get(key);
+		if (o != null) {
+			if (clazz.isInstance(o)) {
+				ret = clazz.cast(o);
+			}
+			else
+				throw new RepositoryClassCastException("Cannot cast " + o.getClass().getName() + " as " + clazz.getName());
+		}
+		return ret;
+	}
+	
+	/**
+	 * Check if it has a property and it is of the given type
+	 * @param key
+	 * @param clazz
+	 * @return
+	 */
+	public <T> boolean isProperty(final String key, final Class<T> clazz) {
+		boolean ret = false;
+		Object o = get(key);
+		if (o != null && clazz.isInstance(o)) {
+			ret = true;
+		}
+		
+		return ret;
 	}
 }

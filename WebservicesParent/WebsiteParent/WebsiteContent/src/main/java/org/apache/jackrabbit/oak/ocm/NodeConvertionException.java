@@ -15,53 +15,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.host.web.jcr;
-
-import java.io.Serializable;
-import java.util.List;
-
-import org.apache.jackrabbit.oak.ocm.annotation.Collection;
-import org.apache.jackrabbit.oak.ocm.annotation.Field;
-import org.apache.jackrabbit.oak.ocm.annotation.Node;
+package org.apache.jackrabbit.oak.ocm;
 
 /**
  * @author Petre Maierean
  *
  */
-@Node(jcrType="maiereni:menu")
-public class Menu implements Serializable {
-	private static final long serialVersionUID = 8937920530370300188L;
-	@Field
-	private String name;
-	@Field
+public class NodeConvertionException extends RuntimeException {
+	private static final long serialVersionUID = 3644038450965155768L;
+
 	private String path;
-	@Field
-	private String title;
-	@Collection
-	private List<Menu> subMenus;
-	public String getName() {
-		return name;
+	
+	public NodeConvertionException(final String path, final Exception ex) {
+		super("Cannot cast node at '" + path + "' to the requested type", ex);
+		this.setPath(path);
 	}
-	public void setName(String name) {
-		this.name = name;
-	}
+
 	public String getPath() {
 		return path;
 	}
+
 	public void setPath(String path) {
 		this.path = path;
-	}
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
-	}
-	public List<Menu> getSubMenus() {
-		return subMenus;
-	}
-	public void setSubMenus(List<Menu> subMenus) {
-		this.subMenus = subMenus;
 	}
 	
 }

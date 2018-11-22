@@ -15,44 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.host.web.jcr;
-
-import java.io.Serializable;
-import java.util.Locale;
-
-import org.apache.jackrabbit.oak.ocm.annotation.Field;
-import org.apache.jackrabbit.oak.ocm.annotation.Node;
+package com.maiereni.host.web.jaxrs.service.exceptions;
 
 /**
+ * An exception class for the cases when the User session has expired
  * @author Petre Maierean
  *
  */
-@Node(jcrType="maiereni:testMessage")
-public class TextMessage implements Serializable {
-	private static final long serialVersionUID = 3320292113452939049L;
-	@Field
-	private String key;
-	@Field
-	private String message;
-	@Field
-	private Locale locale;
-	public String getKey() {
-		return key;
-	}
-	public void setKey(String key) {
-		this.key = key;
-	}
-	public String getMessage() {
-		return message;
-	}
-	public void setMessage(String message) {
-		this.message = message;
-	}
-	public Locale getLocale() {
-		return locale;
-	}
-	public void setLocale(Locale locale) {
-		this.locale = locale;
+public class UserExpired extends Exception {
+	private static final long serialVersionUID = 2515571273939194486L;
+	private String sessionToken;
+	
+	public UserExpired(final String sessionToken) {
+		this.sessionToken = sessionToken;
 	}
 	
+	public String getSessionToken() {
+		return sessionToken;
+	}
 }

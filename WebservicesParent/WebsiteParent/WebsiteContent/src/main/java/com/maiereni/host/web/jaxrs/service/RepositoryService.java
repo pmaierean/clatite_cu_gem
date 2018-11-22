@@ -39,7 +39,7 @@ public interface RepositoryService {
 	 * @return
 	 * @throws Exception
 	 */
-	List<? extends Object> getResources(RepositoryQueryRequest request, Class<? extends Object> resultType) throws Exception;
+	<T> List<T> getResources(RepositoryQueryRequest request, Class<T> resultType) throws Exception;
 	/**
 	 * Add a node
 	 * 

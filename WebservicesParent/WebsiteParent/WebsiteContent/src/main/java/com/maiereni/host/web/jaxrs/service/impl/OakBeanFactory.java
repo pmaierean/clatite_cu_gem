@@ -15,13 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.oak;
-
+package com.maiereni.host.web.jaxrs.service.impl;
 
 import javax.annotation.Nonnull;
 import javax.jcr.SimpleCredentials;
-import javax.security.auth.login.Configuration;
+import javax.sql.DataSource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.oak.InitialContent;
 import org.apache.jackrabbit.oak.Oak;
 import org.apache.jackrabbit.oak.api.ContentRepository;
@@ -29,6 +29,7 @@ import org.apache.jackrabbit.oak.jcr.Jcr;
 import org.apache.jackrabbit.oak.namepath.NamePathMapper;
 import org.apache.jackrabbit.oak.plugins.commit.ConflictValidatorProvider;
 import org.apache.jackrabbit.oak.plugins.commit.JcrConflictHandler;
+import org.apache.jackrabbit.oak.plugins.document.rdb.RDBDocumentNodeStoreBuilder;
 import org.apache.jackrabbit.oak.plugins.index.WhiteboardIndexEditorProvider;
 import org.apache.jackrabbit.oak.plugins.index.property.PropertyIndexEditorProvider;
 import org.apache.jackrabbit.oak.plugins.index.property.PropertyIndexProvider;
@@ -43,6 +44,8 @@ import org.apache.jackrabbit.oak.plugins.tree.impl.TreeProviderService;
 import org.apache.jackrabbit.oak.plugins.version.VersionHook;
 import org.apache.jackrabbit.oak.query.QueryEngineSettings;
 import org.apache.jackrabbit.oak.security.internal.SecurityProviderBuilder;
+import org.apache.jackrabbit.oak.spi.blob.BlobStore;
+import org.apache.jackrabbit.oak.spi.blob.FileBlobStore;
 import org.apache.jackrabbit.oak.spi.security.ConfigurationParameters;
 import org.apache.jackrabbit.oak.spi.security.SecurityProvider;
 import org.apache.jackrabbit.oak.spi.security.authentication.ConfigurationUtil;
@@ -56,22 +59,76 @@ import org.apache.jackrabbit.oak.spi.whiteboard.Whiteboard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-import com.maiereni.oak.bo.RepositoryProperties;
+import com.maiereni.host.web.jaxrs.service.bo.RepositoryProperties;
+import com.maiereni.host.web.util.BaseBeanFactory;
 
 /**
- * A factory class for the repository builder
+ * The factory class for the Services
  * @author Petre Maierean
  *
  */
-public abstract class OakBeanFactory extends PropertiesReader {
+@Configuration
+public class OakBeanFactory extends BaseBeanFactory {
+	public static final String OAK_DATASOURCE = "java:comp/env/jdbc/oak_datasource";
+	public static final String OAK_CACHE_SIZE = "java:comp/env/jdbc/oak_cacheSize";
+	public static final String OAK_CLUSTER_ID = "java:comp/env/jdbc/oak_clusterId";
+	public static final String OAK_BLOB_STORE = "java:comp/env/jdbc/oak_blobStore";
+	public static final String OAK_BLOB_FS = "java:comp/env/jdbc/oak_blobPath";
 	private static final Logger logger = LoggerFactory.getLogger(OakBeanFactory.class);
 
+	public OakBeanFactory() throws Exception {
+		super();
+	}
+
+	@Bean(name="repositoryProperties")
+	public RepositoryProperties getRepositoryProperties() throws Exception {
+		RepositoryProperties ret = new RepositoryProperties();
+		String blobPath = getProperty(OAK_BLOB_FS, null);
+		if (StringUtils.isNotBlank(blobPath)) {
+			FileBlobStore blobStore = new FileBlobStore(blobPath);
+			ret.put(OAK_BLOB_STORE, blobStore);
+		}
+		try {
+			String cacheSize = getProperty(OAK_CACHE_SIZE, "1");
+			ret.put(OAK_CACHE_SIZE, Long.parseLong(cacheSize));
+		}
+		catch(Exception e) {
+			ret.put(OAK_CACHE_SIZE, new Long(1));			
+		}
+		return ret;
+	}
+
 	/**
-	 * Get the properties for the Oak repository
+	 * Get a node store
 	 * @return
+	 * @throws Exception
 	 */
-	public abstract @Nonnull RepositoryProperties getProperties() throws Exception;
+	@Bean(name="nodeStore")
+	public NodeStore getNodeStore(final RepositoryProperties properties) throws Exception {
+		logger.debug("Create the Document node store");
+		DataSource datasource = getContextProperty(OAK_DATASOURCE, DataSource.class);
+		if (datasource == null) {
+			datasource = this.applicationContext.getBean(DataSource.class);
+		}
+		if (datasource == null) {
+			throw new Exception("No datasource found");
+		}
+		RDBDocumentNodeStoreBuilder builder = new RDBDocumentNodeStoreBuilder();
+		builder.setRDBConnection(datasource);
+		long cacheSize = properties.get(OAK_CACHE_SIZE, 1L, Long.class);
+		builder.memoryCacheSize(cacheSize);
+		int clusterId = properties.get(OAK_CLUSTER_ID, 1, Integer.class);
+        builder.setClusterId(clusterId);
+        BlobStore blobStore = properties.get(OAK_BLOB_STORE, null, BlobStore.class);
+        if (blobStore != null) {
+        	builder.setBlobStore(blobStore);
+        }
+        builder.setLogging(false);
+        
+		return builder.build();
+	}
 	
 	@Bean(name="securityProvider")
 	public SecurityProvider getSecurityProvider() throws Exception {
@@ -138,7 +195,7 @@ public abstract class OakBeanFactory extends PropertiesReader {
     }
 
     @Bean("securityConfiguration")
-    public Configuration getConfiguration() {
+    public javax.security.auth.login.Configuration getConfiguration() {
         return ConfigurationUtil.getDefaultConfiguration(getSecurityConfigParameters());
     }
 		
@@ -166,4 +223,5 @@ public abstract class OakBeanFactory extends PropertiesReader {
     protected <T> T getConfig(final SecurityProvider securityProvider, Class<T> configClass) {
         return securityProvider.getConfiguration(configClass);
     }
+
 }

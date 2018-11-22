@@ -23,7 +23,7 @@
 		<appender-ref ref="fileAppender" />
 	</appender>
 	
-	<logger name="com.maiereni.host.web">
+	<logger name="com.maiereni">
 		<level value="debug" />
 	</logger>
 		

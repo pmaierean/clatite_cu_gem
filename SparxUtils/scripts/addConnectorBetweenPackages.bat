@@ -24,9 +24,9 @@ SET CLP=%CLP%;"%JAVA32LIB%\ext\sunjce_provider.jar"
 SET CLP=%CLP%;"%JAVA32LIB%\ext\sunmscapi.jar"
 SET CLP=%CLP%;"%JAVA32LIB%\ext\sunpkcs11.jar"
 SET CLP=%CLP%;"%JAVA32LIB%\ext\zipfs.jar"
-SET CLP=%CLP%;"%CRT_DIR%\..\target\classes"
+SET CLP=%CLP%;"%CRT_DIR%\..\target\SparxUtils-0.0.1-SNAPSHOT.jar"
 SET CLP=%CLP%;"%SPARX_API_PATH%\eaapi.jar"
 
 echo on
 
-%JAVA32% -Djava.library.path="%SPARX_API_PATH%" -Dfile.encoding=Cp1252 -classpath %CLP% com.maiereni.sample.sparx.AddConnectorBetweenPackages %0 %1 %2 %3
+%JAVA32% -Djava.library.path="%SPARX_API_PATH%" -Dfile.encoding=Cp1252 -classpath %CLP% com.maiereni.sample.sparx.AddConnectorBetweenPackages %1 %2 %3 %4

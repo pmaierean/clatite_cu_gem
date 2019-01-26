@@ -45,6 +45,15 @@ public class BaseClient implements Closeable {
 		return repository;
 	}
 	
+	protected String[] getLessOne(final String[] names) {
+		String[] ret = new String[names.length - 1];
+		for(int i=1; i<names.length; i++) {
+			ret[i-1] = names[i];
+		}
+		return ret;
+	}
+	
+	
 	/**
 	 * Close the file and the repository object
 	 */

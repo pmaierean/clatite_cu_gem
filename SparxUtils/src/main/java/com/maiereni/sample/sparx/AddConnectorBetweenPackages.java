@@ -81,27 +81,38 @@ public class AddConnectorBetweenPackages extends BaseClient {
 	protected org.sparx.Package getPackage(final String packagePath) throws Exception {
 		String[] toks = packagePath.split("/");
 		if (toks.length < 2)
-			throw new Exception("The package path must be of the format: model_name/package1/.../package");
+			throw new Exception("The package path must be of the format: model_name/package1/.../package but it is " + packagePath);
 		org.sparx.Package p = getModelPackage(toks[0]);
-		StringBuffer sb = new StringBuffer();
-		sb.append("/").append(toks[0]);
-		for(int i=1; i<toks.length; i++) {
-			sb.append("/").append(toks[i]);
-			Collection<org.sparx.Package> children = p.GetPackages();
-			p = null;
-			for(org.sparx.Package child: children) {
-				if (child.GetName().equals(toks[i])) {
-					p = child;
+		String[] names = getLessOne(toks);
+		org.sparx.Package ret = getNestedPackage(p, names);
+		if (ret == null) 
+			throw new Exception("Cannot resolve '" + packagePath + "' in the model");
+		System.out.println("Found the package at path: " + packagePath);
+		return ret;
+	}
+	
+	private org.sparx.Package getNestedPackage(org.sparx.Package p, String[] names) throws Exception {
+		org.sparx.Package ret = null;
+		Collection<org.sparx.Package> children = p.GetPackages();
+		
+		for(org.sparx.Package child: children) {
+			if (child.GetName().equals(names[0])) {
+				if (names.length == 1) {
+					ret = child;
 					break;
 				}
-			}
-			if (p == null) {
-				throw new Exception("Could not find a package at '" + sb.toString() + "' in the model. ");
-			}
+				else {
+					String[] nnames = getLessOne(names);
+					ret = getNestedPackage(child, nnames);
+					if (ret != null) {
+						break;
+					}
+				}
+			}			
 		}
-		System.out.println("Found the package at path: " + sb.toString());
-		return p;
-	}
+		return ret;
+	} 
+	
 	/**
 	 * Get a model from the EAP file by name
 	 * @param modleName

@@ -21,6 +21,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -286,7 +287,7 @@ public class BaseHttpClient {
             if (sb.length()>0)
                 sb.insert(0, "?");
             sb.insert(0, url);
-            logger.debug("Send GET: " + sb.toString());
+            // logger.debug("Send GET: " + sb.toString());
                
             HttpGet httpGet = new HttpGet(sb.toString());
             return execute(httpGet, cookies, headers, entityProcessor);
@@ -329,13 +330,12 @@ public class BaseHttpClient {
             r.setDomain(c.getDomain());
             r.setPath(c.getPath());
             r.setVersion(c.getVersion());
-            String sAge = "";
             if (c.getExpiryDate() != null) {
                 long age = c.getExpiryDate().getTime() - System.currentTimeMillis()/1000;
-                r.setMaxAge((int)age);
-                sAge = "  age=" + age;
+                int maxAge = BigDecimal.valueOf(age/1000).intValue();
+                r.setMaxAge(maxAge);
             }
-            logger.debug("Add cookie: " + c.getName() + "=" + c.getValue() + sAge);
+            // logger.debug("Add cookie: " + c.getName() + "=" + c.getValue() + sAge);
             ret.add(r);
         }
         return ret;

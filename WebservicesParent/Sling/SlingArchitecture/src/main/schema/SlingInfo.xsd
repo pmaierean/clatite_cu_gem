@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	targetNamespace="http://www.maiereni.com/SlingInfo" 
+	xmlns:tns="http://www.maiereni.com/SlingInfo" elementFormDefault="qualified">
+    <complexType name="Property">
+    	<attribute name="key" type="string"></attribute>
+    	<attribute name="value" type="string"></attribute>
+    </complexType>
+
+	<complexType name="Properties">
+		<sequence>
+			<element name="property" type="tns:Property"  minOccurs="0" maxOccurs="unbounded"></element>
+		</sequence>
+	</complexType>
+
+    <complexType name="Service">
+    	<sequence>
+    		<element name="type" type="string" minOccurs="0" maxOccurs="unbounded"></element>
+    		<element name="properties" type="tns:Properties" minOccurs="0"></element>
+    	</sequence>
+    	<attribute name="description" type="string"></attribute>
+    	<attribute name="id" type="string"></attribute>
+    	<attribute name="name" type="string"></attribute>
+    	<attribute name="scope" type="string"></attribute>
+    </complexType>
+    
+    <element name="Service" type="tns:Service"></element>
+
+	<complexType name="Services">
+		<sequence>
+    		<element name="service" type="tns:Service" minOccurs="0" maxOccurs="unbounded"></element>		
+		</sequence>
+	</complexType>
+
+    <complexType name="Component">
+    	<sequence>
+    		<element name="services" type="tns:Services" minOccurs="0"></element>
+    		<element name="properties" type="tns:Properties" minOccurs="0"></element>
+    	</sequence>    
+    	<attribute name="id" type="string"></attribute>
+    	<attribute name="name" type="string"></attribute>
+    	<attribute name="implementationClass" type="string"></attribute>
+    	<attribute name="scope" type="string"></attribute>
+    	<attribute name="state" type="string"></attribute>
+    </complexType>
+    
+    <element name="Component" type="tns:Component"></element>
+	
+	<complexType name="BundleRef">
+    	<attribute name="id" type="string"></attribute>
+    	<attribute name="name" type="string"></attribute>		
+	</complexType>
+
+	<complexType name="BundleRefs">
+		<sequence>
+    		<element name="bundleRef" type="tns:BundleRef" minOccurs="0" maxOccurs="unbounded"></element>		
+		</sequence>
+	</complexType>
+
+	<complexType name="Components">
+		<sequence>
+    		<element name="component" type="tns:Component" minOccurs="0" maxOccurs="unbounded"></element>		
+		</sequence>
+	</complexType>
+	
+	<complexType name="Exports">
+		<sequence>
+			<element name="pkg" type="string" minOccurs="0" maxOccurs="unbounded"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Imports">
+		<sequence>
+			<element name="pkg" type="string" minOccurs="0" maxOccurs="unbounded"></element>
+		</sequence>
+	</complexType>
+
+    <complexType name="Bundle">
+    	<sequence>
+    		<element name="components" type="tns:Components" minOccurs="0"></element>
+    		<element name="services" type="tns:Services" minOccurs="0"></element>
+    		<element name="exportPackages" type="tns:Exports" minOccurs="0"></element>
+    		<element name="imports" type="tns:BundleRefs" minOccurs="0"></element>
+    		<element name="importPackages" type="tns:Imports" minOccurs="0"></element>
+    	</sequence>
+    	<attribute name="id" type="string"></attribute>
+    	<attribute name="name" type="string"></attribute>
+    	<attribute name="version" type="string"></attribute>
+    	<attribute name="description" type="string"></attribute>
+    	<attribute name="vendor" type="string"></attribute>
+    	<attribute name="startLevel" type="int"></attribute>
+    	<attribute name="group" type="string"></attribute>
+    </complexType>
+    
+    <element name="Bundle" type="tns:Bundle"></element>
+
+    <complexType name="Model">
+    	<sequence>
+    		<element name="bundles" type="tns:Bundle" minOccurs="0" maxOccurs="unbounded"></element>
+    	</sequence>
+    	<attribute name="name" type="string"></attribute>
+    </complexType>
+    
+    <element name="Model" type="tns:Model"></element>
+</schema>

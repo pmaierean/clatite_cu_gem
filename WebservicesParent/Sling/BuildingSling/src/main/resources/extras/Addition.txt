@@ -1,0 +1,56 @@
+[feature name=oak_derby]
+
+[artifacts startLevel=15]
+	org.owasp.esapi/esapi/2.0_rc9
+	
+
+[artifacts startLevel=20 runModes=oak_derby]
+    org.apache.derby/derby/10.14.2.0
+    org.apache.sling/org.apache.sling.datasource/1.0.3-SNAPSHOT
+
+[settings runModes=oak_derby]
+	sample.test=node1
+	 
+[configurations runModes=oak_derby]
+  org.apache.sling.commons.log.LogManager.factory.config-derby.log
+	org.apache.sling.commons.log.additiv=B"false"
+	org.apache.sling.commons.log.file="logs/derby.log"
+	org.apache.sling.commons.log.level="debug"
+	org.apache.sling.commons.log.names=[ "org.apache.derby.jdbc", "org.apache.jackrabbit.oak.plugins.document" ]
+	org.apache.sling.commons.log.pattern="{0,date,dd.MM.yyyy\ HH:mm:ss.SSS}\ *{4}*\ [{2}]\ {3}\ {5}"
+
+  org.apache.sling.datasource.DataSourceFactory
+	connectionProperties=""
+	datasource.name="oak"
+	datasource.svc.prop.name="datasource.name"
+	datasource.svc.properties=[ \
+	  "", \
+	  ]
+	defaultAutoCommit="Default"
+	defaultCatalog=""
+	defaultReadOnly="Default"
+	defaultTransactionIsolation="SERIALIZABLE"
+	driverClassName="org.apache.derby.jdbc.EmbeddedDriver"
+	initSQL=""
+	initialSize=I"10"
+	jdbcInterceptors="StatementCache;SlowQueryReport(threshold\=10000);ConnectionState"
+	logValidationErrors=B"true"
+	maxActive=I"100"
+	maxAge=I"0"
+	maxIdle=I"100"
+	maxWait=I"30000"
+	minEvictableIdleTimeMillis=I"60000"
+	minIdle=I"10"
+	service.pid="org.apache.sling.datasource.DataSourceFactory"
+	testOnBorrow=B"false"
+	testOnReturn=B"false"
+	testWhileIdle=B"false"
+	timeBetweenEvictionRunsMillis=I"5000"
+	url="jdbc:derby:/opt/local/sling/test;create\=true"
+	username=""
+	validationInterval=I"30000"
+	validationQuery=""
+	validationQueryTimeout=I"-1"
+  	
+  org.apache.jackrabbit.oak.plugins.document.DocumentNodeStoreService
+	documentStoreType="RDB"

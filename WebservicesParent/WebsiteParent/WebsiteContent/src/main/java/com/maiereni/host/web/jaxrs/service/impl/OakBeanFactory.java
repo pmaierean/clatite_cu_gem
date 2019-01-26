@@ -27,6 +27,8 @@ import org.apache.jackrabbit.oak.Oak;
 import org.apache.jackrabbit.oak.api.ContentRepository;
 import org.apache.jackrabbit.oak.jcr.Jcr;
 import org.apache.jackrabbit.oak.namepath.NamePathMapper;
+import org.apache.jackrabbit.oak.ocm.NodeConverter;
+import org.apache.jackrabbit.oak.ocm.impl.OakNodeConverterImpl;
 import org.apache.jackrabbit.oak.plugins.commit.ConflictValidatorProvider;
 import org.apache.jackrabbit.oak.plugins.commit.JcrConflictHandler;
 import org.apache.jackrabbit.oak.plugins.document.rdb.RDBDocumentNodeStoreBuilder;
@@ -199,6 +201,13 @@ public class OakBeanFactory extends BaseBeanFactory {
         return ConfigurationUtil.getDefaultConfiguration(getSecurityConfigParameters());
     }
 		
+    @Bean("nodeConverter")
+    public NodeConverter getNodeConverter() {
+    	NodeConverter nodeConverter = new OakNodeConverterImpl();
+    	
+    	return nodeConverter;
+    }
+    
 	protected ConfigurationParameters getConfigurationParameters() {
 		return ConfigurationParameters.EMPTY;
 	}

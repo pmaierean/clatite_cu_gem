@@ -25,7 +25,6 @@ import javax.annotation.Nonnull;
 import org.apache.jackrabbit.oak.api.ContentSession;
 import org.apache.jackrabbit.oak.api.QueryEngine;
 import org.apache.jackrabbit.oak.api.Result;
-import org.apache.jackrabbit.oak.api.ResultRow;
 import org.apache.jackrabbit.oak.ocm.NodeConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

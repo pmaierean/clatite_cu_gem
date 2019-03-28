@@ -72,7 +72,7 @@ public class BaseHttpClient {
     public static final Map<String, String> NO_HEADER = new Hashtable<String, String>();
     public static final Map<String, String> EMPTY_PARAMS = new Hashtable<String, String>();
     public static final List<Cookie> NO_COOKIES = new Vector<Cookie>();
-    private static final String ERROR_MESSAGE = "%s: %s";
+
     public static final String GET = "get";
     public static final String POST = "post";
     private EntityProcessor defaultEntityProcessor = new DefaultEntityProcessor();
@@ -274,24 +274,24 @@ public class BaseHttpClient {
      }
     
     private ResponseBean _get(final String url, final Map<String, String> params, final Map<String, String> headers, final List<Cookie> cookies, final EntityProcessor entityProcessor)
-            throws Exception {
-            StringBuffer sb = new StringBuffer();
-            for(String key: params.keySet()) {
-                String value = params.get(key);
-                if (sb.length() > 0)
-                    sb.append("&");
-                sb.append(key).append("=");
-                if (StringUtils.isNoneEmpty(value))
-                    sb.append(URLEncoder.encode(value, "UTF-8"));
-            }
-            if (sb.length()>0)
-                sb.insert(0, "?");
-            sb.insert(0, url);
-            // logger.debug("Send GET: " + sb.toString());
-               
-            HttpGet httpGet = new HttpGet(sb.toString());
-            return execute(httpGet, cookies, headers, entityProcessor);
+        throws Exception {
+        StringBuffer sb = new StringBuffer();
+        for(String key: params.keySet()) {
+            String value = params.get(key);
+            if (sb.length() > 0)
+                sb.append("&");
+            sb.append(key).append("=");
+            if (StringUtils.isNoneEmpty(value))
+                sb.append(URLEncoder.encode(value, "UTF-8"));
         }
+        if (sb.length()>0)
+            sb.insert(0, "?");
+        sb.insert(0, url);
+        // logger.debug("Send GET: " + sb.toString());
+           
+        HttpGet httpGet = new HttpGet(sb.toString());
+        return execute(httpGet, cookies, headers, entityProcessor);
+    }
 
     
     private ResponseBean _post(final String url, final Map<String, String> params, final Map<String, String> headers, final List<Cookie> cookies)
@@ -300,19 +300,19 @@ public class BaseHttpClient {
     }
     
     private ResponseBean _post(final String url, final Map<String, String> params, final Map<String, String> headers, final List<Cookie> cookies, final EntityProcessor entityProcessor)
-            throws Exception {
-            List <NameValuePair> nameValuePairs = new ArrayList <NameValuePair>();
-           
-            for(String key: params.keySet())    {
-                String value = params.get(key);               
-                nameValuePairs.add(new BasicNameValuePair(key, value));
-            }
-
-            logger.debug("Send POST: " + url);
-            HttpPost httpPost = new HttpPost(url);
-            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
-            return execute(httpPost, cookies, headers, entityProcessor);
+        throws Exception {
+        List <NameValuePair> nameValuePairs = new ArrayList <NameValuePair>();
+       
+        for(String key: params.keySet())    {
+            String value = params.get(key);               
+            nameValuePairs.add(new BasicNameValuePair(key, value));
         }
+
+        logger.debug("Send POST: " + url);
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+        return execute(httpPost, cookies, headers, entityProcessor);
+    }
     
        
     private String getCurrentURL(final HttpContext context) {
@@ -341,12 +341,9 @@ public class BaseHttpClient {
         return ret;
     }
    
-    private void checkError(final HttpResponse response) throws Exception {
+    private void checkError(final HttpResponse response) throws HttpClientException {
         if (response.getStatusLine().getStatusCode() != 200) {
-            String error = String.format(ERROR_MESSAGE,
-                response.getStatusLine().getStatusCode(),
-                response.getStatusLine().getReasonPhrase());
-            throw new Exception(error);   
+            throw new HttpClientException(response);   
         }
     }
    

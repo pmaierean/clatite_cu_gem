@@ -21,6 +21,9 @@ import java.io.File;
 
 import org.sparx.Collection;
 import org.sparx.Connector;
+import org.sparx.Diagram;
+import org.sparx.DiagramObject;
+import org.sparx.Element;
 import org.sparx.Repository;
 
 /**
@@ -44,17 +47,74 @@ public class AddConnectorBetweenPackages extends BaseClient {
 	 */
 	public void addConnection(final String sourcePackagePath, final String destinationPackagePath, final String connectionType) throws Exception {
 		org.sparx.Package source = getPackage(sourcePackagePath);
+		Element elSource = source.GetElement();
+		int iSource = elSource.GetElementID();
 		org.sparx.Package destination = getPackage(destinationPackagePath);
+		Element elDestination = destination.GetElement();
+		int iDest = elDestination.GetElementID();
 		Collection<Connector> connectors = source.GetConnectors();
-		Connector connector = connectors.AddNew("Sample connector", connectionType);
-		connector.SetClientID(source.GetPackageID());
-		connector.SetSupplierID(destination.GetPackageID());
-		connector.SetDirection("Source -> Destination");
-		connector.Update();
-		connectors.Refresh();
+		boolean b = false;
+		for(Connector connector : connectors) {
+			if (connector.GetClientID() == iSource &&
+				connector.GetSupplierID() == iDest) {
+				b = true;
+				break;
+			}
+		}
+		if (!b) {
+			Connector connector = connectors.AddNew("Sample connector", connectionType);
+			connector.SetClientID(elSource.GetElementID());
+			connector.SetSupplierID(elDestination.GetElementID());
+			connector.SetDirection("Source -> Destination");
+			connector.Update();
+			connectors.Refresh();
+			System.out.println("A connector has been added");
+		}
+		Diagram sourceDiagram = getMainDiagram(source, source.GetName());
+		addPackage(sourceDiagram, source);
+		addPackage(sourceDiagram, destination);
 		repository.SaveAllDiagrams();
 		System.out.println("The connector of type '" + connectionType + "' has between the packages has been added");
 	}
+	
+	private Diagram getMainDiagram(final org.sparx.Package source, final String name) throws Exception {
+		Diagram ret = null;
+		Collection<Diagram> diagrams = source.GetDiagrams();
+		for(Diagram diagram: diagrams) {
+			if (diagram.GetName().equals(name)) {
+				ret = diagram;
+				break;
+			}
+		}
+		if (ret == null) {
+			ret = diagrams.AddNew(name, "Component");
+			ret.Update();
+			diagrams.Refresh();
+		}
+		return ret;
+	}
+	
+	private void addPackage(final Diagram diagram, final org.sparx.Package pkg) throws Exception {
+		Collection<DiagramObject> diagramObjects = diagram.GetDiagramObjects();
+		boolean b = false;
+		int id = pkg.GetElement().GetElementID();
+		for(DiagramObject obj: diagramObjects) {
+			if (obj.GetElementID() == id) {
+				b = true;
+				break;
+			}
+		}
+		if (!b) {
+			DiagramObject diagramObject = diagramObjects.AddNew(pkg.GetName(), "");
+			diagramObject.SetElementID(id);
+			diagramObject.Update();
+			diagram.Update();
+			diagramObjects.Refresh();
+			System.out.println("The package '" + pkg.GetName() + "' has been added to the diagram");
+		}
+	}
+	
+
 	
 	/**
 	 * Verifies it a connection between to packages in the model file exists
@@ -67,7 +127,7 @@ public class AddConnectorBetweenPackages extends BaseClient {
 		boolean ret = false;
 		org.sparx.Package source = getPackage(sourcePackagePath);
 		org.sparx.Package destination = getPackage(destinationPackagePath);
-		int idDestination = destination.GetPackageID();
+		int idDestination = destination.GetElement().GetElementID();
 		Collection<Connector> connectors = source.GetConnectors();
 		for(Connector connector: connectors) {
 			if (connector.GetSupplierID() == idDestination) {

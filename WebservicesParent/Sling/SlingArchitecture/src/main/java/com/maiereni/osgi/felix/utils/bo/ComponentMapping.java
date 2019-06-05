@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class ComponentMapping implements Serializable {
 	private static final long serialVersionUID = 5149392596716319250L;
-	private String name, guid;
+	private String name, guid, componentId;
 	private List<ServiceMapping> services;
 	public String getName() {
 		return name;
@@ -45,6 +45,12 @@ public class ComponentMapping implements Serializable {
 	}
 	public void setServices(List<ServiceMapping> services) {
 		this.services = services;
+	}
+	public String getComponentId() {
+		return componentId;
+	}
+	public void setComponentId(String componentId) {
+		this.componentId = componentId;
 	}
 	
 }

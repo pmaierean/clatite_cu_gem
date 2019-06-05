@@ -2,6 +2,19 @@
 <schema xmlns="http://www.w3.org/2001/XMLSchema" 
 	targetNamespace="http://www.maiereni.com/SlingInfo" 
 	xmlns:tns="http://www.maiereni.com/SlingInfo" elementFormDefault="qualified">
+    <complexType name="Source">
+    	<attribute name="url" type="string"></attribute>
+    	<attribute name="repositoryType" type="string"></attribute>
+    	<attribute name="artifactId" type="string"></attribute>
+    	<attribute name="groupId" type="string"></attribute>
+    	<attribute name="version" type="string"></attribute>    	
+    </complexType>
+    
+	<complexType name="Attribute">
+    	<attribute name="key" type="string"></attribute>
+    	<attribute name="value" type="string"></attribute>	
+	</complexType>
+
     <complexType name="Property">
     	<attribute name="key" type="string"></attribute>
     	<attribute name="value" type="string"></attribute>
@@ -9,14 +22,30 @@
 
 	<complexType name="Properties">
 		<sequence>
-			<element name="property" type="tns:Property"  minOccurs="0" maxOccurs="unbounded"></element>
+			<element name="property" type="tns:Property" minOccurs="0" maxOccurs="unbounded"></element>
 		</sequence>
 	</complexType>
+	
+	<complexType name="Reference">
+		<sequence>
+			<element name="targetFilter" type="string" minOccurs="0" maxOccurs="unbounded"></element> 
+			<element name="className" type="string" minOccurs="0"></element>
+		</sequence>
+		<attribute name="serviceId" type="string"></attribute>
+		<attribute name="attrName" type="string"></attribute>
+		<attribute name="name" type="string"></attribute>
+		<attribute name="cardinality" type="string"></attribute>
+		<attribute name="policy" type="string"></attribute>
+		<attribute name="policyOption" type="string"></attribute>
+		<attribute name="status" type="string"></attribute>		
+	</complexType>
+
+	<element name="Reference" type="tns:Reference"></element>
 
     <complexType name="Service">
     	<sequence>
-    		<element name="type" type="string" minOccurs="0" maxOccurs="unbounded"></element>
     		<element name="properties" type="tns:Properties" minOccurs="0"></element>
+    		<element name="type" type="string" minOccurs="0" maxOccurs="unbounded"></element>
     	</sequence>
     	<attribute name="description" type="string"></attribute>
     	<attribute name="id" type="string"></attribute>
@@ -34,7 +63,9 @@
 
     <complexType name="Component">
     	<sequence>
+    		<element name="attribute" type="tns:Attribute" minOccurs="0" maxOccurs="unbounded"></element>
     		<element name="services" type="tns:Services" minOccurs="0"></element>
+    		<element name="reference" type="tns:Reference" minOccurs="0" maxOccurs="unbounded"></element>
     		<element name="properties" type="tns:Properties" minOccurs="0"></element>
     	</sequence>    
     	<attribute name="id" type="string"></attribute>
@@ -68,10 +99,18 @@
 			<element name="pkg" type="string" minOccurs="0" maxOccurs="unbounded"></element>
 		</sequence>
 	</complexType>
+	
+	<complexType name="ImportPackage">
+		<sequence>
+			<element name="value" type="string" minOccurs="0"></element>
+		</sequence>
+		<attribute name="bundleId" type="string"></attribute>
+		<attribute name="name" type="string"></attribute>
+	</complexType>
 
 	<complexType name="Imports">
 		<sequence>
-			<element name="pkg" type="string" minOccurs="0" maxOccurs="unbounded"></element>
+			<element name="pkg" type="tns:ImportPackage" minOccurs="0" maxOccurs="unbounded"></element>
 		</sequence>
 	</complexType>
 
@@ -82,6 +121,7 @@
     		<element name="exportPackages" type="tns:Exports" minOccurs="0"></element>
     		<element name="imports" type="tns:BundleRefs" minOccurs="0"></element>
     		<element name="importPackages" type="tns:Imports" minOccurs="0"></element>
+    		<element name="source" type="tns:Source" minOccurs="0"></element>
     	</sequence>
     	<attribute name="id" type="string"></attribute>
     	<attribute name="name" type="string"></attribute>

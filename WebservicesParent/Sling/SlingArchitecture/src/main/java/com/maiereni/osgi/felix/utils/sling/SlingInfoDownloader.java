@@ -53,22 +53,22 @@ public class SlingInfoDownloader {
 	}
 
 
-	private List<Service> getServices(final String host, final List<Cookie> auth) throws Exception {
+	protected List<Service> getServices(final String host, final List<Cookie> auth) throws Exception {
 		ListServices processor = new ListServices(host, mapper);
 		return processor.getServices(auth);
 	}
 	
-	private List<Bundle> getBundles(final String host, final List<Cookie> auth) throws Exception {
+	protected List<Bundle> getBundles(final String host, final List<Cookie> auth) throws Exception {
 		ListBundles processor = new ListBundles(host, mapper);
 		return processor.getBundles(auth);
 	}
 	
-	private List<Component> getComponents(final String host, final List<Cookie> auth) throws Exception {
+	protected List<Component> getComponents(final String host, final List<Cookie> auth) throws Exception {
 		ListComponents processor = new ListComponents(host, mapper);
 		return processor.getComponents(auth);
 	}
 	
-	private List<Cookie> login(final String host, final String user, final String password) throws Exception {
+	protected List<Cookie> login(final String host, final String user, final String password) throws Exception {
 		Login login = new Login(host, mapper);
 		ResponseBean responseBean = login.login(user, password);
 		logger.debug("Successfully logged in");

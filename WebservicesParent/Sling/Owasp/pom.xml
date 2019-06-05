@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- 
+===========================================================================
+ *  Copyright (c) 2017-2018 Maiereni Software and Consulting Inc
+ * ========================================================================
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+===========================================================================
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>Sling</artifactId>
+		<groupId>com.maiereni.sling</groupId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+    <groupId>org.owasp.esapi</groupId>
+    <artifactId>esapi-bundle</artifactId>
+    <version>2.1.0.1</version>	
+	<name>Authentication Handler Utilities</name>
+	<description>A customization of the Authentication Process of Sling</description>
+	<build>
+		<plugins> 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<archive>
+						<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.7.0</version>
+				<configuration>
+					<source>8</source>
+					<target>8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.1.1</version>
+				<executions>
+					<execution>
+						<id>unpack</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.owasp.esapi</groupId>
+									<artifactId>esapi</artifactId>
+									<version>2.1.0.1</version>		
+									<type>jar</type>
+									<overWrite>false</overWrite>
+									<includes>**/*.class,**/*.xml,**/*.xsd</includes>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>${project.build.directory}/classes</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>			
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>4.2.0</version>
+				<extensions>true</extensions>
+				<executions>		
+					<execution>
+						<id>bundle-manifest</id>
+						<phase>process-classes</phase>
+						<goals>    
+							<goal>manifest</goal>
+						</goals>   
+						<configuration>
+							<exportScr>true</exportScr>
+							<supportIncrementalBuild>true</supportIncrementalBuild>
+							<instructions>
+					            <Bundle-SymbolicName>org.owasp.esapi</Bundle-SymbolicName>
+					            <Bundle-Name>Esapi</Bundle-Name>
+					            <Import-Package>org.apache.log4j.spi,!org.owasp.esapi</Import-Package>
+								<_exportcontents>org.owasp.esapi.*</_exportcontents>
+		                   </instructions>
+						</configuration>
+					</execution>
+				</executions>				
+			</plugin>			
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+		    <groupId>org.owasp.esapi</groupId>
+		    <artifactId>esapi</artifactId>
+		    <version>2.1.0.1</version>		
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+	<profiles>
+		<profile>
+			<id>autoInstallBundle</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.sling</groupId>
+						<artifactId>maven-sling-plugin</artifactId>
+						<version>2.3.4</version>
+						<executions>
+							<execution>
+								<id>install-bundle</id>
+								<goals>
+									<goal>install</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<slingUrl>http://localhost:8080/system/console</slingUrl>
+							<user>admin</user>
+							<password>admin</password>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+</project>

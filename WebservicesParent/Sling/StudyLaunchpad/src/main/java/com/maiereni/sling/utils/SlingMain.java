@@ -25,7 +25,6 @@ import org.apache.felix.framework.util.FelixConstants;
 import org.apache.sling.launchpad.base.impl.Sling;
 import org.apache.sling.launchpad.base.shared.Notifiable;
 import org.apache.sling.launchpad.base.shared.SharedConstants;
-import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

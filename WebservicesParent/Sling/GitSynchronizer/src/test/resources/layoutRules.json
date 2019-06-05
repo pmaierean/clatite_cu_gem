@@ -1,0 +1,7 @@
+{
+	"layouts":[
+		{"name":"content","path":"/content/sample","exclusionPattern":null,"inclusionPattern":"content[\\x2F|\\x5C].*"},
+		{"name":"apps","path":"/apps/sample","exclusionPattern":null,"inclusionPattern":"apps[\\x2F|\\x5C].*"},
+		{"name":"etc","path":"/etc/styles/sample","exclusionPattern":null,"inclusionPattern":"etc[\\x2F|\\x5C].*"}
+	]
+}

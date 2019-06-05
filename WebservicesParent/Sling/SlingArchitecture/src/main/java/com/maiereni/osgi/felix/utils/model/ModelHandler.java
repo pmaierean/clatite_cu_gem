@@ -30,10 +30,11 @@ import com.maiereni.sling.info.Model;
 public class ModelHandler extends BaseModelHandler {
 	private List<PostProcessor> postProcessors;
 	
-	public ModelHandler() throws Exception {
+	public ModelHandler(final String sourceFiles) throws Exception {
 		super();
 		this.postProcessors = new ArrayList<PostProcessor>();
 		this.postProcessors.add(new BundleGroupQualifier());
+		this.postProcessors.add(new SourcesLookup(sourceFiles));
 	}
 
 	/**
@@ -54,8 +55,8 @@ public class ModelHandler extends BaseModelHandler {
 	 * @throws Exception
 	 */
 	public void writetoEA(final Model model, final String eaFile) throws Exception {
-		EASlingModelWriter modelWriter = new EASlingModelWriter();
-		modelWriter.writetoEA(model, eaFile);
+		EASlingModelWriter modelWriter = new EASlingModelWriter(model);
+		modelWriter.writetoEA(eaFile);
 	}
 
 	/**
@@ -68,7 +69,7 @@ public class ModelHandler extends BaseModelHandler {
 		SlingModelReader modelReader = new SlingModelReader(getFactory(), getUnmarshaller());
 		return modelReader.loadFromXml(xmlFile);
 	}
-
+	
 	/**
 	 * Post processes the model
 	 * @param model
@@ -78,7 +79,7 @@ public class ModelHandler extends BaseModelHandler {
 	public Model updataModel(final Model model) throws Exception {
 		Model ret = model;
 		for(PostProcessor processor: postProcessors) {
-			ret = processor.updataModel(model);
+			ret = processor.updataModel(ret);
 		}
 		return ret;
 	}

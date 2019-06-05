@@ -96,7 +96,7 @@
   org.apache.sling.jcr.oak.server.internal.OakSlingRepositoryManagerConfiguration
   	name="oak-sling-repository1"
   	oak_observation_queue_length=I"500"
-  	
+  	 	
 [configurations runModes=oak_tar]
   org.apache.jackrabbit.oak.segment.SegmentNodeStoreService
     name="Default\ NodeStore"

@@ -1,0 +1,7 @@
+{
+	"layouts":[
+		{"name":"content","path":"/initial-content/content","exclusionPattern":null,"inclusionPattern":".*"},
+		{"name":"apps","path":"/initial-content/apps","exclusionPattern":null,"inclusionPattern":".*"},
+		{"name":"design","path":"/initial-content/design","exclusionPattern":null,"inclusionPattern":".*"}
+	]
+}

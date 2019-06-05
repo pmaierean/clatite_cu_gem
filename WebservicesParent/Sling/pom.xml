@@ -10,7 +10,7 @@
 	<artifactId>Sling</artifactId>
 	<packaging>pom</packaging>
 	<modules>
-	    <module>SlingArchitecture</module>
+	    <module>AuthenticationHandler</module>
 		<module>BuildingSling</module>
 	</modules>
 	<dependencyManagement>
@@ -84,6 +84,11 @@
 			    <groupId>javax.servlet</groupId>
 			    <artifactId>javax.servlet-api</artifactId>
 			    <version>3.1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.ehcache</groupId>
+				<artifactId>ehcache</artifactId>
+				<version>3.7.0</version>				
 			</dependency>
 		</dependencies>	
 	</dependencyManagement>

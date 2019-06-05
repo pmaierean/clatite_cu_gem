@@ -38,10 +38,10 @@ import com.maiereni.sling.info.Model;
  * @author Petre Maierean
  *
  */
-public class SlingDescriber {
+public class SlingDescriber extends SourcesResolver {
 	private static final Logger logger = LoggerFactory.getLogger(SlingDescriber.class);
 	private String host, user, pwd;
-	private String outputModel, inputModel, eaModel;
+	private String outputModel, inputModel, eaModel, sourceFiles, slingHome;
 	private ObjectMapper mapper = new ObjectMapper();
 	
 	public SlingDescriber() {
@@ -50,7 +50,6 @@ public class SlingDescriber {
 		host = "localhost:8080";
 		user = "admin";
 		pwd = "admin";
-		
 	}
 	
 	/**
@@ -59,7 +58,7 @@ public class SlingDescriber {
 	 * @throws Exception
 	 */
 	public void describe() throws Exception {
-		ModelHandler modelHandler = new ModelHandler();
+		ModelHandler modelHandler = new ModelHandler(sourceFiles);
 		Model slingInfo = null;
 		if (StringUtils.isNotBlank(inputModel)) {
 			slingInfo = modelHandler.loadFromXml(inputModel);
@@ -69,6 +68,7 @@ public class SlingDescriber {
 			SlingInfoDownloader downloader = new SlingInfoDownloader();
 			SlingInfo si = downloader.getSlingInfo(host, user, pwd);
 			slingInfo = modelHandler.convert(si);
+			updateSources(slingInfo, slingHome);
 		}
 		logger.debug("The Sling Information bean has been loaded");
 		if (StringUtils.isNotBlank(outputModel)) {
@@ -122,6 +122,12 @@ public class SlingDescriber {
 				}
 				else if (sp[0].equals("eaModel")) {
 					eaModel = sp[1];
+				}
+				else if (sp[0].equals("sourceFiles")) {
+					sourceFiles = sp[1];
+				}
+				else if (sp[0].equals("slingHome")) {
+					slingHome = sp[1];
 				}
 			}
 		}

@@ -29,6 +29,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.maiereni.osgi.felix.utils.bo.Bundle;
 import com.maiereni.osgi.felix.utils.bo.Component;
@@ -39,10 +41,12 @@ import com.maiereni.sling.info.BundleRef;
 import com.maiereni.sling.info.BundleRefs;
 import com.maiereni.sling.info.Components;
 import com.maiereni.sling.info.Exports;
+import com.maiereni.sling.info.ImportPackage;
 import com.maiereni.sling.info.Imports;
 import com.maiereni.sling.info.Model;
 import com.maiereni.sling.info.ObjectFactory;
 import com.maiereni.sling.info.Properties;
+import com.maiereni.sling.info.Reference;
 import com.maiereni.sling.info.Services;
 
 /**
@@ -50,6 +54,7 @@ import com.maiereni.sling.info.Services;
  *
  */
 public abstract class BaseModelHandler {
+	private static final Logger logger = LoggerFactory.getLogger(BaseModelHandler.class);
 	private Marshaller marshaller;
 	private Unmarshaller unmarshaller;
 	private ObjectFactory factory;
@@ -75,6 +80,13 @@ public abstract class BaseModelHandler {
 			for(Component c: slingInfo.getComponent()) {
 				Integer bundleId = c.getBundleId();
 				com.maiereni.sling.info.Component cp = convert(c);
+				if (ic.containsKey(cp.getId())) {
+					if (cp.getServices() != null && cp.getServices().getService() != null) {
+						ic.get(cp.getId()).setServices(cp.getServices());
+					}
+					continue;
+				}
+				ic.put(cp.getId(), cp);
 				com.maiereni.sling.info.Bundle bundle = ib.get(bundleId.toString());
 				if (bundle == null) { 
 					throw new Exception("The bundleId cannot found: " + bundleId);
@@ -85,7 +97,6 @@ public abstract class BaseModelHandler {
 					bundle.setComponents(components);
 				}
 				components.getComponent().add(cp);
-				ic.put(cp.getId(), cp);
 			}
 			for(Service s: slingInfo.getServices()) {
 				com.maiereni.sling.info.Service service = convert(s);
@@ -187,11 +198,11 @@ public abstract class BaseModelHandler {
 		String types = service.getTypes();
 		if (StringUtils.isNotBlank(types)) {
 			if (types.startsWith("[") && types.endsWith("]")) {
-				types = types.substring(1, types.length() - 2);			
+				types = types.substring(1, types.length() - 1);			
 			}
 			String[] toks = types.split(",");
 			for(String tok: toks) {
-				ret.getType().add(tok);
+				ret.getType().add(tok.trim());
 			}			
 		}
 		return ret;
@@ -228,7 +239,10 @@ public abstract class BaseModelHandler {
 		return ret;
 	}
 
-	
+	private static final String REFERENCE = "Reference ";
+	private static final String IMPLEMENTATION_CLASS = "Implementation Class";
+	private static final String PROPERTIES = "Properties";
+	@SuppressWarnings("unchecked")
 	private com.maiereni.sling.info.Component convert(final Component component) {
 		com.maiereni.sling.info.Component ret = new com.maiereni.sling.info.Component();
 		ret.setId(component.getId());
@@ -237,23 +251,111 @@ public abstract class BaseModelHandler {
 		if  (component.getProps() != null) {
 			for(Property p: component.getProps()) {
 				String key = p.getKey();
-				if (key.equals("Implementation Class")) {
+				if (key.equals(IMPLEMENTATION_CLASS)) {
 					String txt = p.getValue().toString();
 					ret.setImplementationClass(txt);
 				}
-				else {
-					com.maiereni.sling.info.Property prop = convert(p);
+				else if (key.startsWith(REFERENCE)) {
+					Reference ref = convertReference(p);
+					ret.getReference().add(ref);
+				}
+				else if (key.startsWith(PROPERTIES)) {
+					Object val = p.getValue();
 					Properties properties = ret.getProperties();
 					if (properties == null) {
 						properties = factory.createProperties();
 						ret.setProperties(properties);
 					}
-					properties.getProperty().add(prop);
+					if (val instanceof ArrayList) {
+						List<Object> vals = (List<Object>)val;
+						for(Object o : vals) {
+							if (o instanceof String) {
+								String s = (String)o;
+								String[] toks = s.split("=");
+								com.maiereni.sling.info.Property prop = new com.maiereni.sling.info.Property();
+								prop.setKey(toks[0].trim());
+								prop.setValue(toks[1].trim());
+								properties.getProperty().add(prop);
+							}
+						}
+					}
+					else if (val instanceof String) {
+						String s = (String)val;
+						String[] toks = s.split("=");
+						com.maiereni.sling.info.Property prop = new com.maiereni.sling.info.Property();
+						prop.setKey(toks[0]);
+						prop.setValue(toks[1]);
+						properties.getProperty().add(prop);						
+					}
+					else {
+						logger.error("Unknown property type " + val.getClass().getName() + " for " + val);
+					}
+				}
+				else {
+					com.maiereni.sling.info.Attribute attr = new com.maiereni.sling.info.Attribute();
+					attr.setKey(key);
+					attr.setValue(p.getValue().toString());
+					ret.getAttribute().add(attr);
 				}
 			}			
 		}
 		return ret;
 	}
+	
+	private static final String SERVICE_NAME = "Service Name: ";
+	private static final String BOUND_SERVICE = "Bound Service ID ";
+	private static final String SATISFIED = "Satisfied";
+	private static final String TARGET_FILTER = "Target Filter: ";
+	private static final String CARDINALITY = "Cardinality: ";
+	private static final String POLICY = "Policy: ";
+	private static final String POLICY_OPTION = "Policy Option: ";
+	private static final String UNSATISFIED = "Unsatisfied";
+	private static final String NO_SERVICE = "No Services bound";
+	private Reference convertReference(final Property p) {
+		Reference ret = new Reference();
+		String refName = p.getKey().substring(REFERENCE.length());
+		ret.setName(refName);
+		Object val = p.getValue();
+		if (val instanceof ArrayList) {
+			@SuppressWarnings("unchecked")
+			List<Object> os = (List<Object>) val;
+			for(Object o: os) {
+				String tok = o.toString();
+				if (tok.startsWith(SERVICE_NAME)) {
+					ret.setAttrName(tok.substring(SERVICE_NAME.length()).trim());
+				}
+				else if (tok.startsWith(BOUND_SERVICE)) {
+					String s = tok.substring(BOUND_SERVICE.length()).trim();
+					String[] sp = s.split(" ");
+					if (sp.length > 1) {
+						ret.setClassName(sp[1]);
+					}
+					ret.setServiceId(sp[0]);
+				}
+				else if (tok.startsWith(SATISFIED) || tok.startsWith(UNSATISFIED) || tok.startsWith(NO_SERVICE)) {
+					ret.setStatus(tok);;
+				}
+				else if (tok.startsWith(TARGET_FILTER)) {
+					ret.getTargetFilter().add(tok.substring(TARGET_FILTER.length()).trim());
+				}
+				else if (tok.startsWith(CARDINALITY)) {
+					ret.setCardinality(tok.substring(CARDINALITY.length()).trim());
+				}
+				else if (tok.startsWith(POLICY)) {
+					ret.setPolicy(tok.substring(POLICY.length()).trim());
+				}
+				else if (tok.startsWith(POLICY_OPTION)) {
+					ret.setPolicyOption(tok.substring(POLICY_OPTION.length()).trim());
+				}
+				else {
+					logger.error("Unknown token in a reference: " + tok);
+				}
+			}
+		}
+		return ret;
+	}
+	
+	private static final String BUNDLE_VERSION = "Bundle-Version: ";
 	
 	@SuppressWarnings("unchecked")
 	private com.maiereni.sling.info.Bundle convert(final Bundle bundle) {
@@ -302,7 +404,11 @@ public abstract class BaseModelHandler {
 							imports = factory.createImports();
 							ret.setImportPackages(imports);
 						}
-						imports.getPkg().addAll(arr);
+						for(String ar: arr) {
+							ImportPackage importPackage = parse(ar);
+							imports.getPkg().add(importPackage);
+						}
+						//imports.getPkg().addAll(arr);
 					}
 				}
 				else if (key.equals("Importing Bundles")) {
@@ -319,8 +425,47 @@ public abstract class BaseModelHandler {
 						}
 					}
 				}
+				else if (key.equals("Manifest Headers")) {
+					List<String> arr = (List<String>)p.getValue();
+					if (arr != null) {
+						for(String s: arr) {
+							if (s.startsWith(BUNDLE_VERSION)) {
+								String bv = s.substring(BUNDLE_VERSION.length());
+								ret.setVersion(bv);
+							}
+						}
+					}
+				}
 			}
 		}
+		return ret;
+	}
+	
+	private static final String FROM = " from ";
+	private static final String BUNDLE = "<a href='/system/console/bundles/";
+	private ImportPackage parse(final String s) {
+		ImportPackage ret = new ImportPackage();
+		int ix = s.indexOf(FROM);
+		if (ix > 0) {
+			ret.setValue(s.substring(0,  ix).trim());
+			ix = s.indexOf(BUNDLE);
+			if (ix > 0) {
+				ix = ix + BUNDLE.length();
+				int iy = s.indexOf("'>", ix);
+				String bundleId = s.substring(ix, iy);
+				ret.setBundleId(bundleId);
+				iy += 2;
+				ix = s.indexOf("(" + bundleId + ")", iy);
+				if (ix > iy) {
+					String name = s.substring(iy, ix).trim();
+					ret.setName(name);
+				}
+			}
+		}
+		else {
+			ret.setValue(s);
+		}
+		
 		return ret;
 	}
 	
@@ -335,12 +480,5 @@ public abstract class BaseModelHandler {
 			ret.setId(toks[1].substring(1, toks[1].length() - 1));
 		}
 		return ret;
-	}
-
-	private com.maiereni.sling.info.Property convert(Property p) {
-		 com.maiereni.sling.info.Property ret = new  com.maiereni.sling.info.Property();
-		 ret.setKey(p.getKey());
-		 ret.setValue(p.getValue().toString());
-		 return ret;
 	}
 }

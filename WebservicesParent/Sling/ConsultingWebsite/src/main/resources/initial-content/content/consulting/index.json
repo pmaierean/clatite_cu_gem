@@ -1,0 +1,6 @@
+{
+    "jcr:primaryType": "sling:OrderedFolder",
+    "sling:resourceType": "consulting/public/regular",
+    "title": "Maiereni Software and Consulting",
+    "description": "The Homepage of the Maiereni Software and Consulting Inc"
+}

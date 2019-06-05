@@ -1,0 +1,463 @@
+<repositories>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-starter-startup.git" version="1.0.6">
+		<project name="org.apache.sling.starter.startup">A module for handling the startup of the Apache Sling Starter.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-jcr-base.git" version="3.0.7-SNAPSHOT">
+		<project name="org.apache.sling.jcr.base">The JCR base bundle provides JCR utility classes</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/commons/proper/collections/trunk" version="3.2.2">
+		<project name="org.apache.commons.collections">Types that extend and augment the Java Collections Framework.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-commons-compiler.git" version="2.3.6">
+		<project name="org.apache.sling.commons.compiler">The Sling Commons Java Compiler bundle provides platform independent Java Compilation support using the Eclipse Java Compiler (org.eclipse.jdt).</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-api.git" version="2.18.4">
+		<project name="org.apache.sling.api">The Apache Sling API defines an extension to the Servlet API 2.4 to provide access to content and unified access to request parameters hiding the differences between the        different methods of transferring parameters from client        to server. Note that the Apache Sling API bundle does not        include the Servlet API but instead requires the API to        be provided by the Servlet container in which the Apache        Sling framework is running or by another bundle.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/aries/tags/org.apache.aries.util-1.1.3/org.apache.aries.util" version="1.1.3">
+		<project name="org.apache.aries.util">This bundle contains the OSGi common util for Apache Aries</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-commons-fsclassloader.git" version="1.0.8">
+		<project name="org.apache.sling.commons.fsclassloader">The Sling Commons FileSystem ClassLoader bundle provides a dynamic class loader for reading and writing class files from and to the file system.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.javax.activation-0.1.0" version="0.1.0">
+		<project name="org.apache.sling.javax.activation">The Apache Sling javax.activation bundle contributes an OSGi-compatible activation bundle.</project>
+	</repository>
+	<repository repositoryType="git" url="http://git-wip-us.apache.org/repos/asf/commons-collections.git" version="4.2">
+		<project name="org.apache.commons.commons-collections4">The Apache Commons Collections package contains types that extend and augment the Java Collections Framework.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.scripting.el-api-1.0.0" version="1.0.0">
+		<project name="org.apache.sling.scripting.el-api">This bundle wraps the Apache Tomcat 6.0.14 EL API used by Apache Sling Scripting JSP.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-validation-core.git" version="1.0.4">
+		<project name="org.apache.sling.validation.core">Provides Validation services to Apache Sling</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/commons/proper/math/trunk" version="2.2">
+		<project name="org.apache.commons.math">The Math project is a library of lightweight, self-contained mathematics and statistics components addressing the most common practical problems not immediately available in the Java programming language or commons-lang.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-scripting-sightly-compiler.git" version="1.1.0-1.4.0">
+		<project name="org.apache.sling.scripting.sightly.compiler">The Apache Sling Scripting HTL Compiler provides support for compiling HTML Template Language scripts into an Abstract Syntax Tree.</project>
+	</repository>
+	<repository repositoryType="git" url="git@github.com:FasterXML/jackson-databind.git" version="2.9.7">
+		<project name="com.fasterxml.jackson.core.jackson-databind">General data-binding functionality for Jackson: works on core streaming API</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.commons.osgi-2.4.0" version="2.4.0">
+		<project name="org.apache.sling.commons.osgi">Commons OSGi</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-discovery-support.git" version="1.0.4">
+		<project name="org.apache.sling.discovery.support">Supporting services for the discovery</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/felix/releases/org.apache.felix.webconsole.plugins.obr-1.0.4" version="1.0.4">
+		<project name="org.apache.felix.webconsole.plugins.obr">This Apache Felix OSGi web console plugin provides method to install bundles from a bundle repository.</project>
+	</repository>
+	<repository repositoryType="git" url="https://github.com/antlr/antlr4.git" version="4.7.1">
+		<project name="org.antlr.antlr4-runtime">The ANTLR 4 Runtime</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-discovery-base.git" version="2.0.8">
+		<project name="org.apache.sling.discovery.base">Contains Connector and Properties support that some implementations might choose to build upon</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.launchpad.installer-1.2.2" version="1.2.2">
+		<project name="org.apache.sling.launchpad.installer">This module installs the contents of the launchpad archive into the framework.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.jcr.webdav-2.3.8" version="2.3.8">
+		<project name="org.apache.sling.jcr.webdav">Bundle to access JCR repositories over WebDAV</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-commons-johnzon.git" version="1.1.2">
+		<project name="org.apache.sling.commons.johnzon">Apache Johnzon powered javax.json library</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-scripting-sightly-models-provider.git" version="1.0.8">
+		<project name="org.apache.sling.scripting.sightly.models.provider">Apache Sling Scripting HTL Sling Models Use Provider adds support for accessing Sling Models from HTL's Use-API leveraging the        ModelFactory.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/jackrabbit" version="2.16.3">
+		<project name="org.apache.jackrabbit.jackrabbit-api">Jackrabbit-specific extensions to the JCR API</project>
+		<project name="org.apache.jackrabbit.jackrabbit-data">Jackrabbit DataStore Implentations</project>
+		<project name="org.apache.jackrabbit.jackrabbit-jcr-commons">General purpose classes for use with the JCR API</project>
+		<project name="org.apache.jackrabbit.jackrabbit-jcr-rmi">JCR-RMI is a transparent Remote Method Invocation (RMI) layer for the    Content Repository for Java Technology API (JCR). The layer makes it    possible to remotely access JCR content repositories.</project>
+		<project name="org.apache.jackrabbit.jackrabbit-spi">The Apache Jackrabbit™ content repository is a fully conforming    implementation of the Content Repository for Java Technology API    (JCR, specified in JSR 170 and 283). A content repository is a    hierarchical content store with support for structured and unstructured    content, full text search, versioning, transactions, observation, and more.    Apache Jackrabbit is a project of the Apache Software Foundation.</project>
+		<project name="org.apache.jackrabbit.jackrabbit-spi-commons">The Apache Jackrabbit™ content repository is a fully conforming    implementation of the Content Repository for Java Technology API    (JCR, specified in JSR 170 and 283). A content repository is a    hierarchical content store with support for structured and unstructured    content, full text search, versioning, transactions, observation, and more.    Apache Jackrabbit is a project of the Apache Software Foundation.</project>
+		<project name="org.apache.jackrabbit.jackrabbit-webdav">Generic WebDAV Library</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.discovery.commons-1.0.20" version="1.0.20">
+		<project name="org.apache.sling.discovery.commons">Common services related to Sling Discovery</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-jcr-resource.git" version="3.0.16">
+		<project name="org.apache.sling.jcr.resource">This bundle provides the JCR based ResourceProvider.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.validation.api-1.0.0" version="1.0.0">
+		<project name="org.apache.sling.validation.api">The Apache Sling Validation Framework API</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/geronimo/bundles/tags/commons-httpclient-3.1_2" version="3.1_2">
+		<project name="org.apache.geronimo.bundles.commons-httpclient">This bundle simply wraps commons-httpclient-3.1.jar.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-scripting-jsp-taglib.git" version="2.3.0">
+		<project name="org.apache.sling.scripting.jsp.taglib">Core Tag Library for Apache Sling JSP support</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-scripting-sightly.git" version="1.1.0-1.4.0">
+		<project name="org.apache.sling.scripting.sightly">The Apache Sling Scripting HTL Engine is a Java implementation of the HTML Template Language specification. The bundle contains the        HTL script engine and its runtime implementation.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/geronimo/bundles/tags/jstl-1.2_1" version="1.2_1">
+		<project name="org.apache.geronimo.bundles.jstl">This bundle simply wraps jstl-1.2.jar.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-hc-core.git" version="1.2.10">
+		<project name="org.apache.sling.hc.core">The Sling Health Check Core</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-caconfig-spi.git" version="1.3.4">
+		<project name="org.apache.sling.caconfig.spi">Apache Sling Context-Aware Configuration SPI</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.jcr.api-2.4.0" version="2.4.0">
+		<project name="org.apache.sling.jcr.api">This OSGi bundle provides the JCR packages as        well as a helper service interface to be implemented and        provided by repository providers.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-commons-log.git" version="5.1.10">
+		<project name="org.apache.sling.commons.log">This bundle embeds Logback which provides the SLF4J logging API.    The embedding supports dynamic OSGi-configuration without    requiring to edit some global filesystem based XML file.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/felix/releases/org.apache.felix.http.sslfilter-1.2.6" version="1.2.6">
+		<project name="org.apache.felix.http.sslfilter">Apache Felix is a community effort to implement the OSGi Framework and Service platform and other interesting OSGi-related technologies.</project>
+	</repository>
+	<repository repositoryType="git" url="https://github.com/google/guava.git" version="15.0">
+		<project name="com.google.guava">Guava is a suite of core and expanded libraries that include    utility classes, google's collections, io classes, and much    much more.    Guava has two code dependencies - javax.annotation    per the JSR-305 spec and javax.inject per the JSR-330 spec.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.extensions.webconsolebranding-1.0.2" version="1.0.2">
+		<project name="org.apache.sling.extensions.webconsolebranding">Apache Sling branding for the Apache Felix Web Console. This fragment        attaches to the org.apache.felix.webconsole bundle to provide branding        through the /META-INF/webconsole.properties.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/felix/releases/org.apache.felix.jaas-1.0.2" version="1.0.2">
+		<project name="org.apache.felix.jaas">Bundle to simplify JAAS usage within OSGi environment. Refer to http://felix.apache.org/documentation/subprojects/apache-felix-jaas.html    for more details</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/pdfbox" version="2.0.12">
+		<project name="org.apache.pdfbox.fontbox">The Apache FontBox library is an open source Java tool to obtain low level information    from font files. FontBox is a subproject of Apache PDFBox.</project>
+		<project name="org.apache.pdfbox">The Apache PDFBox library is an open source Java tool for working with PDF documents.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-jcr-contentloader.git" version="2.2.6">
+		<project name="org.apache.sling.jcr.contentloader">This bundle provides initial content installation through bundles.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-serviceusermapper.git" version="1.4.4">
+		<project name="org.apache.sling.serviceusermapper">Provides a service to map service names with</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-caconfig-impl.git" version="1.4.14">
+		<project name="org.apache.sling.caconfig.impl">Apache Sling Context-Aware Configuration Implementation</project>
+	</repository>
+	<repository repositoryType="git" url="http://git-wip-us.apache.org/repos/asf/commons-fileupload.git" version="1.3.3">
+		<project name="org.apache.commons.fileupload">The Apache Commons FileUpload component provides a simple yet flexible means of adding support for multipart    file upload functionality to servlets and web applications.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-scripting-javascript.git" version="3.0.4">
+		<project name="org.apache.sling.scripting.javascript">Support for JavaScript scripting</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.extensions.threaddump-0.2.2" version="0.2.2">
+		<project name="org.apache.sling.extensions.threaddump">Plugin providing plugins to the Felix Shell and Web Console to        have the current threads with the stack traces dumped.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/felix/releases/org.apache.felix.framework-6.0.1" version="6.0.1">
+		<project name="org.apache.felix.framework">This bundle is system specific; it implements various system services.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.models.jacksonexporter-1.0.8" version="1.0.8">
+		<project name="org.apache.sling.models.jacksonexporter">Apache Sling Models Client Model Exporter - Jackson</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-installer-factory-configuration.git" version="1.2.0">
+		<project name="org.apache.sling.installer.factory.configuration">Provides support for configurations to the Apache Sling OSGi installer</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-event.git" version="4.2.12">
+		<project name="org.apache.sling.event">Support for eventing.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.scripting.jsp-api-1.0.0" version="1.0.0">
+		<project name="org.apache.sling.scripting.jsp-api">This bundle wraps the Apache Tomcat 6.0.14 JSP API used by Apache Sling Scripting JSP.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/felix/releases/org.apache.felix.webconsole-4.3.8" version="4.3.8">
+		<project name="org.apache.felix.webconsole">Web Based Management Console for OSGi Frameworks. See        http://felix.apache.org/site/apache-felix-web-console.html for more        information on this bundle.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/jackrabbit/oak" version="1.8.8">
+		<project name="org.apache.jackrabbit.oak-segment-tar">The goal of the Oak effort within the Apache Jackrabbit project is    to implement a scalable and performant hierarchical content repository    for use as the foundation of modern world-class web sites and other    demanding content applications.</project>
+		<project name="org.apache.jackrabbit.oak-api">The goal of the Oak effort within the Apache Jackrabbit project is    to implement a scalable and performant hierarchical content repository    for use as the foundation of modern world-class web sites and other    demanding content applications.</project>
+		<project name="org.apache.jackrabbit.oak-blob">The goal of the Oak effort within the Apache Jackrabbit project is    to implement a scalable and performant hierarchical content repository    for use as the foundation of modern world-class web sites and other    demanding content applications.</project>
+		<project name="org.apache.jackrabbit.oak-blob-plugins">The goal of the Oak effort within the Apache Jackrabbit project is    to implement a scalable and performant hierarchical content repository    for use as the foundation of modern world-class web sites and other    demanding content applications.</project>
+		<project name="org.apache.jackrabbit.oak-commons">The goal of the Oak effort within the Apache Jackrabbit project is    to implement a scalable and performant hierarchical content repository    for use as the foundation of modern world-class web sites and other    demanding content applications.</project>
+		<project name="org.apache.jackrabbit.oak-core">The goal of the Oak effort within the Apache Jackrabbit project is    to implement a scalable and performant hierarchical content repository    for use as the foundation of modern world-class web sites and other    demanding content applications.</project>
+		<project name="org.apache.jackrabbit.oak-core-spi">The goal of the Oak effort within the Apache Jackrabbit project is    to implement a scalable and performant hierarchical content repository    for use as the foundation of modern world-class web sites and other    demanding content applications.</project>
+		<project name="org.apache.jackrabbit.oak-jcr">The goal of the Oak effort within the Apache Jackrabbit project is    to implement a scalable and performant hierarchical content repository    for use as the foundation of modern world-class web sites and other    demanding content applications.</project>
+		<project name="org.apache.jackrabbit.oak-lucene">Oak Lucene integration subproject</project>
+		<project name="org.apache.jackrabbit.oak-query-spi">The goal of the Oak effort within the Apache Jackrabbit project is    to implement a scalable and performant hierarchical content repository    for use as the foundation of modern world-class web sites and other    demanding content applications.</project>
+		<project name="org.apache.jackrabbit.oak-security-spi">The goal of the Oak effort within the Apache Jackrabbit project is    to implement a scalable and performant hierarchical content repository    for use as the foundation of modern world-class web sites and other    demanding content applications.</project>
+		<project name="org.apache.jackrabbit.oak-store-composite">The goal of the Oak effort within the Apache Jackrabbit project is    to implement a scalable and performant hierarchical content repository    for use as the foundation of modern world-class web sites and other    demanding content applications.</project>
+		<project name="org.apache.jackrabbit.oak-store-document">The goal of the Oak effort within the Apache Jackrabbit project is    to implement a scalable and performant hierarchical content repository    for use as the foundation of modern world-class web sites and other    demanding content applications.</project>
+		<project name="org.apache.jackrabbit.oak-store-spi">The goal of the Oak effort within the Apache Jackrabbit project is    to implement a scalable and performant hierarchical content repository    for use as the foundation of modern world-class web sites and other    demanding content applications.</project>
+	</repository>
+	<repository repositoryType="git" url="https://github.com/dropwizard/dropwizard.git" version="3.2.6">
+		<project name="io.dropwizard.metrics.core">Metrics is a Java library which gives you unparalleled insight into what your code does in        production. Metrics provides a powerful toolkit of ways to measure the behavior of critical        components in your production environment.</project>
+	</repository>
+	<repository repositoryType="git" url="git@github.com:FasterXML/jackson-core.git" version="2.9.7">
+		<project name="com.fasterxml.jackson.core.jackson-core">Core Jackson processing abstractions (aka Streaming API), implementation for JSON</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-scripting-sightly-runtime.git" version="1.0.0-1.4.0">
+		<project name="org.apache.sling.scripting.sightly.runtime">The Apache Sling Scripting HTL Runtime provides support for executing HTL Java compiled units produced by the org.apache.sling.scripting.sightly.compiler.java module.</project>
+	</repository>
+	<repository repositoryType="git" url="https://github.com/qos-ch/slf4j.git" version="1.7.25">
+		<project name="jcl.over.slf4j">JCL 1.2 implemented over SLF4J</project>
+		<project name="log4j.over.slf4j">Log4j implemented over SLF4J</project>
+		<project name="slf4j.api">The slf4j API</project>
+	</repository>
+	<repository repositoryType="git" url="git@github.com:FasterXML/jackson-annotations.git" version="2.9.7">
+		<project name="com.fasterxml.jackson.core.jackson-annotations">Core annotations used for value types, used by Jackson data binding package.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-engine.git" version="2.6.16">
+		<project name="org.apache.sling.engine">Bundle implementing the core of Apache Sling.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-hc-api.git" version="1.0.2">
+		<project name="org.apache.sling.hc.api">The Sling Health Check API</project>
+	</repository>
+	<repository repositoryType="git" url="https://git-wip-us.apache.org/repos/asf/servicemix-bundles.git" version="1.7.10_1">
+		<project name="org.apache.servicemix.bundles.rhino">This OSGi bundle wraps rhino 1.7.10 jar file.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-auth-form.git" version="1.0.12">
+		<project name="org.apache.sling.auth.form">Bundle implementing form based authentication with login and logout support. Authentication state is maintained in        a Cookie or in an HTTP Session. The password is only submitted        when first authenticating.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-resourceresolver.git" version="1.6.8">
+		<project name="org.apache.sling.resourceresolver">This bundle provides the Resource Resolver and the Resource Resolver Factory.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.jcr.jcr-wrapper-2.0.0" version="2.0.0">
+		<project name="org.apache.sling.jcr.jcr-wrapper">This bundle wraps the JCR API Version 2.0 and exports it as version 2.0 and 1.1 to avoid problems with strict import ranges due to the (wrong) export in the        original JCR api bundle.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-event-dea.git" version="1.1.4">
+		<project name="org.apache.sling.event.dea">Support distributing events through the OSGi event admin.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-scripting-sightly-repl.git" version="1.0.6">
+		<project name="org.apache.sling.scripting.sightly.repl">REPL for Apache Sling Scripting HTL engine</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/geronimo/specs/tags/geronimo-saaj_1.3_spec-1.1" version="1.1">
+		<project name="org.apache.geronimo.specs.geronimo-saaj_1.3_spec">SOAP AA for Java 1.3</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/felix/releases/org.apache.felix.http.whiteboard-4.0.0" version="4.0.0">
+		<project name="org.apache.felix.http.whiteboard">This is an implementation of the proprietary Apache Felix whiteboard support</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.commons.scheduler-2.7.2" version="2.7.2">
+		<project name="org.apache.sling.commons.scheduler">Support for scheduling.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.installer.provider.jcr-3.1.26" version="3.1.26">
+		<project name="org.apache.sling.installer.provider.jcr">Installs OSGi bundles and configurations found in the JCR repository.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-samples.git" version="0.9.0">
+		<project name="org.apache.sling.sample.slingshot">The parent project for Apache Sling</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-caconfig-api.git" version="1.1.2">
+		<project name="org.apache.sling.caconfig.api">Apache Sling Context-Aware Configuration API</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-fsresource.git" version="2.1.14">
+		<project name="org.apache.sling.fsresource">Provides a ResourceProvider implementation supporting file system based resources.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-jcr-jackrabbit-usermanager.git" version="2.2.8">
+		<project name="org.apache.sling.jcr.jackrabbit.usermanager">Provides ResourceProvider and SlingPostOperations for the Jackrabbit        UserManager.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-commons-classloader.git" version="1.4.2">
+		<project name="org.apache.sling.commons.classloader">This bundle provides support for dynamic class loading used for example by the scripting engines.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/felix/releases/org.apache.felix.webconsole.plugins.ds-2.1.0" version="2.1.0">
+		<project name="org.apache.felix.webconsole.plugins.ds">This is a plugin for the Apache Felix OSGi web console for displaying Service Components/Declarative Services.</project>
+	</repository>
+	<repository repositoryType="git" url="https://github.com/ist-dresden/composum.git" version="1.9.2">
+		<project name="com.composum.core.commons">general components and objects to use the Sling API</project>
+		<project name="com.composum.core.config">the set of necessary OSGi configuration fragments</project>
+		<project name="com.composum.core.console">a set of basig tools: jcr browser, package manager, user manager</project>
+		<project name="com.composum.core.jslibs">the set of necessary javascript components and scripts</project>
+		<project name="com.composum.core.pckgmgr">a console module to manage VLT packages</project>
+		<project name="com.composum.core.usermgnt">a console module to manage users via JCR API</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-models-impl.git" version="1.4.10">
+		<project name="org.apache.sling.models.impl">Apache Sling Models Implementation</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.provisioning.model-1.8.4" version="1.8.4">
+		<project name="org.apache.sling.provisioning.model">The provisioning model for Apache Sling</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/geronimo/specs/tags/geronimo-ws-metadata_2.0_spec-1.1.3" version="1.1.3">
+		<project name="org.apache.geronimo.specs.geronimo-ws-metadata_2.0_spec">Web Services Metadata 2.0 API</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-commons-metrics.git" version="1.2.6">
+		<project name="org.apache.sling.commons.metrics">Integrates Metric library with Sling. Refer to</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/felix/releases/org.apache.felix.http.servlet-api-1.1.2" version="1.1.2">
+		<project name="org.apache.felix.http.servlet-api">Provides the Servlet API for use by applications</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/aries/tags/org.apache.aries.jmx.whiteboard-1.2.0" version="1.2.0">
+		<project name="org.apache.aries.jmx.whiteboard">This bundle implements whiteboard pattern support for DynamicMBean        services registered with the OSGi service registry. Each DynamicMBean        service is registered with (and unregistered from) all MBeanServer        services registered in the OSGi service registry.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-jcr-repoinit.git" version="1.1.8">
+		<project name="org.apache.sling.jcr.repoinit">Initializes a JCR repository based on the output	  of the RepoInit Language parser.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.scripting.api-2.2.0" version="2.2.0">
+		<project name="org.apache.sling.scripting.api">This bundle provides the internal API to implement scripting.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/felix/releases/org.apache.felix.prefs-1.1.0" version="1.1.0">
+		<project name="org.apache.felix.prefs">Implementation of the OSGi Preferences Service Specification 1.1.1</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/felix/releases/org.apache.felix.webconsole.plugins.packageadmin-1.0.4" version="1.0.4">
+		<project name="org.apache.felix.webconsole.plugins.packageadmin">Plugin providing support to query the Package Admin service        for various details; e.g. finding duplicate package exports        or finding bundles exporting given packages</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-scripting-sightly-compiler-java.git" version="1.1.0-1.4.0">
+		<project name="org.apache.sling.scripting.sightly.compiler.java">The Apache Sling Scripting HTL Java Compiler provides support for transpiling the Abstract Syntax Tree produced by the        org.apache.sling.scripting.sightly.compiler module into Java source code.</project>
+	</repository>
+	<repository repositoryType="git" url="http://git-wip-us.apache.org/repos/asf/commons-lang.git" version="3.8.1">
+		<project name="org.apache.commons.lang3">Apache Commons Lang, a package of Java utility classes for the  classes that are in java.lang's hierarchy, or are considered to be so  standard as to justify existence in java.lang.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-starter-content.git" version="1.0.2">
+		<project name="org.apache.sling.starter.content">This bundle provides content that is loaded in the JCR repository    for the Sling Starter.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-servlets-resolver.git" version="2.4.24">
+		<project name="org.apache.sling.servlets.resolver">Bundle implementing the Sling API ServletResolver.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/commons/proper/lang/branches/LANG_2_X" version="2.6">
+		<project name="org.apache.commons.lang">Commons Lang, a package of Java utility classes for the        classes that are in java.lang's hierarchy, or are considered to be so        standard as to justify existence in java.lang.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.jcr.webconsole-1.0.2" version="1.0.2">
+		<project name="org.apache.sling.jcr.webconsole">The JCR WebConsole bundle provides Felix WebConsole plugins.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-xss.git" version="2.0.12">
+		<project name="org.apache.sling.xss">Apache Sling XSS Protection Bundle providing XSS protection based on the OWASP AntiSamy and OWASP Java Encoder libraries.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-servlets-post.git" version="2.3.26">
+		<project name="org.apache.sling.servlets.post">Provides default POST servlets.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/felix/releases/org.apache.felix.http.jetty-4.0.6" version="4.0.6">
+		<project name="org.apache.felix.http.jetty">This is an implementation of the OSGi Http Service and the OSGi Http Whiteboard Specification</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-jcr-jackrabbit-accessmanager.git" version="3.0.2">
+		<project name="org.apache.sling.jcr.jackrabbit.accessmanager">Provides SlingPostOperations for the Jackrabbit JSR-283 Access Control Manager.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/felix/releases/org.apache.felix.webconsole.plugins.event-1.1.8" version="1.1.8">
+		<project name="org.apache.felix.webconsole.plugins.event">This is a plugin for the Apache Felix OSGi web console for displaying        OSGi events.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/aries/tags/org.apache.aries.jmx.core-1.1.8" version="1.1.8">
+		<project name="org.apache.aries.jmx.core">This bundle contains the core implementation 		of the JMX Control specification</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/commons/proper/codec/trunk" version="1.11">
+		<project name="org.apache.commons.codec">The Apache Commons Codec package contains simple encoder and decoders for     various formats such as Base64 and Hexadecimal.  In addition to these     widely used encoders and decoders, the codec package also maintains a     collection of phonetic encoding utilities.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.discovery.api-1.0.4" version="1.0.4">
+		<project name="org.apache.sling.discovery.api">Support for topology discovery of instances.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/commons/proper/codec/trunk" version="1.10">
+		<project name="org.apache.httpcomponents.httpclient">Apache HttpComponents Client (OSGi bundle)</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-serviceuser-webconsole.git" version="1.0.0">
+		<project name="org.apache.sling.serviceuser.webconsole">Provides an OSGi Web Console for creating, updating and viewing Service Users.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-servlets-get.git" version="2.1.38">
+		<project name="org.apache.sling.servlets.get">Provides default GET servlets for HTML, Text and JSON rendering        and streaming resources.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-settings.git" version="1.3.10">
+		<project name="org.apache.sling.settings">Settings support including run modes</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.extensions.webconsolesecurityprovider-1.2.0" version="1.2.0">
+		<project name="org.apache.sling.extensions.webconsolesecurityprovider">WebConsoleSecurityProvider for the Apache Felix Web Console using the        Apache Sling Auth Core bundle to authenticate users.</project>
+	</repository>
+	<repository repositoryType="git" url="https://github.com/apache/servicemix-specs.git" version="2.9.0">
+		<project name="org.apache.servicemix.specs.jaxb-api-2.2">This pom provides project information that is common to all ServiceMix branches.</project>
+		<project name="org.apache.servicemix.specs.jaxws-api-2.2">This pom provides project information that is common to all ServiceMix branches.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-commons-threads.git" version="3.2.18">
+		<project name="org.apache.sling.commons.threads">Support for thread handling like pooling.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/felix/releases/org.apache.felix.configadmin-1.9.10" version="1.9.10">
+		<project name="org.apache.felix.configadmin">Implementation of the OSGi Configuration Admin Service Specification 1.6</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/servicemix/smx4/bundles/tags/org.apache.servicemix.bundles.jaxb-impl-2.2.11_1" version="2.2.11_1">
+		<project name="org.apache.servicemix.bundles.jaxb-impl">This OSGi bundle wraps jaxb-impl 2.2.11 jar file.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-scripting-jsp.git" version="2.3.4">
+		<project name="org.apache.sling.scripting.jsp">Support for JSP scripting</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-i18n.git" version="2.5.14">
+		<project name="org.apache.sling.i18n">Support for creating Java I18N ResourceBundles from repository        resources.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/geronimo/specs/tags/geronimo-annotation_1.3_spec-1.1" version="1.1">
+		<project name="org.apache.geronimo.specs.geronimo-annotation_1.3_spec">Common Annotations spec 1.3 API</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/felix/releases/org.apache.felix.metatype-1.2.2" version="1.2.2">
+		<project name="org.apache.felix.metatype">Implementation of the OSGi Metatype Service Specification 1.4</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.hc.webconsole-1.1.2" version="1.1.2">
+		<project name="org.apache.sling.hc.webconsole">Webconsole plugin for Sling Health Check Services</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.installer.provider.file-1.1.0" version="1.1.0">
+		<project name="org.apache.sling.installer.provider.file">Installs OSGi bundles and configurations from the file system.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/felix/releases/org.apache.felix.inventory-1.0.6" version="1.0.6">
+		<project name="org.apache.felix.inventory">Apache Felix Inventory provides some mechanisms to get the current state of the system and therefore provides an inventory of the system.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.installer.console-1.0.2" version="1.0.2">
+		<project name="org.apache.sling.installer.console">Provides a web console plugin for the OSGi installer</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.commons.log.webconsole-1.0.0" version="1.0.0">
+		<project name="org.apache.sling.commons.log.webconsole">This bundle provides webconsole plugin for Sling Commons Log</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-auth-core.git" version="1.4.2">
+		<project name="org.apache.sling.auth.core">The Sling Authentication Service bundle provides the basic mechanisms to authenticate HTTP requests with a JCR repository.        The algorithms for extracting authentication details from the        requests is extensible by implementing an AuthenticationHandler        interface.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-jcr-registration.git" version="1.0.6">
+		<project name="org.apache.sling.jcr.registration">Bundle providing support to publish JCR repository services via RMI and/or JNDI</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-repoinit-parser.git" version="1.2.2">
+		<project name="org.apache.sling.repoinit.parser">Parser for the Repository Initialization language used in Sling</project>
+	</repository>
+	<repository repositoryType="git" url="https://github.com/apache/tika.git" version="1.19.1">
+		<project name="org.apache.tika.core">This is the core Apache Tika™ toolkit library from which all other modules inherit functionality. It also    includes the core facades for the Tika API.</project>
+		<project name="org.apache.tika.parsers">Apache Tika is a toolkit for detecting and extracting metadata and    structured text content from various documents using existing parser    libraries.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-bundleresource-impl.git" version="2.3.2">
+		<project name="org.apache.sling.bundleresource.impl">Provides a ResourceProvider implementation supporting bundle        based resources.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-models-api.git" version="1.3.8">
+		<project name="org.apache.sling.models.api">Apache Sling Models API</project>
+	</repository>
+	<repository repositoryType="git" url="http://git-wip-us.apache.org/repos/asf/commons-io.git" version="2.6">
+		<project name="org.apache.commons.io">The Apache Commons IO library contains utility classes, stream implementations, file filters,file comparators, endian transformation classes, and much more.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-commons-mime.git" version="2.2.0">
+		<project name="org.apache.sling.commons.mime">Support for configurable MIME type mapping and querying</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/felix/releases/org.apache.felix.webconsole.plugins.memoryusage-1.0.8" version="1.0.8">
+		<project name="org.apache.felix.webconsole.plugins.memoryusage">Plugin providing plugins to the Felix Shell and Web Console to        observe the VMs memory use and cause try to get thread dumps etc.</project>
+	</repository>
+	<repository repositoryType="svn" url="https://svn.apache.org/repos/asf/felix/releases/org.apache.felix.scr-2.1.14" version="2.1.14">
+		<project name="org.apache.felix.scr">Implementation of the Declarative Services specification 1.4</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/felix/releases/org.apache.felix.bundlerepository-2.0.10" version="2.0.10">
+		<project name="org.apache.felix.bundlerepository">Bundle repository service.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.commons.logservice-1.0.6" version="1.0.6">
+		<project name="org.apache.sling.commons.logservice">Implementation of the OSGi Compendium Log Service using SLF4J        as the actual logging backend.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/jackrabbit/commons/filevault/tags/3.2.4/vault-core" version="3.2.4">
+		<project name="org.apache.jackrabbit.vault">Builds an OSGi bundle for the file vault parts</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-installer-hc.git" version="2.0.0">
+		<project name="org.apache.sling.installer.hc">Provides Sling Health Checks related to the Sling Installer.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/sling/tags/org.apache.sling.adapter-2.1.10" version="2.1.10">
+		<project name="org.apache.sling.adapter">Bundle implementing the AdapterManager and provides a convenience        implementation of the Adaptable interface to make use of this        AdapterManager.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/felix/releases/org.apache.felix.eventadmin-1.5.0" version="1.5.0">
+		<project name="org.apache.felix.eventadmin">This bundle provides an implementation of the OSGi R7 EventAdmin service.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-jcr-davex.git" version="1.3.10">
+		<project name="org.apache.sling.jcr.davex">Bundle to access JCR repositories over DavEx</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-scripting-core.git" version="2.0.54">
+		<project name="org.apache.sling.scripting.core">Sling Scripting core functionality</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-discovery-oak.git" version="1.2.28">
+		<project name="org.apache.sling.discovery.oak">Implementation of Apache Sling Discovery based on Jackrabbit Oak using its discovery-lite descriptor for in-cluster view detection and a TopologyView through HTTP POST heartbeats announcing sub-topologies to each other.</project>
+	</repository>
+	<repository repositoryType="git" url="https://git-wip-us.apache.org/repos/asf/httpcomponents-client.git" version="4.4.10">
+		<project name="org.apache.httpcomponents.httpcore">Apache HttpComponents Core (OSGi bundle)</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-installer-core.git" version="3.9.0">
+		<project name="org.apache.sling.installer.core">Provides services to install OSGi bundles and configurations        by supplying input streams and dictionaries.</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-scripting-sightly-js-provider.git" version="1.0.28">
+		<project name="org.apache.sling.scripting.sightly.js.provider">The Apache Sling HTL JavaScript Use Provider adds support for accessing JS scripts from HTL's Use-API.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/pdfbox" version="1.8.16">
+		<project name="org.apache.pdfbox.jempbox">The Apache JempBox library is an open source Java tool that implements Adobe's XMP(TM)    specification. JempBox is a subproject of Apache PDFBox.</project>
+	</repository>
+	<repository repositoryType="svn" url="http://svn.apache.org/repos/asf/geronimo/specs/tags/geronimo-atinject_1.0_spec-1.1" version="1.1">
+		<project name="org.apache.geronimo.specs.geronimo-atinject_1.0_spec">Apache Geronimo implementation of the JSR-330 Dependency Injection Spec API</project>
+	</repository>
+	<repository repositoryType="git" url="https://gitbox.apache.org/repos/asf/sling-org-apache-sling-jcr-oak-server.git" version="1.2.3-SNAPSHOT">
+		<project name="org.apache.sling.jcr.oak.server">This bundle provides a SlingRepository based on Apache Jackrabbit Oak.</project>
+	</repository>
+</repositories>

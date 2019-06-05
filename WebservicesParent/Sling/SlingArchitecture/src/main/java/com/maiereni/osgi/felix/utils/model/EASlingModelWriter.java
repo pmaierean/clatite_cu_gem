@@ -35,14 +35,17 @@ import com.maiereni.ea.utils.PackageProcessor;
 import com.maiereni.ea.utils.bo.ConnectorDescription;
 import com.maiereni.ea.utils.bo.DiagramDescription;
 import com.maiereni.ea.utils.bo.ElementDescription;
+import com.maiereni.ea.utils.bo.PackageDescription;
 import com.maiereni.osgi.felix.utils.bo.BundleMapping;
 import com.maiereni.osgi.felix.utils.bo.ComponentMapping;
 import com.maiereni.osgi.felix.utils.bo.ServiceMapping;
 import com.maiereni.sling.info.Bundle;
 import com.maiereni.sling.info.Component;
 import com.maiereni.sling.info.Components;
+import com.maiereni.sling.info.ImportPackage;
 import com.maiereni.sling.info.Imports;
 import com.maiereni.sling.info.Model;
+import com.maiereni.sling.info.Reference;
 import com.maiereni.sling.info.Service;
 import com.maiereni.sling.info.Services;
 
@@ -51,16 +54,22 @@ import com.maiereni.sling.info.Services;
  * @author Petre Maierean
  *
  */
-class EASlingModelWriter {
+class EASlingModelWriter extends ModelLookup {
+	
+	public EASlingModelWriter(Model model) {
+		super(model);
+	}
+
 	private static final Logger logger = LoggerFactory.getLogger(EASlingModelWriter.class);
 	public static final String MODEL_NAME = "Model";
+
+	
 	/**
 	 * Write a sling model into EA
-	 * @param model the model
 	 * @param eaFile the output file
 	 * @throws Exception
 	 */
-	public void writetoEA(final Model model, final String eaFile) throws Exception {
+	public void writetoEA(final String eaFile) throws Exception {
 		logger.debug("Write model to Enterpise Architect");
 		EAClientFactory clientFactory = new EAClientFactory();
 		
@@ -104,6 +113,11 @@ class EASlingModelWriter {
 		addConnectors(slingPackages, model, ret, "sling");
 		addConnectors(osgiPackages, model, ret, "osgi");
 		addConnectors(otherPackages, model, ret, "other");
+
+		addDiagrams(jcrPackages, model, ret, "jcr");
+		addDiagrams(slingPackages, model, ret, "sling");
+		addDiagrams(osgiPackages, model, ret, "osgi");
+		addDiagrams(otherPackages, model, ret, "other");
 		
 		DiagramProcessor diagramProcessor = addOrGet(proc, "Sling", DiagramDescription.Type.COMPONENT);
 		diagramProcessor.addPackage(slingPackages.getPackageDescription());
@@ -125,8 +139,8 @@ class EASlingModelWriter {
 		logger.debug("Add the connectors for bundle: " + bundle.getName());
 		Imports imports = bundle.getImportPackages();
 		if (!(imports == null || imports.getPkg() == null)) {
-			for(String pkg: imports.getPkg()) {
-				String ref = getBundleReferenceFromImport(pkg);
+			for(ImportPackage pkg: imports.getPkg()) {
+				String ref = pkg.getBundleId();
 				if (StringUtils.isNotBlank(ref)) {
 					BundleMapping depMapping = refs.get(ref);
 					if (depMapping == null) {
@@ -134,6 +148,7 @@ class EASlingModelWriter {
 						continue;
 					}
 					if (!proc.hasConnector(depMapping.getGuid(), ConnectorDescription.Types.DEPENDENCY)) {
+						logger.debug("Add connecctor to package " + depMapping.getBundleName());
 						proc.addConnector("import package", depMapping.getGuid(), ConnectorDescription.Types.DEPENDENCY);
 					}
 				}
@@ -141,20 +156,210 @@ class EASlingModelWriter {
 		}
 	}
 	
-	private static final String IMPORT_TEMPLATE = "href='/system/console/bundles/";
-	protected String getBundleReferenceFromImport(final String s) {
-		String ret = null;
-		if (StringUtils.isNotBlank(s)) {
-			int i = s.indexOf(IMPORT_TEMPLATE);
-			if (i>0) {
-				i = i + IMPORT_TEMPLATE.length();
-				int j = s.indexOf("'", i);
-				if (j > 0) {
-					ret = s.substring(i, j);
+	private void addDiagrams(final PackageProcessor proc, final Model model, final Map<String, BundleMapping> refs, final String groupName) throws Exception {
+		for(Bundle bundle: model.getBundles()) {
+			if (bundle.getGroup().equals(groupName)) {
+				PackageProcessor procBundle = proc.getPackage(bundle.getName());
+				addDiagrams(procBundle, bundle, refs);
+			}
+		}
+	}	
+	
+	private void addDiagrams(final PackageProcessor proc, final Bundle bundle, final Map<String, BundleMapping> refs) throws Exception {
+		logger.debug("Add the diagram for bundle: " + bundle.getName());
+		DiagramProcessor diagram = null;
+		if (proc.hasDiagram(bundle.getName())) {
+			diagram = proc.getDiagram(bundle.getName());
+		}
+		else {
+			diagram = proc.addDiagram(bundle.getName(), DiagramDescription.Type.COMPONENT);
+		}
+		PackageDescription pkgD = proc.getPackageDescription();
+		if (!diagram.hasPackage(pkgD)) {
+			diagram.addPackage(pkgD);
+		}
+		
+		addComponentsToDiagram(proc, bundle, refs, diagram);
+		addImportsToDiagram(proc, bundle, refs, diagram);
+	}
+	
+	private void addComponentsToDiagram(final PackageProcessor proc, final Bundle bundle, final Map<String, BundleMapping> refs, final DiagramProcessor diagram) throws Exception {
+		logger.debug("Add components to diagram");
+		if (bundle.getComponents() != null && bundle.getComponents().getComponent() != null) {
+			BundleMapping mapping = refs.get(bundle.getId());
+			for(Component component: bundle.getComponents().getComponent()) {
+				ComponentMapping cm = getComponentMapping(mapping, component.getId());
+				ElementProcessor ep = proc.getElement(cm.getName());
+				diagram.addElement(ep.getDescription());
+				addComponentRefrencesToDiagram(proc, refs, diagram, component, ep);
+			}
+		}
+	}
+	
+	private void addComponentRefrencesToDiagram(
+		final PackageProcessor proc, 
+		final Map<String, BundleMapping> refs, 
+		final DiagramProcessor diagram, 
+		final Component component,
+		final ElementProcessor ep) throws Exception {
+		if (component.getReference() != null) {
+			for(Reference ref: component.getReference()) {
+				Component refComponent = getComponentByServiceName(ref.getAttrName());
+				if (refComponent == null) {
+					Bundle refBundle = getBundleByServiceName(ref.getAttrName());
+					if (refBundle != null) {
+						addReferencePackageToDiagram(proc, refs, diagram, refBundle, ep);
+					}
+					else {
+						logger.error("Cannot resolve reference service " + ref.getAttrName() + " to a component");
+					}
+				}
+				else {
+					addReferenceComponentToDiagram(proc, refs, diagram, refComponent, ep);
 				}
 			}
 		}
+	}
+	
+	private void addReferenceComponentToDiagram(
+		final PackageProcessor proc, 
+		final Map<String, BundleMapping> refs,
+		final DiagramProcessor diagram, 
+		final Component refComponent,
+		final ElementProcessor ep) throws Exception {
+		Bundle refBundle = getBundleByComponentId(refComponent.getId());
+		BundleMapping refBundleMapping = refs.get(refBundle.getId());
+		PackageProcessor pRef = proc.findPackage(refBundleMapping.getGuid());
+		if (pRef != null) {
+			PackageDescription pRefDesc = pRef.getPackageDescription();
+			if (!diagram.hasPackage(pRefDesc)) {
+				logger.debug("Reference package " + refBundle.getName() + " to the diagram");
+				diagram.addPackage(pRefDesc);
+			}
+			ComponentMapping refCompMapping = getComponentMapping(refBundleMapping, refComponent.getId());
+			ElementProcessor refElementProc = pRef.getElement(refCompMapping.getName());
+			if (refElementProc == null) {
+				try {
+					int elementId = Integer.parseInt(refCompMapping.getComponentId());
+					refElementProc = pRef.getElementById(elementId);
+				}
+				catch(Exception e) {
+					logger.error("Failed to parse string '" + refCompMapping.getComponentId() + "' to integer");
+				}
+			}
+			if (refElementProc == null) {
+				logger.error("Cannot find an element for component: " + refCompMapping.getName() + " in package " + pRefDesc.getName());
+			}
+			else {
+				ElementDescription refElementDesc = refElementProc.getDescription();
+				if (!ep.hasConnector(refElementDesc, ConnectorDescription.Types.ASSOCIATION)) {
+					logger.debug("Add connector to component " + refComponent.getName());
+					ep.addConnector(refElementDesc, "references", ConnectorDescription.Types.ASSOCIATION);
+				}
+				if (!diagram.hasElement(refElementDesc)) {
+					logger.debug("Add component " + refComponent.getName() + " to diagram ");
+					diagram.addElement(refElementDesc);
+				}
+			}
+		}
+		else {
+			logger.error("Cannot find package for guid " + refBundleMapping.getGuid());							
+		}
+		
+	}
+	
+	private void addReferencePackageToDiagram(
+		final PackageProcessor proc, 
+		final Map<String, BundleMapping> refs,
+		final DiagramProcessor diagram, 
+		final Bundle refBundle,
+		final ElementProcessor ep) throws Exception {
+		BundleMapping refBundleMapping = refs.get(refBundle.getId());
+		PackageProcessor pRef = proc.findPackage(refBundleMapping.getGuid());
+		if (pRef != null) {
+			PackageDescription pRefDesc = pRef.getPackageDescription();
+			if (!diagram.hasPackage(pRefDesc)) {
+				logger.debug("Reference package " + refBundle.getName() + " to the diagram");
+				diagram.addPackage(pRefDesc);
+			}
+
+			ComponentMapping refCompMapping = getComponentMappingByName(refBundleMapping, "generic");
+			ElementProcessor refElementProc = pRef.getElement(refCompMapping.getName());
+			if (refElementProc == null) {
+				try {
+					int elementId = Integer.parseInt(refCompMapping.getComponentId());
+					refElementProc = pRef.getElementById(elementId);
+				}
+				catch(Exception e) {
+					logger.error("Failed to parse string '" + refCompMapping.getComponentId() + "' to integer");
+				}
+			}
+			if (refElementProc == null) {
+				logger.error("Cannot find an element for component: " + refCompMapping.getName() + " in package " + pRefDesc.getName());
+			}
+			else {
+				ElementDescription refElementDesc = refElementProc.getDescription();
+				if (!ep.hasConnector(refElementDesc, ConnectorDescription.Types.ASSOCIATION)) {
+					logger.debug("Add connector to component 'generic'");
+					ep.addConnector(refElementDesc, "references", ConnectorDescription.Types.ASSOCIATION);
+				}
+				if (!diagram.hasElement(refElementDesc)) {
+					logger.debug("Add component 'generic' to diagram ");
+					diagram.addElement(refElementDesc);
+				}
+			}
+		
+		}
+	}
+
+	private ComponentMapping getComponentMapping(final BundleMapping mapping, final String componentId) {
+		ComponentMapping ret = null;
+		for(ComponentMapping cm : mapping.getComponents()) {
+			if (cm.getComponentId().equals(componentId)) {
+				ret = cm;
+				break;
+			}
+		}
 		return ret;
+	}
+
+	private ComponentMapping getComponentMappingByName(final BundleMapping mapping, final String componentName) {
+		ComponentMapping ret = null;
+		for(ComponentMapping cm : mapping.getComponents()) {
+			if (cm.getName().equals(componentName)) {
+				ret = cm;
+				break;
+			}
+		}
+		return ret;
+	}
+
+	
+	private void addImportsToDiagram(final PackageProcessor proc, final Bundle bundle, final Map<String, BundleMapping> refs, final DiagramProcessor diagram) throws Exception {
+		logger.debug("Add imports to diagram");
+		Imports imports = bundle.getImportPackages();
+		if (!(imports == null || imports.getPkg() == null)) {
+			for(ImportPackage pkg: imports.getPkg()) {
+				String ref = pkg.getBundleId();
+				if (StringUtils.isNotBlank(ref)) {
+					BundleMapping depMapping = refs.get(ref);
+					if (depMapping == null) {
+						logger.error("The reference id=" + ref + "' cannot be resolved");
+						continue;
+					}
+					PackageProcessor pImports = proc.findPackage(depMapping.getGuid());
+					if (pImports != null) {
+						PackageDescription iPkgd = pImports.getPackageDescription();
+						if (!diagram.hasPackage(iPkgd)) {
+							diagram.addPackage(iPkgd);
+						}
+					}
+					else {
+						logger.error("Cannot find package for guid " + depMapping.getGuid());
+					}
+				}
+			}
+		}
 	}
 	
 	private Map<String, BundleMapping> writeOthers(final Model model, final PackageProcessor p) throws Exception {
@@ -185,6 +390,15 @@ class EASlingModelWriter {
 				List<ComponentMapping> componentMappings = addComponents(bundle.getComponents(), pp);
 				bundleMapping.setComponents(componentMappings);
 				List<ServiceMapping> serviceMappings = addServices(bundle.getServices(), pp);
+				ElementProcessor gEl = pp.getElement("generic");
+				if (gEl != null) {
+					ElementDescription desc = gEl.getDescription();
+					ComponentMapping generic = new ComponentMapping();
+					generic.setName("generic");
+					generic.setGuid(desc.getUuid());
+					generic.setComponentId(desc.getId().toString());
+					componentMappings.add(generic);
+				}
 				bundleMapping.setServices(serviceMappings);
 				ret.put(bundle.getId(), bundleMapping);
 				logger.debug("The bundle '{}' has been created", bundle.getName());
@@ -201,6 +415,7 @@ class EASlingModelWriter {
 				ComponentMapping componentMapping = new ComponentMapping();
 				componentMapping.setGuid(proc1.getDescription().getUuid());
 				componentMapping.setName(component.getName());
+				componentMapping.setComponentId(component.getId());
 				List<ServiceMapping> serviceMappings = addServices(component.getServices(), proc1);
 				componentMapping.setServices(serviceMappings);
 				ret.add(componentMapping);

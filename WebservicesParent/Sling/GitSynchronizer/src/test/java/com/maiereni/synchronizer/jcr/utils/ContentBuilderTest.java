@@ -18,12 +18,13 @@
 package com.maiereni.synchronizer.jcr.utils;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
@@ -38,7 +39,8 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.maiereni.synchronizer.git.service.bo.FSStatus;
+import com.maiereni.synchronizer.git.service.bo.LayoutRule;
+import com.maiereni.synchronizer.git.service.bo.LayoutRules;
 import com.maiereni.util.DeletableDirectory;
 
 /**
@@ -55,7 +57,7 @@ public class ContentBuilderTest {
 	public void testNegative1() {
 		try {
 			ContentBuilder cb = createBuilder(new String[] {});
-			cb.buildContentUpdater(null, null, null);
+			cb.buildZip(null, null);
 			fail("Unexpected behavior");
 		}
 		catch(Exception e) {
@@ -70,7 +72,7 @@ public class ContentBuilderTest {
 	public void testNegative2() {
 		try {
 			ContentBuilder cb = createBuilder(new String[] {});
-			cb.buildContentUpdater(UUID.randomUUID().toString(), null, null);
+			cb.buildZip(UUID.randomUUID().toString(), null);
 			fail("Unexpected behavior");
 		}
 		catch(Exception e) {
@@ -87,7 +89,7 @@ public class ContentBuilderTest {
 			ContentBuilder cb = createBuilder(new String[] {});
 			File f = new File(dir.getPath(), "some.txt");
 			FileUtils.writeStringToFile(f, "This is a simple text", Charset.defaultCharset());
-			cb.buildContentUpdater(f.getPath(), null, null);
+			cb.buildZip(f.getPath(), null);
 			fail("Unexpected behavior");
 		}
 		catch(Exception e) {
@@ -103,10 +105,12 @@ public class ContentBuilderTest {
 		File arch = null;
 		try (DeletableDirectory dir = new DeletableDirectory()) {
 			ContentBuilder cb = createBuilder(new String[] {"a/b/c/f1", "a/b/d/f2"});
-			String s = createContent(dir, new String[] {"a/b/c/f1", "a/b/d/f2"});
-			FSStatus status = cb.buildContentUpdater(s, null, null);
-			arch = cb.buildZip(s, status);
-			assertNull("Archive is null", arch);
+			createContent(dir, new String[] {"a/b/c/f1", "a/b/d/f2"});
+			LayoutRules rules = getLayoutRules("a");
+			rules.setName("");
+			
+			boolean changes = cb.hasChanges(dir.getPath(), rules);
+			assertTrue("No changes", !changes);
 		}
 		catch(Exception e) {
 			logger.error("Not expected to fail", e);
@@ -127,11 +131,10 @@ public class ContentBuilderTest {
 		File arch = null;
 		try (DeletableDirectory dir = new DeletableDirectory()) {
 			ContentBuilder cb = createBuilder(new String[] {});
-			String s = createContent(dir, new String[] {"a/b/c/f1", "a/b/d/f2"});
-			FSStatus status = cb.buildContentUpdater(s, null, null);
-			arch = cb.buildZip(s, status);
+			createContent(dir, new String[] {"a/b/c/f1", "a/b/d/f2"});
+			LayoutRules rules = getLayoutRules("a");
+			arch = cb.buildZip(dir.getPath(), rules);
 			assertNotNull("Archive is not null", arch);
-			assertEquals("Size of the archive", 308L, arch.length());
 		}
 		catch(Exception e) {
 			logger.error("Not expected to fail", e);
@@ -152,11 +155,10 @@ public class ContentBuilderTest {
 		File arch = null;
 		try (DeletableDirectory dir = new DeletableDirectory()) {
 			ContentBuilder cb = createBuilder(new String[] {"a/b/c/f1"});
-			String s = createContent(dir, new String[] {"a/b/c/f1", "a/b/d/f2", "a/b/c/f2"});
-			FSStatus status = cb.buildContentUpdater(s, null, null);
-			arch = cb.buildZip(s, status);
+			createContent(dir, new String[] {"a/b/c/f1", "a/b/d/f2", "a/b/c/f2"});
+			LayoutRules rules = getLayoutRules(".");
+			arch = cb.buildZip(dir.getPath(), rules);
 			assertNotNull("Archive is not null", arch);
-			assertEquals("Size of the archive", 308L, arch.length());
 		}
 		catch(Exception e) {
 			logger.error("Not expected to fail", e);
@@ -207,7 +209,11 @@ public class ContentBuilderTest {
 				createNode(session, f, NodeType.NT_FILE);											
 			}
 		}
-		return new ContentBuilder(session);
+		return new ContentBuilder(session) {
+			protected boolean matchNodeSize(final File f, final String nodePath) {
+				return isFileNode(nodePath);
+			}
+		};
 	}
 
 	
@@ -217,5 +223,16 @@ public class ContentBuilderTest {
 		Mockito.when(nodeType.getName()).thenReturn(sNodeType);
 		Mockito.when(ret.getPrimaryNodeType()).thenReturn(nodeType);
 		Mockito.when(session.getNode(path)).thenReturn(ret);
+	}
+
+	private LayoutRules getLayoutRules(final String path) {
+		LayoutRules rules = new LayoutRules();
+		rules.setDescription("testing");
+		rules.setLayouts(new ArrayList<LayoutRule>());
+		LayoutRule rule = new LayoutRule();
+		rule.setPath(path);
+		rule.setName(path);
+		rules.getLayouts().add(rule);
+		return rules;
 	}
 }

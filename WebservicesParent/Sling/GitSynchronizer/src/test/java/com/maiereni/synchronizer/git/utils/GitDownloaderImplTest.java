@@ -23,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.InputStream;
-import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
@@ -34,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import com.maiereni.synchronizer.git.service.bo.GitProperties;
 import com.maiereni.synchronizer.git.service.bo.GitResults;
-import com.maiereni.synchronizer.git.service.bo.LayoutRule;
+import com.maiereni.synchronizer.git.service.bo.LayoutRules;
 import com.maiereni.util.DeletableDirectory;
 import com.maiereni.util.DeletableFile;
 
@@ -156,7 +155,7 @@ public class GitDownloaderImplTest {
 			results = downloader.download(props);
 			assertNotNull(results);
 			assertTrue("The repository has been updated", !results.isCreated());
-			assertEquals("Expected number of changes", 10, results.getChanges().size());
+			assertEquals("Expected number of changes", 11, results.getChanges().size());
 		}
 		catch(Exception e) {
 			logger.error("Failed to create local repository", e);
@@ -170,10 +169,10 @@ public class GitDownloaderImplTest {
 			InputStream is = getClass().getResourceAsStream("/layoutRules.json")) {
 			byte[] buffer = IOUtils.toByteArray(is);
 			FileUtils.writeByteArrayToFile(cfgFile.getTmpFile(), buffer);
-			List<LayoutRule> rules = downloader.getLayoutRules(cfgFile.getTmpFile());
-			assertEquals("Expected number of rules", 3, rules.size());
-			assertEquals("Assert name", "content", rules.get(0).getName());
-			assertEquals("Assert inclusion pattern", "content[\\x2F|\\x5C].*", rules.get(0).getInclusionPattern());
+			LayoutRules rules = downloader.getLayoutRules(cfgFile.getTmpFile());
+			assertEquals("Expected number of rules", 3, rules.getLayouts().size());
+			assertEquals("Assert name", "content", rules.getLayouts().get(0).getName());
+			assertEquals("Assert inclusion pattern", "content[\\x2F|\\x5C].*", rules.getLayouts().get(0).getInclusionPattern());
 		}
 		catch(Exception e) {
 			logger.error("Failed to test", e);

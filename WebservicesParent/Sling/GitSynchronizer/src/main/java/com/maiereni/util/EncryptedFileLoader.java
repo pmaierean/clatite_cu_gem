@@ -21,20 +21,26 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.security.KeyPair;
 import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.Security;
 import java.util.Enumeration;
 import java.util.Properties;
 
 import javax.annotation.Nonnull;
-import javax.crypto.Cipher;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.bouncycastle.crypto.AsymmetricBlockCipher;
+import org.bouncycastle.crypto.encodings.PKCS1Encoding;
+import org.bouncycastle.crypto.engines.RSAEngine;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.crypto.util.PublicKeyFactory;
+
 
 /**
  * Utility class to encrypt the content of a Properties object using RSA algorithm.  
@@ -54,6 +60,14 @@ public class EncryptedFileLoader {
     public static final String KEY_PASSWORD = "javax.net.ssl.keyPassword";
     public static final String KEY_ALIAS = "javax.net.ssl.keyAlias";
     
+    static final String CMD_KEY_STORE_PASSWORD = "-D" + KEY_STORE_PASSWORD + "=";
+    static final String CMD_KEY_STORE_PATH = "-D" + KEY_STORE_PATH + "=";
+    static final String CMD_KEY_STORE_TYPE = "-D" + KEY_STORE_TYPE + "=";
+    static final String CMD_KEY_PASSWORD = "-D" + KEY_PASSWORD + "=";
+    static final String CMD_KEY_ALIAS = "-D" + KEY_ALIAS + "=";
+
+    
+    private static final String SUN_JAVA_COMMAND = "sun.java.command";
     private String keyStorePassword;
     private String keyPassword;
     private String keyStorePath;
@@ -69,7 +83,6 @@ public class EncryptedFileLoader {
     		System.getProperty(KEY_STORE_TYPE, "JKS"), 
     		System.getProperty(KEY_ALIAS, null));
     }
-
     public EncryptedFileLoader(
     	final String keyStorePath, 
     	final String keyStorePassword, 
@@ -81,6 +94,31 @@ public class EncryptedFileLoader {
     	this.keyPassword = keyPassword;
     	this.keyAlias = keyAlias;
     	this.keyStoreType = keyStoreType;
+    	initFromSlingCmdLine();
+    }
+
+    private void initFromSlingCmdLine() {
+    	String cmdLine = System.getProperty(SUN_JAVA_COMMAND);
+    	if (StringUtils.isNotBlank(cmdLine)) {
+    		String[] args = cmdLine.split(" ");
+    		for(String arg: args) {
+    			if (arg.startsWith(CMD_KEY_ALIAS)) {
+    				this.keyAlias = arg.substring(CMD_KEY_ALIAS.length());
+    			}
+    			else if (arg.startsWith(CMD_KEY_PASSWORD)) {
+    				this.keyPassword = arg.substring(CMD_KEY_PASSWORD.length());
+    			}
+    			else if (arg.startsWith(CMD_KEY_STORE_PASSWORD)) {
+    				this.keyStorePassword = arg.substring(CMD_KEY_STORE_PASSWORD.length());
+    			}
+    			else if (arg.startsWith(CMD_KEY_STORE_PATH)) {
+    				this.keyStorePath = arg.substring(CMD_KEY_STORE_PATH.length());
+    			}
+    			else if (arg.startsWith(CMD_KEY_STORE_TYPE)) {
+    				this.keyStoreType = arg.substring(CMD_KEY_STORE_TYPE.length());
+    			}
+    		}
+    	}    	
     }
     
     public void checkProvider() throws Exception {
@@ -99,15 +137,12 @@ public class EncryptedFileLoader {
 		checkProvider();
 		File f = new File(path);
 		if (!f.isFile()) {
-			throw new Exception("The path does not point to a file");
+			throw new Exception("The path does not point to a file: " + path);
 		}
 		try (FileInputStream fis = new FileInputStream(f)) {
-			Cipher cipher = Cipher.getInstance(RSA, BouncyCastle);
-			PrivateKey pk = getPrivateKey();
-			cipher.init(Cipher.DECRYPT_MODE, pk);
 			String s = FileUtils.readFileToString(f, "UTF-8");
-			byte[] buffer = base64.decode(s.getBytes());//IOUtils.readBytes(fis);
-			byte[] decodedBuffer = cipher.doFinal(buffer);
+			byte[] buffer = base64.decode(s);
+			byte[] decodedBuffer = decryptRSA(buffer);
 			return loadProperties(decodedBuffer);
 		}
 	}
@@ -121,26 +156,91 @@ public class EncryptedFileLoader {
 	public void saveProperties(@Nonnull Properties properties, @Nonnull final String path) throws Exception {
 		checkProvider();
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-			Cipher cipher = Cipher.getInstance(RSA, BouncyCastle);
-			PublicKey pk = getPublicKey();
-			cipher.init(Cipher.ENCRYPT_MODE, pk);
-			properties.store(out, null);
+			properties.store(out, "");
 			byte[] buffer = out.toByteArray();
-			byte[] encryptedBuff = cipher.doFinal(buffer);
-			// FileUtils.writeByteArrayToFile(new File(path), encryptedBuff);
-			String encodedString = new String(base64.encode(encryptedBuff));
+			byte[] hexEncodedCipher = encryptRSA(buffer);
+            String encodedString = base64.encodeToString(hexEncodedCipher);
 			FileUtils.write(new File(path), encodedString, "UTF-8");
 		}
 	}
-		
-	private PrivateKey getPrivateKey() throws Exception {
-		KeyStore ks = loadKeyStore(keyStorePath, keyStorePassword, keyStoreType);
-		return getPrivateKey(ks, keyPassword, keyAlias);
+
+	/**
+	 * Encrypt and encode 
+	 * @param buffer
+	 * @return
+	 * @throws Exception
+	 */
+	protected byte[] encryptRSA(final byte[] buffer) 
+		throws Exception {
+		try(ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            AsymmetricBlockCipher cipher = getAsymmetricBlockCipher(true);
+            int len = cipher.getInputBlockSize();
+            for (int i=0; i < buffer.length;  i += len) {
+                if (i + len > buffer.length)
+                    len = buffer.length - i;
+ 
+                byte[] encrypted = cipher.processBlock(buffer, i, len);
+                out.write(encrypted);
+            }
+            return out.toByteArray();
+		}
+    }
+
+	protected byte[] decryptRSA(final byte[] buffer) throws Exception {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()){
+            AsymmetricBlockCipher cipher = getAsymmetricBlockCipher(false);
+            int len = cipher.getInputBlockSize();
+            for (int i=0; i < buffer.length;  i += len) {
+                if (i + len > buffer.length) {
+                    len = buffer.length - i;
+                } 
+ 
+                byte[] decrypted = cipher.processBlock(buffer, i, len);
+                out.write(decrypted);
+            }
+            return out.toByteArray();
+        }
+    }
+	
+
+	protected KeyPair getKeyPair() throws Exception {
+		KeyPair ret = null;
+		KeyStore keyStore = loadKeyStore(keyStorePath, keyStorePassword, keyStoreType);
+		char[] password = keyPassword.toCharArray();
+	    KeyStore.ProtectionParameter protParam = new KeyStore.PasswordProtection(password);
+		if (StringUtils.isNotBlank(keyAlias)) {
+			ret = convert((KeyStore.PrivateKeyEntry) keyStore.getEntry(keyAlias, protParam));
+		}
+		else {
+			Enumeration<String> e = keyStore.aliases();
+			while(e.hasMoreElements()) {
+				String s = e.nextElement();
+				if (keyStore.isCertificateEntry(s)) {
+					ret = convert((KeyStore.PrivateKeyEntry) keyStore.getEntry(s, protParam));
+					break;
+				}
+			}
+		}
+
+		return ret;
 	}
 
-	private PublicKey getPublicKey() throws Exception {
-		KeyStore ks = loadKeyStore(keyStorePath, keyStorePassword, keyStoreType);
-		return getPublicKey(ks, keyPassword, keyAlias);		
+	private AsymmetricBlockCipher getAsymmetricBlockCipher(boolean encoding) throws Exception {
+		KeyPair keyPair = getKeyPair();
+        AsymmetricKeyParameter key = null;
+        if (encoding) { 
+        	key = PrivateKeyFactory.createKey(keyPair.getPrivate().getEncoded());
+        }
+        else {
+        	key = PublicKeyFactory.createKey(keyPair.getPublic().getEncoded());
+        }
+        AsymmetricBlockCipher ret = new PKCS1Encoding(new RSAEngine());
+        
+        ret.init(encoding, key);
+        return ret;
+	}
+	private KeyPair convert(final KeyStore.PrivateKeyEntry entry) {
+		return new KeyPair(entry.getCertificate().getPublicKey(), entry.getPrivateKey());
 	}
 	
 	private Properties loadProperties(final byte[] buffer) throws Exception {
@@ -150,27 +250,6 @@ public class EncryptedFileLoader {
 			return props;
 		}
 	}
-	
-	private PublicKey getPublicKey(final KeyStore keyStore, final String keyPassword, final String alias) throws Exception {
-	    PublicKey ret = null;
-		char[] password = keyPassword.toCharArray();
-	    KeyStore.ProtectionParameter protParam = new KeyStore.PasswordProtection(password);
-		if (StringUtils.isNotBlank(alias)) {
-			ret = ((KeyStore.PrivateKeyEntry) keyStore.getEntry(alias, protParam)).getCertificate().getPublicKey();
-		}
-		else {
-			Enumeration<String> e = keyStore.aliases();
-			while(e.hasMoreElements()) {
-				String s = e.nextElement();
-				if (keyStore.isCertificateEntry(s)) {
-					ret = ((KeyStore.PrivateKeyEntry) keyStore.getEntry(s, protParam)).getCertificate().getPublicKey();
-					break;
-				}
-			}
-		}
-		return ret;
-	}
-	
 	private KeyStore loadKeyStore(@Nonnull final String path, @Nonnull final String password, final String type) throws Exception {
 		char[] pwd = password.toCharArray();
 		KeyStore ks = KeyStore.getInstance(type);
@@ -199,25 +278,66 @@ public class EncryptedFileLoader {
 		return ret;
 	}
 
-	private PrivateKey getPrivateKey(final KeyStore keyStore, final String keyPassword, final String alias) throws Exception {
-		char[] password = keyPassword.toCharArray();
-		
-	    KeyStore.ProtectionParameter protParam = new KeyStore.PasswordProtection(password);
-	    PrivateKey ret = null;
-		if (StringUtils.isNotBlank(alias)) {
-			ret = ((KeyStore.PrivateKeyEntry) keyStore.getEntry(alias, protParam)).getPrivateKey();
+	/**
+	 * Encode the input properties file and save the result to the outputFile
+	 * @param inputFile
+	 * @param outputFile
+	 * @throws Exception
+	 */
+	public void encode(final String inputFile, final String outputFile) throws Exception {
+		try (InputStream is = getInputStream(inputFile)) {
+			Properties props = new Properties();
+			props.load(is);
+			saveProperties(props, outputFile);
 		}
-		else {
-			Enumeration<String> e = keyStore.aliases();
-			while(e.hasMoreElements()) {
-				String s = e.nextElement();
-				if (keyStore.isKeyEntry(s)) {
-					ret = ((KeyStore.PrivateKeyEntry) keyStore.getEntry(s, protParam)).getPrivateKey();
-					break;
+	}
+
+	/**
+	 * Decode the input properties file and save the result to the outputFile
+	 * @param inputFile
+	 * @param outputFile
+	 * @throws Exception
+	 */
+	public void decode(final String inputFile, final String outputFile) throws Exception {
+		try(FileOutputStream out = new FileOutputStream(outputFile)) {
+			Properties props = loadProperties(inputFile);
+			props.store(out, "Decoded");
+		}
+	}
+
+	/**
+	 * <p>Convert a properties file to an encrypted one and vice versa</p>
+	 * <p>Arguments: -i=input_file -o=output_file</p>
+	 * <p>If the input_file ends with '.properties' then the output_file will contain its encryption. Otherwise the output_file will contain the attempt of decryption</p>
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		try {
+			String inputFile = null, outputFile = null;
+			for(String arg: args) {
+				if (arg.startsWith("-i=")) {
+					inputFile = arg.substring(3);
+				}
+				else if (arg.startsWith("-o=")) {
+					outputFile  = arg.substring(3);
 				}
 			}
+			if (StringUtils.isAnyBlank(inputFile, outputFile)) {
+				throw new Exception("Expected arguments: -i=input_file -o=output_file");
+			}
+			EncryptedFileLoader loader = new EncryptedFileLoader();
+			if (inputFile.endsWith(".properties")) {
+				loader.encode(inputFile, outputFile);
+				System.out.println("Sccessfully encoded the file to " + outputFile);
+			}
+			else {
+				loader.decode(inputFile, outputFile);
+				System.out.println("Sccessfully decoded the file to " + outputFile);
+			}
 		}
-		return ret;
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
-	
 }

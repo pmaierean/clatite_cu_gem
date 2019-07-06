@@ -26,7 +26,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.maiereni.synchronizer.git.service.bo.Configuration;
 import com.maiereni.synchronizer.git.service.bo.GitProperties;
+import com.maiereni.synchronizer.git.service.bo.SlingProperties;
 import com.maiereni.util.EncryptedFileLoader;
 
 /**
@@ -35,18 +37,21 @@ import com.maiereni.util.EncryptedFileLoader;
  */
 class CredentialsLoader extends EncryptedFileLoader {
 	private static final Logger logger = LoggerFactory.getLogger(CredentialsLoader.class);
-	public static final String PASSWORD_KEY = "password";
-	public static final String USER_KEY = "user";
-	public static final String URL_KEY = "url";
-	public static final String BRANCH_KEY = "branch";
-	public static final String LOCAL_REPO = "localPath";
-	public static final String CONTENT_PATH = "contentPath";
+	public static final String PASSWORD_KEY = "git.password";
+	public static final String USER_KEY = "git.user";
+	public static final String URL_KEY = "git.url";
+	public static final String BRANCH_KEY = "git.branch";
+	public static final String LOCAL_REPO = "git.localPath";
+	public static final String CONTENT_PATH = "git.contentPath";
 	private static final String URL_PRE = URL_KEY + "=";
 	private static final String USER_PRE = USER_KEY + "=";
 	private static final String PASSWORD_PRE = PASSWORD_KEY + "=";
 	private static final String BRANCH_PRE = BRANCH_KEY + "=";
 	private static final String LOCAL_REPO_PRE = LOCAL_REPO + "=";
 	private static final String CONTENT_PATH_PRE = CONTENT_PATH + "=";
+	private static final String SLING_URL = "sling.url";
+	private static final String SLING_USER = "sling.user";
+	private static final String SLING_PASSWORD = "sling.password";
 	/**
 	 * Get properties from a comma sepparated string
 	 * @param s
@@ -63,9 +68,11 @@ class CredentialsLoader extends EncryptedFileLoader {
 				}
 				else if (tok.startsWith(USER_PRE)) {
 					ret.setUserName(tok.substring(USER_PRE.length()));
+					logger.debug("User: " + ret.getUserName());
 				}
 				else if (tok.startsWith(PASSWORD_PRE)) {
 					ret.setPassword(tok.substring(PASSWORD_PRE.length()));
+					logger.debug("Password: " + ret.getPassword());
 				}
 				else if (tok.startsWith(BRANCH_PRE)) {
 					ret.setBranchName(tok.substring(BRANCH_PRE.length()));
@@ -86,7 +93,8 @@ class CredentialsLoader extends EncryptedFileLoader {
 	 * @return
 	 * @throws Exception
 	 */
-	public GitProperties getProperties(@Nonnull final String path) throws Exception {
+	public Configuration getProperties(@Nonnull final String path) throws Exception {
+		Configuration ret = new Configuration();
 		Properties props = null;
 		if (path.endsWith(".properties")) {
 			try(FileInputStream is = new FileInputStream(path)) {
@@ -97,8 +105,14 @@ class CredentialsLoader extends EncryptedFileLoader {
 		}
 		else {
 			props = loadProperties(path);
-			logger.debug("The properties have neem loaded from an encryoted file");
+			logger.debug("The properties have been loaded from an encrypted file");
 		}
+		ret.setGitProperties(getGitProperties(props));
+		ret.setSlingProperties(getSlingProperties(props));
+		return ret;
+	}
+
+	protected GitProperties getGitProperties(final Properties props) {
 		GitProperties ret = new GitProperties();
 		ret.setPassword(props.getProperty(PASSWORD_KEY));
 		ret.setUserName(props.getProperty(USER_KEY));
@@ -106,6 +120,14 @@ class CredentialsLoader extends EncryptedFileLoader {
 		ret.setBranchName(props.getProperty(BRANCH_KEY));
 		ret.setLocalRepo(props.getProperty(LOCAL_REPO));
 		ret.setContentPath(props.getProperty(CONTENT_PATH));
+		return ret;
+	}
+	
+	protected SlingProperties getSlingProperties(final Properties props) {
+		SlingProperties ret = new SlingProperties();
+		ret.setPassword(props.getProperty(SLING_PASSWORD, "admin"));
+		ret.setUserName(props.getProperty(SLING_USER, "admin"));
+		ret.setUrl(props.getProperty(SLING_URL, "http://localhost:8080/system/content/bundle"));
 		return ret;
 	}
 }

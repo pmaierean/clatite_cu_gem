@@ -68,7 +68,7 @@ public class GitDownloaderImpl implements GitDownloader {
 	private static final String LOCAL_BRANCH = "local";
 	private static final String REF_HEADS_LOCAL = REF_HEADS + LOCAL_BRANCH;
 	private static final Logger logger = LoggerFactory.getLogger(GitDownloaderImpl.class);
-	public static final String LAYOUT_RULES_FILE = "layout.xml";
+	public static final String LAYOUT_RULES_FILE = "layoutRules.json";
 	private ObjectMapper objectMapper;
 
 	public GitDownloaderImpl() {
@@ -101,31 +101,28 @@ public class GitDownloaderImpl implements GitDownloader {
 		GitResults res = downloadProject(git, properties);
 		res.setContentPath(new File(fRepo, properties.getContentPath()).toString());
 		res.setCreated(isCreated);
-		List<LayoutRule> layoutRules = getLayoutRules(res);
+		LayoutRules layoutRules = getLayoutRules(res);
 		res.setLayoutRules(layoutRules);
 		git.close();
 		return res;
 	}
 
-	private List<LayoutRule> getLayoutRules(final GitResults gitResults) throws Exception {
-		List<LayoutRule> ret = null;
-		File layoutRulesFile = new File(gitResults.getContentPath(), LAYOUT_RULES_FILE);
+	LayoutRules getLayoutRules(final File layoutRulesFile) throws Exception {
+		LayoutRules ret = null;		
 		if (layoutRulesFile.exists()) {
-			ret = getLayoutRules(layoutRulesFile);
+			ret = objectMapper.readValue(layoutRulesFile, LayoutRules.class);
+			logger.debug("Read the layout file " + layoutRulesFile.getPath());
 		}
 		else {
-			ret = new ArrayList<LayoutRule>();
-			LayoutRule rule = new LayoutRule();
-			rule.setName("content");
-			rule.setInclusionPattern(".*");
-			ret.add(rule);
-		}
+			logger.error("Cannot find a layoutRules file in the repository");
+			ret = new LayoutRules();
+		}	
 		return ret;
 	}
 	
-	protected List<LayoutRule> getLayoutRules(final File f) throws Exception {
-		LayoutRules layoutRules = objectMapper.readValue(f, LayoutRules.class);
-		return layoutRules.getLayouts();
+	private LayoutRules getLayoutRules(final GitResults gitResults) throws Exception {
+		File layoutRulesFile = new File(gitResults.getContentPath(), LAYOUT_RULES_FILE);
+		return getLayoutRules(layoutRulesFile);
 	}
 	
 	private boolean isRepository(final File dir) {

@@ -28,6 +28,7 @@ import java.util.UUID;
 
 import org.junit.Test;
 
+import com.maiereni.synchronizer.git.service.bo.Configuration;
 import com.maiereni.synchronizer.git.service.bo.GitProperties;
 import com.maiereni.util.DeletableFile;
 
@@ -74,7 +75,9 @@ public class CredentialsLoaderTest {
 	public void testLoadingFromRegularFile() {
 		try (DeletableFile deletableFile = createTestCase("https://www.github.com/sample", "simple", "123")) {
 			CredentialsLoader loader = new CredentialsLoader();
-			GitProperties props = loader.getProperties(deletableFile.getPath());
+			Configuration config = loader.getProperties(deletableFile.getPath()); 
+			assertNotNull("Expected configuration", config);
+			GitProperties props = config.getGitProperties();
 			assertNotNull("Expected not null", props);
 			assertEquals("Expected to match", "123", props.getPassword());			
 			assertEquals("Expected to match", "https://www.github.com/sample", props.getRemote());			

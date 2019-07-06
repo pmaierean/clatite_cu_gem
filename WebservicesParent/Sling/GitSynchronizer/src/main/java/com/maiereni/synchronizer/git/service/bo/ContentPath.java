@@ -18,43 +18,24 @@
 package com.maiereni.synchronizer.git.service.bo;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author Petre Maierean
  *
  */
-public class GitResults implements Serializable {
-	private static final long serialVersionUID = 4444269789907112045L;
-	private List<Change> changes;
-	private LayoutRules layoutRules;
-	private String contentPath;
-	private boolean created;
-	
-	
-	public boolean isCreated() {
-		return created;
+public class ContentPath implements Serializable {
+	private static final long serialVersionUID = 4231244935374887236L;
+	private String name, path;
+	public String getName() {
+		return name;
 	}
-	public void setCreated(boolean created) {
-		this.created = created;
+	public void setName(String name) {
+		this.name = name;
 	}
-	public List<Change> getChanges() {
-		return changes;
+	public String getPath() {
+		return path;
 	}
-	public void setChanges(List<Change> changes) {
-		this.changes = changes;
+	public void setPath(String path) {
+		this.path = path;
 	}
-	public String getContentPath() {
-		return contentPath;
-	}
-	public void setContentPath(String contentPath) {
-		this.contentPath = contentPath;
-	}
-	public LayoutRules getLayoutRules() {
-		return layoutRules;
-	}
-	public void setLayoutRules(LayoutRules layoutRules) {
-		this.layoutRules = layoutRules;
-	}
-
 }

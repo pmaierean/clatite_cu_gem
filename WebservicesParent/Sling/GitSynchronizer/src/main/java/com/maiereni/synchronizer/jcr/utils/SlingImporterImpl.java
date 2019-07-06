@@ -18,28 +18,25 @@
 package com.maiereni.synchronizer.jcr.utils;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.api.JackrabbitSession;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
-import org.apache.sling.jcr.contentloader.ContentImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.maiereni.synchronizer.git.service.SlingImporter;
 import com.maiereni.synchronizer.git.service.bo.Change;
-import com.maiereni.synchronizer.git.service.bo.FSStatus;
 import com.maiereni.synchronizer.git.service.bo.ImportProperties;
+import com.maiereni.synchronizer.git.service.bo.LayoutRules;
+import com.maiereni.synchronizer.git.service.bo.SlingProperties;
 
 /**
  * A service class that imports from file system
@@ -52,13 +49,13 @@ public class SlingImporterImpl implements SlingImporter {
 	public static final String USER_NAME = "synchronization-handler";
 	private static final Logger logger = LoggerFactory.getLogger(SlingImporterImpl.class);
 	private ResourceResolverFactory resourceResolverFactory;
-	private ContentImporter contentImporter;
-	
+	private BundleInstaller bundleInstaller;
+
 	public SlingImporterImpl(
 		final ResourceResolverFactory resourceResolverFactory, 
-		final ContentImporter contentImporter) {
+		final SlingProperties slingProperties) throws Exception {
 		this.resourceResolverFactory = resourceResolverFactory;
-		this.contentImporter = contentImporter;
+		bundleInstaller = new BundleInstaller(slingProperties);
 	}
 
 	/**
@@ -68,7 +65,7 @@ public class SlingImporterImpl implements SlingImporter {
 	 */
 	@Override
 	public void importAll(@Nonnull final ImportProperties properties) throws Exception {
-		importAll(properties.getRootPath(), properties.getChanges(), properties.getExclusionPattern());
+		importAll(properties.getRootPath(), properties.getChanges(), properties.getLayoutRules());
 	}
 
 	/**
@@ -81,16 +78,16 @@ public class SlingImporterImpl implements SlingImporter {
 		if (properties.getChanges() == null) {
 			throw new Exception("The list of changes cannot be null");
 		}
-		importAll(properties.getRootPath(), properties.getChanges(), properties.getExclusionPattern());
+		importAll(properties.getRootPath(), properties.getChanges(), properties.getLayoutRules());
 	}
-	private static final String DEFAULT_CONTENT_NAME = "content.zip";
-	private void importAll(final String path, final List<Change> changes, final String exclusionPath) throws Exception {
+
+	private void importAll(final String path, final List<Change> changes, final LayoutRules layoutRules) throws Exception {
 		if (StringUtils.isBlank(path)) {
 			throw new Exception("Invalid case. The path must be provided");
 		}
 		ResourceResolver resourceResolver = initSession();
 		JackrabbitSession session = null;
-		File deltaArchive = null;
+		File bundleArchive = null;
 		try {
 			session = (JackrabbitSession)resourceResolver.adaptTo(Session.class);
 			ContentBuilder contentBuilder = new ContentBuilder(session);
@@ -100,34 +97,27 @@ public class SlingImporterImpl implements SlingImporter {
 					logger.debug("Add node: {}", path);
 				}
 			});
-			FSStatus fsStatus = contentBuilder.buildContentUpdater(path, changes, exclusionPath);
-			deltaArchive = contentBuilder.buildZip(path, fsStatus);
-			if (deltaArchive != null) {
-				try(InputStream is = new FileInputStream(deltaArchive);
-					GitContentImportListener listener = new GitContentImportListener()) {
-					logger.debug("The ZIP file with changes is ready to import");
-					Node root = session.getNode("/");
-					contentImporter.importContent(root, DEFAULT_CONTENT_NAME, is, new GitImporterOptions(true), listener);
-					logger.debug("Done importing\r\n{}", listener.toString());
-					session.save();
-					session.refresh(false);
-				}
-			}
-			else {
-				logger.debug("Nothing to import");
+			if (contentBuilder.hasChanges(path, layoutRules)) {
+				logger.debug("There are changes at {} to import", path);
+				bundleArchive = contentBuilder.buildZip(path, layoutRules);
+				bundleInstaller.installBundle(layoutRules, bundleArchive);
 			}
 		}
 		finally {
+			if (bundleArchive != null)
+				logger.debug("The Zip file is available at {}", bundleArchive.getPath());
+			/*
 			if (deltaArchive != null)
 				if (!deltaArchive.delete())
 					deltaArchive.deleteOnExit();
+			*/
 			if (session != null) {
 				session.logout();
 			}
 			resourceResolver.close();
 		}		
 	}
-	
+		
 	protected ResourceResolver initSession() throws Exception {
 		ResourceResolver resourceResolver = null;
 		logger.debug("Open an administrative session");
@@ -137,4 +127,5 @@ public class SlingImporterImpl implements SlingImporter {
 		resourceResolver = resourceResolverFactory.getServiceResourceResolver(properties);
 		return resourceResolver;
 	}
+	
 }

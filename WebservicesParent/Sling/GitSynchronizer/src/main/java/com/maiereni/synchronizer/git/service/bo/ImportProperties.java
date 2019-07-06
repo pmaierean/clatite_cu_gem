@@ -26,24 +26,26 @@ import java.util.List;
  */
 public class ImportProperties implements Serializable {
 	private static final long serialVersionUID = 422245225730350636L;
-	private String rootPath, exclusionPattern;
+	private String rootPath;
 	private List<Change> changes;
+	private LayoutRules layoutRules;
+	
 	public String getRootPath() {
 		return rootPath;
 	}
 	public void setRootPath(String rootPath) {
 		this.rootPath = rootPath;
 	}
-	public String getExclusionPattern() {
-		return exclusionPattern;
-	}
-	public void setExclusionPattern(String exclusionPattern) {
-		this.exclusionPattern = exclusionPattern;
-	}
 	public List<Change> getChanges() {
 		return changes;
 	}
 	public void setChanges(List<Change> changes) {
 		this.changes = changes;
+	}
+	public LayoutRules getLayoutRules() {
+		return layoutRules;
+	}
+	public void setLayoutRules(LayoutRules layoutRules) {
+		this.layoutRules = layoutRules;
 	}
 }

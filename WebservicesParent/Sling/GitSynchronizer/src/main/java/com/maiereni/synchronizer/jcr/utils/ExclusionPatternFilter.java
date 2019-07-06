@@ -22,29 +22,44 @@ import java.io.FileFilter;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+
+import com.maiereni.synchronizer.git.service.bo.LayoutRule;
+
+import bsh.StringUtil;
 /**
  * @author Petre Maierean
  *
  */
 public class ExclusionPatternFilter implements FileFilter {
 	public static final String GIT_EXCLUSION_PATTERN = ".*(\\x2egit).*";
-	private Pattern pattern;
+	public static final String GIT_INCLUSION_PATTERN = ".*";
+	private Pattern inclusionPattern, exclusionPattern;
 	
-	public ExclusionPatternFilter() {
-	}
-
-	public ExclusionPatternFilter(final String s) {
-		if (StringUtils.isNotBlank(s)) {
-			pattern = Pattern.compile(s);
+	public ExclusionPatternFilter(final LayoutRule layoutRule) {
+		if (StringUtils.isNotBlank(layoutRule.getExclusionPattern())){
+			exclusionPattern = Pattern.compile(layoutRule.getExclusionPattern());
 		}
 		else {
-			pattern = Pattern.compile(GIT_EXCLUSION_PATTERN);
+			exclusionPattern = Pattern.compile(GIT_EXCLUSION_PATTERN);			
+		}
+		if (StringUtils.isNotBlank(layoutRule.getInclusionPattern())) {
+			inclusionPattern = Pattern.compile(layoutRule.getInclusionPattern());
+		}
+		else {
+			inclusionPattern = Pattern.compile(GIT_INCLUSION_PATTERN);			
 		}
 	}
 
 	@Override
 	public boolean accept(File f) {
-		return !pattern.matcher(f.getPath()).matches();
+		boolean b = true;
+		if (exclusionPattern.matcher(f.getPath()).matches()) {
+			b = false;
+		}
+		else if (!inclusionPattern.matcher(f.getPath()).matches()) {
+			b = false;
+		}
+		return b;
 	}
 
 }

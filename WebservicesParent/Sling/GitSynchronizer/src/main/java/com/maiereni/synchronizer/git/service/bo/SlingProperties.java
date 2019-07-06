@@ -15,38 +15,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.synchronizer.jcr.utils;
+package com.maiereni.synchronizer.git.service.bo;
 
-import org.apache.sling.jcr.contentloader.ImportOptions;
+import java.io.Serializable;
 
 /**
  * @author Petre Maierean
  *
  */
-public class GitImporterOptions extends ImportOptions {
-	private boolean checkin;
-	
-	public GitImporterOptions(boolean checkin) {
-		this.checkin = checkin;
+public class SlingProperties implements Serializable {
+	private static final long serialVersionUID = -1769346887796893595L;
+	private String url, userName, password;
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
 	}
 	
-	@Override
-	public boolean isOverwrite() {
-		return true;
-	}
-
-	@Override
-	public boolean isPropertyOverwrite() {
-		return true;
-	}
-
-	@Override
-	public boolean isCheckin() {
-		return checkin;
-	}
-
-	@Override
-	public boolean isIgnoredImportProvider(String extension) {
-		return false;
-	}
 }

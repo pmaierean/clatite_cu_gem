@@ -108,8 +108,14 @@ public class ProjectsUpdaterMain {
 			XPath xpath = XPathFactory.newInstance().newXPath();
 			String stmt = "//repository";
 			if (StringUtils.isNotBlank(projectName)) {
-				stmt = "//repository[project[@name='" + projectName + "']]";
+				if (projectName.endsWith(".*")) {
+					stmt = "//repository[project[starts-with(@name,'" + projectName.substring(0, projectName.length() - 2) + "')]]"; 
+				}
+				else {
+					stmt = "//repository[project[@name='" + projectName + "']]";
+				}
 			}
+			logger.debug("XPath statement is " + stmt);
 			NodeList nl = (NodeList)xpath.evaluate(stmt, document, XPathConstants.NODESET);
 			int max = nl.getLength();
 			ret = new ArrayList<Repository>();
@@ -117,6 +123,7 @@ public class ProjectsUpdaterMain {
 				Element element = (Element) nl.item(i);
 				ret.add(convert(element));
 			}
+			logger.debug("Found a number of " + ret.size());
 		}
 		return ret;
 	}

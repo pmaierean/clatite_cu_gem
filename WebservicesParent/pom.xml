@@ -28,7 +28,7 @@
 			</dependency>
 			<dependency>
 			    <groupId>org.eclipse.jetty</groupId>
-			    <artifactId>jetty-webapp</artifactId>
+			    <artifactId>jetty-webapp</artifactId>s
 			    <version>9.4.7.v20170914</version>
 			</dependency>		
 			<dependency>
@@ -375,5 +375,6 @@
 		<module>RestfulWithCXF</module>
 		<module>RestfulWithJersey</module>
 		<module>WebsiteParent</module>
+		<module>EncryptionUtils</module>
 	</modules>
 </project>

@@ -635,7 +635,6 @@
     <bundle>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>1.4</version>
       <classifier></classifier>
     </bundle>
     <bundle>

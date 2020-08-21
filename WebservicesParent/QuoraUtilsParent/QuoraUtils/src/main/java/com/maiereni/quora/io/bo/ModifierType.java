@@ -15,25 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.encryption.utils;
-
-import java.security.PrivateKey;
-import java.security.PublicKey;
+package com.maiereni.quora.io.bo;
 
 /**
- * @author Petre Maierean
  *
  */
-public interface EncryptionKeyProvider {
-    /**
-     * Get the Public Key
-     * @return
-     */
-    PublicKey getPublicKey();
+public enum ModifierType {
+    LINK("link"), IMAGE("image");
 
-    /**
-     * Get the Private Key
-     * @return
-     */
-    PrivateKey getPrivateKey();
+    private String type;
+    private ModifierType(final String type) {
+        this.type = type;
+    }
+
+    public String toString() {
+        return type;
+    }
 }

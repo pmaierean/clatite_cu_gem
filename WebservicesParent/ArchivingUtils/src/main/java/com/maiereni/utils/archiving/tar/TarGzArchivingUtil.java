@@ -31,15 +31,9 @@ import com.maiereni.utils.archiving.BaseArchivingUtility;
  *
  */
 public class TarGzArchivingUtil extends BaseArchivingUtility {
-	private Compressor compressor;
-	private Decompressor decompressor;
+	private Compressor compressor = new Compressor();
+	private Decompressor decompressor = new Decompressor();
 
-	public TarGzArchivingUtil() throws Exception {
-		super();
-		compressor = new Compressor();
-		decompressor = new Decompressor();
-	}
-	
 	/**
 	 * Decompresses an archive file into the destination directory
 	 * @param archiveFile
@@ -48,7 +42,8 @@ public class TarGzArchivingUtil extends BaseArchivingUtility {
 	 */
 	@Override
 	public File decompress(@Nonnull final File archiveFile) throws Exception {
-		return decompressor.decompress(archiveFile, destDir);
+		File ret = super.getTempDir();
+		return  decompressor.decompress(archiveFile, ret);
 	}
 
 	/**
@@ -63,8 +58,10 @@ public class TarGzArchivingUtil extends BaseArchivingUtility {
 			throw new Exception("The input file does not exist");
 		File f = compressor.compress(input);
 		File dest = null;
-		if (name.indexOf(delim) < 0)
+		if (name.indexOf(delim) < 0) {
+			File destDir = super.getTempDir();
 			dest = new File(destDir, name);
+		}
 		else
 			dest = new File(name);
 		FileUtils.copyFile(f, dest);

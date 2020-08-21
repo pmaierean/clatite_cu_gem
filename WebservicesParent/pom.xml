@@ -28,7 +28,7 @@
 			</dependency>
 			<dependency>
 			    <groupId>org.eclipse.jetty</groupId>
-			    <artifactId>jetty-webapp</artifactId>s
+			    <artifactId>jetty-webapp</artifactId>
 			    <version>9.4.7.v20170914</version>
 			</dependency>		
 			<dependency>
@@ -376,5 +376,10 @@
 		<module>RestfulWithJersey</module>
 		<module>WebsiteParent</module>
 		<module>EncryptionUtils</module>
-	</modules>
+        <module>RomanRoads</module>
+		<module>RomanRoadsUtils</module>
+        <module>QuoraUtils</module>
+        <module>QuoraUtilsParent</module>
+        <module>QuoraWeb</module>
+    </modules>
 </project>

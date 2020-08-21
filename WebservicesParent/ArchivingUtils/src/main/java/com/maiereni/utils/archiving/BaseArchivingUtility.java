@@ -18,23 +18,27 @@
 package com.maiereni.utils.archiving;
 
 import java.io.File;
+import java.util.UUID;
 
 /**
  * @author Petre Maierean
  *
  */
 public abstract class BaseArchivingUtility implements ArchivingUtility {
-	public final String LOCAL_DIR = "com.maiereni.utils.archiving.dir";
-	private static final String DEFAULT_LOCAL_DIR = System.getProperty("user.home") + "/Downloads";
-	protected File destDir;
-	protected String delim;
-	
-	public BaseArchivingUtility() throws Exception {
-		String baseDir = System.getProperty(LOCAL_DIR, DEFAULT_LOCAL_DIR);
-		delim = System.getProperty("file.separator");
-		destDir = new File(baseDir);
+	protected String delim = System.getProperty("file.separator");
+
+	/**
+	 * Creates a temporary directory
+	 * @return
+	 * @throws Exception
+	 */
+	public File getTempDir() throws Exception {
+		String uid = UUID.randomUUID().toString().replaceAll("-", "");
+		String baseDir = System.getProperty("user.home") + delim + "temp";
+		File destDir = new File(baseDir, uid);
 		if (!destDir.isDirectory())
 			if (!destDir.mkdirs())
 				throw new Exception("Cannot make base directory at " + baseDir);
+		return destDir;
 	}
 }

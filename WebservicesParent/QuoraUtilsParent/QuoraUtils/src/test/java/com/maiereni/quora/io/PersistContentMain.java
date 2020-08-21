@@ -15,25 +15,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.encryption.utils;
+package com.maiereni.quora.io;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
 
 /**
- * @author Petre Maierean
  *
+ * @author Petre Maierean
  */
-public interface EncryptionKeyProvider {
+public class PersistContentMain {
+    private static final Logger logger = LoggerFactory.getLogger(PersistContentMain.class);
     /**
-     * Get the Public Key
-     * @return
+     * Extracts and persist content
+     *
+     * @param args data.zip dest_folder
      */
-    PublicKey getPublicKey();
-
-    /**
-     * Get the Private Key
-     * @return
-     */
-    PrivateKey getPrivateKey();
+    public static void main(final String[] args) {
+        try {
+            if (args.length < 2) {
+                throw new Exception("Expected arguments: data.zip dest_folder");
+            }
+            PersistContent pc = new PersistContent();
+            pc.extractContent(new File(args[0]), new File(args[1]));
+        }
+        catch(Exception e) {
+            logger.error("Failed to presist", e);
+        }
+    }
 }

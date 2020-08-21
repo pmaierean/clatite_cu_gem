@@ -58,7 +58,7 @@ public class EncryptionKeyProviderProviderImpl implements EncryptionKeyProvider 
         init();
     }
 
-    public  PublicKey getPublicKey() {
+    public PublicKey getPublicKey() {
         return publicKey;
     }
 
@@ -69,7 +69,7 @@ public class EncryptionKeyProviderProviderImpl implements EncryptionKeyProvider 
     public String getKeyAlias() {
         return keyAlias;
     }
-    
+
     private void init() throws Exception {
         if (StringUtils.isBlank(keyStore)) {
             throw new Exception("The Key store cannot be blank");
@@ -77,11 +77,12 @@ public class EncryptionKeyProviderProviderImpl implements EncryptionKeyProvider 
         File f = new File(keyStore);
         if (f.isFile()) {
             try (InputStream is = new FileInputStream(f)) {
+                init(is);
             }
         }
         else {
             try (InputStream is = getClass().getResourceAsStream(keyStore)) {
-
+                init(is);
             }
         }
      }

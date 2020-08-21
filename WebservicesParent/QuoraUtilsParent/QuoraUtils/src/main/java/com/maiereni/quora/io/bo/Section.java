@@ -15,25 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.encryption.utils;
+package com.maiereni.quora.io.bo;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.io.Serializable;
+import java.util.List;
 
 /**
- * @author Petre Maierean
  *
+ * @author Petre Maierean
  */
-public interface EncryptionKeyProvider {
-    /**
-     * Get the Public Key
-     * @return
-     */
-    PublicKey getPublicKey();
+public class Section implements Serializable {
+    private List<Span> spans;
 
-    /**
-     * Get the Private Key
-     * @return
-     */
-    PrivateKey getPrivateKey();
+    public List<Span> getSpans() {
+        return spans;
+    }
+
+    public void setSpans(List<Span> spans) {
+        this.spans = spans;
+    }
 }

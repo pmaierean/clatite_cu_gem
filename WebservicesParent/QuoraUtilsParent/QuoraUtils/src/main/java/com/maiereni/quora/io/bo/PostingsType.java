@@ -1,6 +1,6 @@
 /**
  * ================================================================
- * Copyright (c) 2017-2020 Maiereni Software and Consulting Inc
+ * Copyright (c) 2017-2018 Maiereni Software and Consulting Inc
  * ================================================================
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,25 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.encryption.utils;
-
-import java.security.PrivateKey;
-import java.security.PublicKey;
+package com.maiereni.quora.io.bo;
 
 /**
- * @author Petre Maierean
- *
+ * Describes the type of a posting
  */
-public interface EncryptionKeyProvider {
-    /**
-     * Get the Public Key
-     * @return
-     */
-    PublicKey getPublicKey();
+public enum PostingsType {
+    QUESTIONS("questions"), ANSWERS("answers");
 
-    /**
-     * Get the Private Key
-     * @return
-     */
-    PrivateKey getPrivateKey();
+    private String type;
+    PostingsType(final String type) {
+        this.type = type;
+    }
+
+    public String toString() {
+        return type;
+    }
 }

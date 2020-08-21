@@ -1,6 +1,6 @@
 /**
  * ================================================================
- * Copyright (c) 2017-2020 Maiereni Software and Consulting Inc
+ * Copyright (c) 2017-2018 Maiereni Software and Consulting Inc
  * ================================================================
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,25 +15,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maiereni.encryption.utils;
-
-import java.security.PrivateKey;
-import java.security.PublicKey;
+package com.maiereni.quora.index.bo;
 
 /**
- * @author Petre Maierean
  *
+ * @author Petre Maierean
  */
-public interface EncryptionKeyProvider {
-    /**
-     * Get the Public Key
-     * @return
-     */
-    PublicKey getPublicKey();
+public class ContentBody extends ContentItem {
+    private String fileName, body;
+    private volatile boolean open;
 
-    /**
-     * Get the Private Key
-     * @return
-     */
-    PrivateKey getPrivateKey();
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public boolean isOpen() {
+        return open;
+    }
+
+    public void setOpen(boolean open) {
+        this.open = open;
+    }
 }

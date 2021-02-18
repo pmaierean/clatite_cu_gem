@@ -7,7 +7,7 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
     <properties>
-        <jackson.version>2.10.3</jackson.version>
+        <jackson.version>2.12.1</jackson.version>
         <crx.host>localhost</crx.host>
         <crx.port>4502</crx.port>
         <crx.username>admin</crx.username>
